@@ -131,7 +131,7 @@ export default function BenefitsPage() {
   ];
 
   return (
-    <div className="pt-24 bg-white">
+    <div className="pt-10 bg-white">
       {/* Corporate Foundation Header */}
       <section className="pt-24 pb-12 bg-white border-b border-gray-100 relative overflow-hidden">
         {/* Minimalist background elements */}

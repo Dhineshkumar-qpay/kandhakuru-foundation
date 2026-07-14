@@ -355,7 +355,7 @@ function Programs() {
             viewport={{ once: true }}
           >
             <Link
-              href="#register"
+              href="/programs"
               className="hidden md:inline-flex items-center gap-2 text-brand-secondary font-semibold hover:text-brand-primary transition-colors"
             >
               View All Programs <ArrowRight size={20} />
@@ -371,62 +371,58 @@ function Programs() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
-              className="group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col"
+              className="group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col cursor-pointer"
             >
-              {/* Image Section */}
-              <div className="relative h-56 overflow-hidden">
-                <div
-                  className="absolute inset-0 bg-cover bg-center transform group-hover:scale-110 transition-transform duration-700"
-                  style={{ backgroundImage: `url('${program.image}')` }}
-                ></div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              <Link href={`/programs/${program.id}`} className="flex flex-col h-full">
+                {/* Image Section */}
+                <div className="relative h-56 overflow-hidden shrink-0">
+                  <div
+                    className="absolute inset-0 bg-cover bg-center transform group-hover:scale-110 transition-transform duration-700"
+                    style={{ backgroundImage: `url('${program.image}')` }}
+                  ></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
 
-                {program.status === "open" ? (
-                  <div className="absolute top-4 right-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
-                    Registering
-                  </div>
-                ) : (
-                  <div className="absolute top-4 right-4 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
-                    Coming Soon
-                  </div>
-                )}
-              </div>
-
-              {/* Content Section */}
-              <div className="p-8 flex-grow flex flex-col">
-                <h4 className="text-2xl font-bold text-foreground mb-6 line-clamp-2">
-                  {program.title}
-                </h4>
-
-                <div className="space-y-4 mb-8 flex-grow">
-                  <div className="flex items-start gap-3 text-gray-600">
-                    <Calendar className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
-                    <span className="font-medium">{program.date}</span>
-                  </div>
-                  <div className="flex items-start gap-3 text-gray-600">
-                    <MapPin className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
-                    <span className="text-sm leading-relaxed">
-                      {program.location}
-                    </span>
-                  </div>
+                  {program.status === "open" ? (
+                    <div className="absolute top-4 right-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
+                      Registering
+                    </div>
+                  ) : (
+                    <div className="absolute top-4 right-4 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
+                      Coming Soon
+                    </div>
+                  )}
                 </div>
 
-                {program.status === "open" ? (
-                  <Link
-                    href="#register"
-                    className="block w-full py-3 px-6 text-center bg-white border-2 border-brand-primary text-brand-primary font-bold rounded-xl hover:bg-brand-primary hover:text-white transition-colors duration-300"
-                  >
-                    Register Now
-                  </Link>
-                ) : (
-                  <button
-                    disabled
-                    className="block w-full py-3 px-6 text-center bg-gray-100 text-gray-400 font-bold rounded-xl cursor-not-allowed"
-                  >
-                    Coming Soon
-                  </button>
-                )}
-              </div>
+                {/* Content Section */}
+                <div className="p-8 flex-grow flex flex-col">
+                  <h4 className="text-2xl font-bold text-foreground mb-6 line-clamp-2 group-hover:text-brand-primary transition-colors">
+                    {program.title}
+                  </h4>
+
+                  <div className="space-y-4 mb-8 flex-grow">
+                    <div className="flex items-start gap-3 text-gray-600">
+                      <Calendar className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
+                      <span className="font-medium">{program.date}</span>
+                    </div>
+                    <div className="flex items-start gap-3 text-gray-600">
+                      <MapPin className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
+                      <span className="text-sm leading-relaxed">
+                        {program.location}
+                      </span>
+                    </div>
+                  </div>
+
+                  {program.status === "open" ? (
+                    <span className="block w-full py-3 px-6 text-center bg-white border-2 border-brand-primary text-brand-primary font-bold rounded-xl group-hover:bg-brand-primary group-hover:text-white transition-colors duration-300">
+                      View Details
+                    </span>
+                  ) : (
+                    <span className="block w-full py-3 px-6 text-center bg-gray-100 text-gray-400 font-bold rounded-xl">
+                      Coming Soon
+                    </span>
+                  )}
+                </div>
+              </Link>
             </motion.div>
           ))}
         </div>
@@ -452,7 +448,7 @@ function Eligibility() {
               <UserCheck size={32} />
             </div>
             <h3 className="text-2xl font-bold text-foreground mb-4">
-              Who Can Attend?
+              Who Can Attend our program?
             </h3>
             <p className="text-gray-600 text-lg">
               Our programs are open to everyone. Anyone above{" "}
@@ -557,32 +553,34 @@ function Gallery() {
       : galleryImages.filter((img) => img.category === activeCategory);
 
   return (
-    <section id="gallery" className="py-24 bg-background">
-      <div className="container mx-auto px-2 md:px-4">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3">
-            Our Moments
-          </h2>
-          <h3 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
-            Gallery
-          </h3>
-        </div>
+    <section id="gallery" className="py-24 bg-white border-t border-gray-100">
+      <div className="container mx-auto px-4 max-w-7xl">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-8 border-b border-gray-100 pb-8">
+          <div className="max-w-xl">
+            <h2 className="text-xs font-bold tracking-widest text-brand-primary uppercase mb-2">
+              Visual Archives
+            </h2>
+            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+              Our Gallery
+            </h3>
+          </div>
 
-        {/* Filter Buttons */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                activeCategory === category
-                  ? "bg-brand-primary text-white shadow-lg shadow-brand-primary/30"
-                  : "bg-white text-gray-600 border border-gray-200 hover:border-brand-primary hover:text-brand-primary"
-              }`}
-            >
-              {category}
-            </button>
-          ))}
+          {/* Professional Minimalist Filters */}
+          <div className="flex flex-wrap gap-6">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setActiveCategory(category)}
+                className={`pb-2 text-sm font-semibold transition-all duration-300 border-b-2 ${
+                  activeCategory === category
+                    ? "border-brand-primary text-gray-900"
+                    : "border-transparent text-gray-400 hover:text-gray-900 hover:border-gray-300"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Gallery Grid */}
@@ -595,21 +593,30 @@ function Gallery() {
               <motion.div
                 key={image.id}
                 layout
-                initial={{ opacity: 0, scale: 0.8 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
+                exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.4 }}
-                className="group relative rounded-2xl overflow-hidden aspect-[4/3] cursor-pointer"
+                className="group relative overflow-hidden bg-gray-100 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-500"
                 onClick={() => setSelectedImage(image.src)}
               >
-                <div
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                  style={{ backgroundImage: `url('${image.src}')` }}
-                ></div>
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300"></div>
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
-                    <ZoomIn size={24} />
+                <div className="aspect-[4/3] w-full h-full relative overflow-hidden">
+                  <div
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-110"
+                    style={{ backgroundImage: `url('${image.src}')` }}
+                  ></div>
+                  
+                  {/* Professional Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                    <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500 flex justify-between items-end">
+                      <div>
+                        <p className="text-white font-medium text-lg tracking-tight">{image.alt}</p>
+                        <p className="text-gray-300 text-xs font-semibold uppercase tracking-wider mt-1">{image.category}</p>
+                      </div>
+                      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white border border-white/20">
+                        <ZoomIn size={18} />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -618,33 +625,34 @@ function Gallery() {
         </motion.div>
       </div>
 
-      {/* Lightbox */}
+      {/* Professional Lightbox */}
       <AnimatePresence>
         {selectedImage && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-gray-900/95 flex items-center justify-center p-4 md:p-12"
             onClick={() => setSelectedImage(null)}
           >
             <button
-              className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors"
+              className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors bg-gray-800 p-3 rounded-full"
               onClick={() => setSelectedImage(null)}
             >
-              <X size={32} />
+              <X size={24} />
             </button>
             <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              className="relative max-w-5xl max-h-[90vh] w-full h-full rounded-lg overflow-hidden"
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="relative max-w-6xl w-full h-full flex items-center justify-center"
               onClick={(e) => e.stopPropagation()}
             >
               <img
                 src={selectedImage}
                 alt="Enlarged gallery image"
-                className="w-full h-full object-contain"
+                className="max-w-full max-h-full object-contain shadow-2xl border border-gray-800"
               />
             </motion.div>
           </motion.div>

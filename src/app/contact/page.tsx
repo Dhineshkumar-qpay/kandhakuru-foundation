@@ -47,7 +47,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="pt-24 bg-white">
+    <div className="pt-10 bg-white">
       {/* Corporate Foundation Header */}
       <section className="pt-24 pb-12 bg-white border-b border-gray-100 relative overflow-hidden">
         {/* Minimalist background elements */}
@@ -100,9 +100,9 @@ export default function Contact() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="bg-white border-t-4 border-brand-primary p-8 shadow-sm"
+                className="bg-white p-8 shadow-sm"
               >
-                <h4 className="text-xl font-bold text-gray-900 mb-8 tracking-tight uppercase">
+                <h4 className="text-xl font-bold text-gray-900 mb-8 tracking-tight">
                   Corporate Headquarters
                 </h4>
 
@@ -184,15 +184,12 @@ export default function Contact() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="bg-white p-8 md:p-12 border-t-4 border-brand-secondary shadow-sm"
+                className="bg-white p-8 md:p-12 shadow-sm"
               >
                 <div className="flex items-center justify-between mb-8 border-b border-gray-100 pb-4">
-                  <h4 className="text-xl font-bold text-gray-900 tracking-tight uppercase">
+                  <h4 className="text-xl font-bold text-gray-900 tracking-tight ">
                     Program Registration Application
                   </h4>
-                  <span className="text-xs font-bold text-brand-secondary bg-brand-secondary/10 px-3 py-1 rounded">
-                    SECURE FORM
-                  </span>
                 </div>
 
                 {isSuccess ? (
