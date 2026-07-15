@@ -136,7 +136,13 @@ export default function BenefitsPage() {
       <section className="pt-32 pb-24 relative overflow-hidden">
         {/* Hero Background Image */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&q=80&w=1920')" }}></div>
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage:
+                "url('https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&q=80&w=1920')",
+            }}
+          ></div>
           <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-[2px]"></div>
         </div>
 
@@ -182,38 +188,45 @@ export default function BenefitsPage() {
       <section className="py-24 bg-white relative overflow-hidden">
         {/* Subtle background decoration */}
         <div className="absolute top-0 right-0 w-1/2 h-full bg-brand-primary/5 rounded-bl-[100px] -z-10"></div>
-        
+
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="flex flex-col lg:flex-row items-center gap-16">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: '-50px' }}
               className="w-full lg:w-5/12 relative"
             >
               <div className="relative rounded-3xl overflow-hidden aspect-[4/5] shadow-[0_20px_50px_rgba(0,0,0,0.1)] group">
                 <div
                   className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-1000"
                   style={{
-                    backgroundImage:
-                      "url('https://scontent.fmaa2-4.fna.fbcdn.net/v/t39.30808-6/486718075_122198317136129648_5350356878139007208_n.jpg?stp=dst-jpg_tt6&cstp=mx1366x2048&ctp=s1366x2048&_nc_cat=105&ccb=1-7&_nc_sid=833d8c&_nc_ohc=w7hfLEAUgNwQ7kNvwFOv_He&_nc_oc=AdpFMUMDoOd4FJlg9UM9r19hDyArkqBnQ-5PrGgRjB_KoEC-Xalox5IQb2ntXXgXjMeCGu4mR9VJS6c7X9b_-Tfj&_nc_zt=23&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=eIv22sBv_I4R-TDhjVTgPQ&_nc_ss=7b2a8&oh=00_AQAb3i0YWydaBRVgAnxDkGdEp1MYc4nCeVWjA_bvgT-Sjg&oe=6A5D024A')",
+                    backgroundImage: "url('babaji.jpg')",
                   }}
                 ></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent opacity-80"></div>
               </div>
-              
+
               {/* Floating element */}
-              <motion.div 
+              <motion.div
                 animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
                 className="absolute -bottom-8 -right-8 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-4 hidden md:flex"
               >
                 <div className="w-12 h-12 bg-brand-primary/10 rounded-full flex items-center justify-center text-brand-primary">
                   <Sparkles size={24} />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-gray-900 uppercase tracking-widest">Inner Peace</p>
-                  <p className="text-xs text-gray-500 font-medium">Holistic well-being</p>
+                  <p className="text-sm font-bold text-gray-900 uppercase tracking-widest">
+                    Inner Peace
+                  </p>
+                  <p className="text-xs text-gray-500 font-medium">
+                    Holistic well-being
+                  </p>
                 </div>
               </motion.div>
             </motion.div>
@@ -221,11 +234,14 @@ export default function BenefitsPage() {
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: '-50px' }}
               className="w-full lg:w-7/12"
             >
               <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-8 leading-tight">
-                An Integrated Approach to <span className="text-brand-primary text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-orange-400">Wellness</span>
+                An Integrated Approach to{" "}
+                <span className="text-brand-primary text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-orange-400">
+                  Wellness
+                </span>
               </h2>
 
               <div className="space-y-6 text-lg md:text-xl text-gray-600 font-light leading-relaxed">
@@ -262,7 +278,9 @@ export default function BenefitsPage() {
       <section className="py-24 bg-gray-50 border-t border-gray-100 relative">
         <div className="container mx-auto px-4 max-w-7xl relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3">Holistic Benefits</h2>
+            <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3">
+              Holistic Benefits
+            </h2>
             <h3 className="text-3xl md:text-5xl font-bold text-gray-900 tracking-tight">
               7 Pillars of Transformation
             </h3>
@@ -316,7 +334,7 @@ export default function BenefitsPage() {
               <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white h-full relative overflow-hidden">
                 {/* Decorative background blur */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/5 rounded-full blur-3xl -z-10"></div>
-                
+
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTab}
@@ -349,9 +367,12 @@ export default function BenefitsPage() {
                       </h4>
                       <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
                         {benefitsList[activeTab].points.map((point, i) => (
-                          <li key={i} className="flex items-start gap-3 group/item">
+                          <li
+                            key={i}
+                            className="flex items-start gap-3 group/item"
+                          >
                             <div className="mt-1.5 shrink-0 w-5 h-5 rounded-full bg-brand-primary/10 flex items-center justify-center group-hover/item:bg-brand-primary transition-colors">
-                               <div className="w-1.5 h-1.5 rounded-full bg-brand-primary group-hover/item:bg-white transition-colors"></div>
+                              <div className="w-1.5 h-1.5 rounded-full bg-brand-primary group-hover/item:bg-white transition-colors"></div>
                             </div>
                             <span className="text-gray-700 font-medium text-[15px] leading-snug">
                               {point}

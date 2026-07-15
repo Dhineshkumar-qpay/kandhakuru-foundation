@@ -9,19 +9,19 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
           {/* Brand Column */}
           <div className="md:col-span-4 space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-[3rem] bg-brand-primary flex items-center justify-center font-bold text-lg text-white">
-                SK
+            <Link href="/" className="flex items-center gap-3 group w-fit">
+              <div className="w-12 h-12 bg-white rounded-xl shadow-md border border-gray-100 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
+                <img src="/appLogo.png" alt="Sri Kandhaguru Foundation" className="w-10 h-10 object-contain" />
               </div>
-              <div>
-                <h4 className="font-bold text-lg tracking-tight leading-none">
+              <div className="flex flex-col">
+                <span className="font-extrabold text-lg tracking-tight leading-none text-gray-900">
                   Sri Kandhaguru
-                </h4>
-                <p className="text-brand-primary text-[10px] font-bold uppercase tracking-[0.2em] mt-1">
+                </span>
+                <span className="text-[9px] font-bold uppercase tracking-[0.25em] mt-1 text-brand-primary">
                   Foundation
-                </p>
+                </span>
               </div>
-            </div>
+            </Link>
             <p className="text-gray-500 text-sm leading-relaxed pr-4 font-light">
               Guiding individuals toward inner peace, self-realization, and
               holistic well-being through the timeless wisdom of Shiva Kriya
@@ -99,7 +99,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/#gallery"
+                  href="/gallery"
                   className="text-gray-500 hover:text-brand-primary transition-colors"
                 >
                   Gallery

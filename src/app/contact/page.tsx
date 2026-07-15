@@ -108,7 +108,7 @@ export default function Contact() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: '-50px' }}
                 className="bg-white/80 backdrop-blur-xl border border-white p-8 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl"
               >
                 <h4 className="text-xl font-bold text-gray-900 mb-8 tracking-tight flex items-center gap-3">
@@ -170,7 +170,7 @@ export default function Contact() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: '-50px' }}
                 transition={{ delay: 0.1 }}
                 className="bg-white border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] h-64 relative overflow-hidden rounded-3xl"
               >
@@ -192,7 +192,7 @@ export default function Contact() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: '-50px' }}
                 transition={{ delay: 0.1 }}
                 className="bg-white/80 backdrop-blur-xl border border-white p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl"
               >

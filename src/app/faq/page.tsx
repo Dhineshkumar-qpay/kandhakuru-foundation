@@ -47,7 +47,7 @@ export default function FAQ() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: '-50px' }}
               transition={{ delay: index * 0.1 }}
               key={index}
               className={`border rounded-2xl overflow-hidden transition-colors duration-300 ${

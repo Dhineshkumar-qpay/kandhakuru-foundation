@@ -65,18 +65,18 @@ function Hero() {
           transition={{ duration: 0.8 }}
           className="max-w-4xl mx-auto"
         >
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 tracking-tight">
-            Sri Kandhaguru Foundation
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+            Sri Kandhaguru <span className="text-brand-primary"> Foundation</span>
           </h1>
 
           <h2 className="text-2xl md:text-3xl text-brand-accent font-medium mb-8">
             The Way of Life
           </h2>
 
-          <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">
+          {/* <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">
             Guide visitors toward inner peace, self-realization, and holistic
             well-being through the timeless wisdom of Shiva Kriya Yogam.
-          </p>
+          </p> */}
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
@@ -130,7 +130,7 @@ function KriyaYogam() {
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-50px' }}
             className="w-full lg:w-1/2"
           >
             <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3">
@@ -163,7 +163,7 @@ function KriyaYogam() {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.8 }}
             className="w-full lg:w-1/2 relative"
           >
@@ -294,7 +294,7 @@ function SpiritualPhilosophy() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-50px' }}
             transition={{ delay: 0.2, duration: 0.8 }}
             className="relative group mx-auto max-w-4xl"
           >
@@ -348,10 +348,10 @@ function RoleOfReligions() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Text Content */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.8 }}
             className="space-y-8"
           >
@@ -361,68 +361,86 @@ function RoleOfReligions() {
               </span>
               <div className="h-px w-12 bg-gradient-to-r from-brand-primary to-transparent"></div>
             </div>
-            
+
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
               The Role of Religions in Connecting with the Divine
             </h2>
-            
+
             <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
               <p>
-                Every religion offers a unique path to connect with the Divine. Sincere devotion, regardless of faith, leads to spiritual realization. Figures like Jesus, Muhammad, Buddha, and Ramakrishna Paramahamsa have demonstrated how following a spiritual path can transcend our limits, guiding us to the Divine. While religions like Christianity, Islam, and Buddhism were founded by visionaries, Hinduism stands apart as Sanatana Dharma, an "eternal" path with no single founder.
+                Every religion offers a unique path to connect with the Divine.
+                Sincere devotion, regardless of faith, leads to spiritual
+                realization. Figures like Jesus, Muhammad, Buddha, and
+                Ramakrishna Paramahamsa have demonstrated how following a
+                spiritual path can transcend our limits, guiding us to the
+                Divine. While religions like Christianity, Islam, and Buddhism
+                were founded by visionaries, Hinduism stands apart as Sanatana
+                Dharma, an "eternal" path with no single founder.
               </p>
-              
+
               <div className="bg-brand-primary/5 border-l-4 border-brand-primary p-6 rounded-r-2xl">
                 <p>
-                  In ancient times, Rishis, through deep meditation, channeled divine wisdom that became the Vedas. These texts explored the relationship between Brahma (the Creator) and the individual soul (Purusha), which was simplified into the Upanishads.
+                  In ancient times, Rishis, through deep meditation, channeled
+                  divine wisdom that became the Vedas. These texts explored the
+                  relationship between Brahma (the Creator) and the individual
+                  soul (Purusha), which was simplified into the Upanishads.
                 </p>
               </div>
-              
+
               <p>
-                The essence of these teachings, including the famous <span className="font-semibold text-gray-900">"Tat Tvam Asi"</span> (You are that), was further distilled into the Bhagavad Gita. In the Gita, Krishna represents divine consciousness, and Arjuna symbolizes the individual consciousness. The Gita teaches paths of realization through Jnana Yoga, Karma Yoga, Bhakti Yoga, and Raja Yoga.
+                The essence of these teachings, including the famous{" "}
+                <span className="font-semibold text-gray-900">
+                  "Tat Tvam Asi"
+                </span>{" "}
+                (You are that), was further distilled into the Bhagavad Gita. In
+                the Gita, Krishna represents divine consciousness, and Arjuna
+                symbolizes the individual consciousness. The Gita teaches paths
+                of realization through Jnana Yoga, Karma Yoga, Bhakti Yoga, and
+                Raja Yoga.
               </p>
             </div>
           </motion.div>
-          
+
           {/* Images Grid */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.8 }}
             className="grid grid-cols-2 gap-4 h-full relative mt-12 lg:mt-0"
           >
             {/* Background decorative element */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-brand-primary/5 rounded-full blur-3xl -z-10"></div>
-            
+
             <div className="space-y-4 lg:translate-y-8">
               <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-lg group">
-                <img 
-                  src="https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&q=80&w=600" 
-                  alt="Spiritual path" 
+                <img
+                  src="https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&q=80&w=600"
+                  alt="Spiritual path"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
               </div>
               <div className="aspect-square rounded-3xl overflow-hidden shadow-lg group">
-                <img 
-                  src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&q=80&w=600" 
-                  alt="Meditation" 
+                <img
+                  src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&q=80&w=600"
+                  alt="Meditation"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
               </div>
             </div>
-            
+
             <div className="space-y-4 lg:-translate-y-8">
               <div className="aspect-square rounded-3xl overflow-hidden shadow-lg group">
-                <img 
-                  src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=600" 
-                  alt="Divine connection" 
+                <img
+                  src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=600"
+                  alt="Divine connection"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
               </div>
               <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-lg group">
-                <img 
-                  src="https://img.magnific.com/free-photo/focused-young-indian-man-meditating-lotus-pose_1262-12658.jpg?semt=ais_hybrid&w=740&q=80" 
-                  alt="Yoga practice" 
+                <img
+                  src="https://img.magnific.com/free-photo/focused-young-indian-man-meditating-lotus-pose_1262-12658.jpg?semt=ais_hybrid&w=740&q=80"
+                  alt="Yoga practice"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
               </div>
@@ -474,7 +492,7 @@ function Programs() {
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-50px' }}
             className="max-w-2xl"
           >
             <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3">
@@ -492,7 +510,7 @@ function Programs() {
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-50px' }}
           >
             <Link
               href="/programs"
@@ -509,7 +527,7 @@ function Programs() {
               key={program.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: '-50px' }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
               className="group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col cursor-pointer"
             >
@@ -577,9 +595,18 @@ function Programs() {
 // Eligibility
 function Eligibility() {
   const requirements = [
-    { text: "Minimum Age: 12+ Years", icon: <UserCheck className="w-6 h-6" strokeWidth={1.5} /> },
-    { text: "Open to All Backgrounds", icon: <Users className="w-6 h-6" strokeWidth={1.5} /> },
-    { text: "No Prior Yoga Experience Required", icon: <Sparkles className="w-6 h-6" strokeWidth={1.5} /> },
+    {
+      text: "Minimum Age: 12+ Years",
+      icon: <UserCheck className="w-6 h-6" strokeWidth={1.5} />,
+    },
+    {
+      text: "Open to All Backgrounds",
+      icon: <Users className="w-6 h-6" strokeWidth={1.5} />,
+    },
+    {
+      text: "No Prior Yoga Experience Required",
+      icon: <Sparkles className="w-6 h-6" strokeWidth={1.5} />,
+    },
   ];
 
   return (
@@ -618,7 +645,7 @@ function Eligibility() {
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="flex flex-col justify-center"
           >
@@ -644,19 +671,19 @@ function Eligibility() {
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: '-50px' }}
               transition={{ delay: 0.2, duration: 0.7 }}
               className="bg-white/90 backdrop-blur-xl border border-white p-10 rounded-3xl shadow-[0_8px_40px_rgb(0,0,0,0.06)] relative group overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-amber-100/40 to-orange-50/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
-              
+
               <ul className="space-y-8 relative z-10">
                 {requirements.map((req, i) => (
-                  <motion.li 
+                  <motion.li
                     key={i}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: true, margin: '-50px' }}
                     transition={{ delay: 0.4 + i * 0.15, duration: 0.5 }}
                     className="flex items-center gap-6 group/item"
                   >
@@ -676,15 +703,15 @@ function Eligibility() {
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
             className="relative"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-amber-300/30 to-orange-300/20 rounded-[3rem] blur-3xl transform -rotate-3 scale-105 animate-[pulse_4s_ease-in-out_Infinity]"></div>
 
-            <div className="relative bg-white/80 backdrop-blur-2xl border border-white p-10 md:p-14 rounded-[3rem] shadow-[0_20px_50px_-15px_rgba(217,119,6,0.15)] overflow-hidden">
+            <div className="relative bg-white/80 backdrop-blur-2xl border border-white p-10 md:p-14 rounded-[1rem] shadow-[0_20px_50px_-15px_rgba(217,119,6,0.15)] overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-amber-100/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-              
+
               <h3 className="text-3xl md:text-4xl font-semibold text-slate-900 mb-6 flex items-center gap-4 relative z-10">
                 <div className="p-3 bg-amber-100 rounded-2xl text-amber-600">
                   <Shirt className="w-8 h-8" strokeWidth={2} />
@@ -705,7 +732,6 @@ function Eligibility() {
                       alt="vesti"
                       className="w-12 h-12 object-contain"
                     />
-                    
                   </div>
                   <h4 className="text-center text-lg font-semibold text-slate-800">
                     Vesti & Shirt
@@ -821,21 +847,33 @@ function Gallery() {
             </h3>
           </div>
 
-          {/* Professional Minimalist Filters */}
-          <div className="flex flex-wrap gap-6">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
-                className={`pb-2 text-sm font-semibold transition-all duration-300 border-b-2 ${
-                  activeCategory === category
-                    ? "border-brand-primary text-gray-900"
-                    : "border-transparent text-gray-400 hover:text-gray-900 hover:border-gray-300"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
+          <div className="flex flex-col items-end gap-4">
+            {/* Professional Minimalist Filters */}
+            <div className="flex flex-wrap gap-6 justify-end">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setActiveCategory(category)}
+                  className={`pb-2 text-sm font-semibold transition-all duration-300 border-b-2 ${
+                    activeCategory === category
+                      ? "border-brand-primary text-gray-900"
+                      : "border-transparent text-gray-400 hover:text-gray-900 hover:border-gray-300"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+            <Link
+              href="/gallery"
+              className="text-brand-primary font-bold hover:text-brand-secondary transition-colors inline-flex items-center gap-1 text-sm uppercase tracking-wider group"
+            >
+              View All{" "}
+              <ArrowRight
+                size={16}
+                className="group-hover:translate-x-1 transition-transform"
+              />
+            </Link>
           </div>
         </div>
 
@@ -959,7 +997,7 @@ function Testimonials() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-50px' }}
             className="max-w-2xl"
           >
             <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3 flex items-center gap-2">
@@ -978,7 +1016,7 @@ function Testimonials() {
               key={testimonial.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: '-50px' }}
               transition={{ delay: index * 0.1 }}
               className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 relative group"
             >
