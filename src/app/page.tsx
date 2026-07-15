@@ -66,28 +66,28 @@ function Hero() {
           className="max-w-4xl mx-auto"
         >
           <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
-            Sri Kandhaguru <span className="text-brand-primary"> Foundation</span>
+            The Way of <span className="text-brand-primary"> Life</span>
           </h1>
 
-          <h2 className="text-2xl md:text-3xl text-brand-accent font-medium mb-8">
+          {/* <h2 className="text-2xl md:text-3xl text-brand-accent font-medium mb-8">
             The Way of Life
-          </h2>
+          </h2> */}
 
-          {/* <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">
             Guide visitors toward inner peace, self-realization, and holistic
             well-being through the timeless wisdom of Shiva Kriya Yogam.
-          </p> */}
+          </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/contact"
-              className="bg-brand-primary text-white px-8 py-4 rounded-full font-medium hover:bg-brand-primary/90 transition-all hover:scale-105 shadow-xl shadow-brand-primary/30 flex items-center gap-2 w-full sm:w-auto justify-center"
+              className="bg-brand-primary text-white px-8 py-3 rounded-[0rem] font-medium hover:bg-brand-primary/90 transition-all hover:scale-105 shadow-xl shadow-brand-primary/30 flex items-center gap-2 w-full sm:w-auto justify-center"
             >
               Join Program <ArrowRight size={18} />
             </Link>
             <Link
               href="/about"
-              className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-8 py-4 rounded-full font-medium hover:bg-white/20 transition-all hover:scale-105 w-full sm:w-auto justify-center flex"
+              className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-8 py-3 rounded-[0rem] font-medium hover:bg-white/20 transition-all hover:scale-105 w-full sm:w-auto justify-center flex"
             >
               Learn More
             </Link>
@@ -188,7 +188,8 @@ function KriyaYogam() {
                   className="w-full h-full bg-cover bg-center"
                   style={{
                     backgroundImage:
-                      "url('https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&q=80&w=800')",
+                      "url('babaji.jpg')",
+                    objectFit: "contain"
                   }}
                 ></div>
                 <div className="absolute inset-0 bg-brand-primary/20 mix-blend-multiply"></div>
@@ -854,11 +855,10 @@ function Gallery() {
                 <button
                   key={category}
                   onClick={() => setActiveCategory(category)}
-                  className={`pb-2 text-sm font-semibold transition-all duration-300 border-b-2 ${
-                    activeCategory === category
-                      ? "border-brand-primary text-gray-900"
-                      : "border-transparent text-gray-400 hover:text-gray-900 hover:border-gray-300"
-                  }`}
+                  className={`pb-2 text-sm font-semibold transition-all duration-300 border-b-2 ${activeCategory === category
+                    ? "border-brand-primary text-gray-900"
+                    : "border-transparent text-gray-400 hover:text-gray-900 hover:border-gray-300"
+                    }`}
                 >
                   {category}
                 </button>
@@ -877,48 +877,54 @@ function Gallery() {
           </div>
         </div>
 
-        {/* Gallery Grid */}
+        {/* Gallery Grid - Corporate Bento Box */}
         <motion.div
           layout
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:auto-rows-[250px]"
         >
           <AnimatePresence>
-            {filteredImages.map((image) => (
-              <motion.div
-                key={image.id}
-                layout
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.4 }}
-                className="group relative overflow-hidden bg-gray-100 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-500"
-                onClick={() => setSelectedImage(image.src)}
-              >
-                <div className="aspect-[4/3] w-full h-full relative overflow-hidden">
-                  <div
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-110"
-                    style={{ backgroundImage: `url('${image.src}')` }}
-                  ></div>
+            {filteredImages.map((image, index) => {
+              // Bento Box Grid Logic
+              let spanClass = "md:col-span-1 md:row-span-1 aspect-square md:aspect-auto"; // Default small square
+              if (index === 0) spanClass = "md:col-span-2 md:row-span-2 aspect-square md:aspect-auto"; // Featured Large
+              else if (index === 3 || index === 4) spanClass = "md:col-span-2 md:row-span-1 aspect-[2/1] md:aspect-auto"; // Wide
+
+              return (
+                <motion.div
+                  key={image.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.4 }}
+                  className={`group relative overflow-hidden bg-gray-100 cursor-pointer shadow-sm rounded-xl hover:shadow-2xl hover:shadow-brand-primary/10 transition-all duration-500 ${spanClass}`}
+                  onClick={() => setSelectedImage(image.src)}
+                >
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                  />
 
                   {/* Professional Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
                     <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500 flex justify-between items-end">
                       <div>
-                        <p className="text-white font-medium text-lg tracking-tight">
+                        <p className="text-white font-bold text-xl tracking-tight">
                           {image.alt}
                         </p>
-                        <p className="text-gray-300 text-xs font-semibold uppercase tracking-wider mt-1">
+                        <p className="text-brand-primary text-xs font-bold uppercase tracking-wider mt-1.5">
                           {image.category}
                         </p>
                       </div>
-                      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white border border-white/20">
-                        <ZoomIn size={18} />
+                      <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white border border-white/20 hover:bg-brand-primary hover:border-brand-primary transition-colors">
+                        <ZoomIn size={20} />
                       </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
         </motion.div>
       </div>

@@ -73,7 +73,7 @@ export default function Navbar() {
         <div className="hidden lg:flex items-center gap-4">
           <Link
             href="/contact"
-            className="bg-brand-primary text-white px-6 py-2 rounded-full font-medium hover:bg-brand-primary/90 transition-all hover:scale-105 shadow-lg shadow-brand-primary/30"
+            className="bg-brand-primary text-white px-6 py-2 rounded-[0rem] font-medium hover:bg-brand-primary/90 transition-all hover:scale-105 shadow-lg shadow-brand-primary/30"
           >
             Join Program
           </Link>
