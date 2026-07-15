@@ -131,17 +131,20 @@ export default function BenefitsPage() {
   ];
 
   return (
-    <div className="pt-10 bg-white">
-      {/* Corporate Foundation Header */}
-      <section className="pt-24 pb-12 bg-white border-b border-gray-100 relative overflow-hidden">
-        {/* Minimalist background elements */}
-        <div className="absolute right-0 top-0 w-1/3 h-full bg-gray-50/50 -skew-x-12 translate-x-20"></div>
+    <div className="bg-white">
+      {/* Hero Header */}
+      <section className="pt-32 pb-24 relative overflow-hidden">
+        {/* Hero Background Image */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&q=80&w=1920')" }}></div>
+          <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-[2px]"></div>
+        </div>
 
         <div className="container mx-auto px-4 max-w-5xl relative z-10 flex flex-col items-center text-center">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold mb-5 uppercase tracking-[0.2em]"
+            className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-md text-white border border-white/20 text-xs font-bold mb-6 uppercase tracking-[0.2em] rounded-full shadow-lg"
           >
             Transformation & Growth
           </motion.div>
@@ -150,24 +153,24 @@ export default function BenefitsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-5 tracking-tight"
+            className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 tracking-tight drop-shadow-lg"
           >
             The Power of
-            <span className="text-brand-primary"> Kriya Yogam</span>
+            <span className="text-brand-primary block mt-2"> Kriya Yogam</span>
           </motion.h1>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="w-16 h-1 bg-brand-primary/20 mb-5 rounded-full"
+            className="w-24 h-1.5 bg-brand-primary mb-6 rounded-full shadow-sm"
           ></motion.div>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-base md:text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto font-light"
+            className="text-lg md:text-2xl text-gray-100 leading-relaxed max-w-3xl mx-auto font-light drop-shadow-sm"
           >
             A holistic spiritual practice combining conscious breathing,
             meditation, and inner awareness to unlock your highest potential.
@@ -175,8 +178,11 @@ export default function BenefitsPage() {
         </div>
       </section>
 
-      {/* Featured Insight Section - High End Magazine / Corporate style */}
-      <section className="py-24 bg-white">
+      {/* Featured Insight Section */}
+      <section className="py-24 bg-white relative overflow-hidden">
+        {/* Subtle background decoration */}
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-brand-primary/5 rounded-bl-[100px] -z-10"></div>
+        
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="flex flex-col lg:flex-row items-center gap-16">
             <motion.div
@@ -185,17 +191,31 @@ export default function BenefitsPage() {
               viewport={{ once: true }}
               className="w-full lg:w-5/12 relative"
             >
-              {/* Refined minimalist image wrapper */}
-              <div className="relative rounded-none overflow-hidden aspect-[4/5] shadow-[20px_20px_0px_0px_rgba(230,126,34,0.1)]">
+              <div className="relative rounded-3xl overflow-hidden aspect-[4/5] shadow-[0_20px_50px_rgba(0,0,0,0.1)] group">
                 <div
-                  className="absolute inset-0 bg-cover bg-center hover:scale-105 transition-transform duration-1000"
+                  className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-1000"
                   style={{
                     backgroundImage:
-                      "url('https://scontent.fmaa2-4.fna.fbcdn.net/v/t51.82787-15/734718470_18058841381778949_3020303764674608277_n.jpg?stp=dst-jpegr_tt6&cstp=mx1440x1419&ctp=s1440x1419&_nc_cat=105&ccb=1-7&_nc_sid=127cfc&_nc_ohc=OaR7OL7-_e4Q7kNvwFfi3_k&_nc_oc=AdrWTnVjaH2f7krd5XEQvJfbkTI8lGIEE7bhCi80F8uKkAM2ki1xpqYokAGJsRz9GYh-it5YsxkhphA9W5Ozdzni&_nc_zt=23&se=-1&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=zVXgstML8Z6dwp0hAwaJJQ&_nc_ss=7b2a8&oh=00_AQCSHPV0ssp4e3h-2EvkreWL1_m8L8eJp7YcAafJNbKT4g&oe=6A5C0C4F')",
+                      "url('https://scontent.fmaa2-4.fna.fbcdn.net/v/t39.30808-6/486718075_122198317136129648_5350356878139007208_n.jpg?stp=dst-jpg_tt6&cstp=mx1366x2048&ctp=s1366x2048&_nc_cat=105&ccb=1-7&_nc_sid=833d8c&_nc_ohc=w7hfLEAUgNwQ7kNvwFOv_He&_nc_oc=AdpFMUMDoOd4FJlg9UM9r19hDyArkqBnQ-5PrGgRjB_KoEC-Xalox5IQb2ntXXgXjMeCGu4mR9VJS6c7X9b_-Tfj&_nc_zt=23&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=eIv22sBv_I4R-TDhjVTgPQ&_nc_ss=7b2a8&oh=00_AQAb3i0YWydaBRVgAnxDkGdEp1MYc4nCeVWjA_bvgT-Sjg&oe=6A5D024A')",
                   }}
                 ></div>
-                <div className="absolute inset-0 bg-black/10"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 to-transparent opacity-80"></div>
               </div>
+              
+              {/* Floating element */}
+              <motion.div 
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -bottom-8 -right-8 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-4 hidden md:flex"
+              >
+                <div className="w-12 h-12 bg-brand-primary/10 rounded-full flex items-center justify-center text-brand-primary">
+                  <Sparkles size={24} />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-gray-900 uppercase tracking-widest">Inner Peace</p>
+                  <p className="text-xs text-gray-500 font-medium">Holistic well-being</p>
+                </div>
+              </motion.div>
             </motion.div>
 
             <motion.div
@@ -204,11 +224,11 @@ export default function BenefitsPage() {
               viewport={{ once: true }}
               className="w-full lg:w-7/12"
             >
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 border-l-4 border-brand-primary pl-6 leading-tight">
-                An Integrated Approach to Wellness and Professional Excellence
+              <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-8 leading-tight">
+                An Integrated Approach to <span className="text-brand-primary text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-orange-400">Wellness</span>
               </h2>
 
-              <div className="space-y-6 text-xl text-gray-600 font-light leading-relaxed pl-7">
+              <div className="space-y-6 text-lg md:text-xl text-gray-600 font-light leading-relaxed">
                 <p>
                   When practiced regularly under proper guidance, Kriya Yogam
                   may contribute significantly to physical, mental, emotional,
@@ -221,11 +241,12 @@ export default function BenefitsPage() {
                   today's fast-paced environment.
                 </p>
 
-                <div className="mt-12 p-8 bg-gray-50 border-l-2 border-gray-300">
-                  <p className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-3">
+                <div className="mt-12 p-8 bg-gray-50/80 backdrop-blur-sm border border-gray-100 rounded-2xl shadow-sm">
+                  <p className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-3 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-brand-primary"></span>
                     Disclaimer
                   </p>
-                  <p className="text-gray-500 text-base">
+                  <p className="text-gray-500 text-base leading-relaxed">
                     Individual experiences vary. This should be viewed as a
                     complementary wellness practice rather than a replacement
                     for medical care.
@@ -238,17 +259,19 @@ export default function BenefitsPage() {
       </section>
 
       {/* Interactive Corporate Tabs Section */}
-      <section className="py-24 bg-gray-50 border-t border-gray-100">
-        <div className="container mx-auto px-4 max-w-7xl">
+      <section className="py-24 bg-gray-50 border-t border-gray-100 relative">
+        <div className="container mx-auto px-4 max-w-7xl relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-gray-900">
+            <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3">Holistic Benefits</h2>
+            <h3 className="text-3xl md:text-5xl font-bold text-gray-900 tracking-tight">
               7 Pillars of Transformation
-            </h2>
+            </h3>
+            <div className="w-16 h-1 bg-brand-primary/20 mx-auto mt-6 rounded-full"></div>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
             {/* Sidebar Navigation */}
-            <div className="w-full lg:w-1/3 flex flex-col gap-2">
+            <div className="w-full lg:w-1/3 flex flex-col gap-3">
               {benefitsList.map((benefit, index) => {
                 const Icon = benefit.icon;
                 const isActive = activeTab === index;
@@ -257,23 +280,23 @@ export default function BenefitsPage() {
                   <button
                     key={index}
                     onClick={() => setActiveTab(index)}
-                    className={`flex items-center gap-4 px-6 py-5 rounded-xl transition-all duration-300 text-left ${
+                    className={`flex items-center gap-4 px-6 py-5 rounded-2xl transition-all duration-300 text-left group ${
                       isActive
-                        ? "bg-white shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-gray-100"
-                        : "hover:bg-gray-100/80 border border-transparent"
+                        ? "bg-white shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-brand-primary/10 ring-1 ring-brand-primary/5"
+                        : "hover:bg-white/60 border border-transparent hover:shadow-sm"
                     }`}
                   >
                     <div
-                      className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                      className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ${
                         isActive
-                          ? "bg-brand-primary text-white"
-                          : "bg-gray-200 text-gray-500"
+                          ? "bg-brand-primary text-white shadow-md shadow-brand-primary/20 scale-110"
+                          : "bg-white border border-gray-200 text-gray-400 group-hover:text-brand-primary"
                       }`}
                     >
                       <Icon size={20} strokeWidth={isActive ? 2 : 1.5} />
                     </div>
                     <span
-                      className={`font-semibold text-lg flex-grow ${isActive ? "text-brand-primary" : "text-gray-600"}`}
+                      className={`font-semibold text-lg flex-grow transition-colors ${isActive ? "text-gray-900" : "text-gray-500 group-hover:text-gray-900"}`}
                     >
                       {benefit.title}
                     </span>
@@ -290,24 +313,27 @@ export default function BenefitsPage() {
 
             {/* Content Display Area */}
             <div className="w-full lg:w-2/3">
-              <div className="bg-white rounded-2xl p-8 lg:p-14 shadow-sm border border-gray-100 h-full">
+              <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white h-full relative overflow-hidden">
+                {/* Decorative background blur */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-brand-primary/5 rounded-full blur-3xl -z-10"></div>
+                
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeTab}
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
+                    exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.3 }}
-                    className="flex flex-col h-full"
+                    className="flex flex-col h-full relative z-10"
                   >
-                    <div className="flex items-center gap-4 mb-8">
-                      <div className="w-16 h-16 rounded-2xl bg-brand-primary/10 text-brand-primary flex items-center justify-center">
+                    <div className="flex items-center gap-5 mb-8">
+                      <div className="w-16 h-16 rounded-2xl bg-brand-primary/10 text-brand-primary flex items-center justify-center border border-brand-primary/20">
                         {(() => {
                           const ActiveIcon = benefitsList[activeTab].icon;
                           return <ActiveIcon size={32} strokeWidth={1.5} />;
                         })()}
                       </div>
-                      <h3 className="text-3xl font-bold text-gray-900">
+                      <h3 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
                         {benefitsList[activeTab].title}
                       </h3>
                     </div>
@@ -316,15 +342,18 @@ export default function BenefitsPage() {
                       {benefitsList[activeTab].intro}
                     </p>
 
-                    <div className="bg-gray-50 rounded-xl p-8 mb-10 border border-gray-100 flex-grow">
-                      <h4 className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-6">
+                    <div className="bg-gray-50/80 rounded-2xl p-8 mb-10 border border-gray-100 flex-grow">
+                      <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-6 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-brand-primary"></span>
                         Key Outcomes
                       </h4>
-                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
                         {benefitsList[activeTab].points.map((point, i) => (
-                          <li key={i} className="flex items-start gap-3">
-                            <div className="mt-1.5 shrink-0 w-2 h-2 rounded-full bg-brand-primary"></div>
-                            <span className="text-gray-700 font-medium">
+                          <li key={i} className="flex items-start gap-3 group/item">
+                            <div className="mt-1.5 shrink-0 w-5 h-5 rounded-full bg-brand-primary/10 flex items-center justify-center group-hover/item:bg-brand-primary transition-colors">
+                               <div className="w-1.5 h-1.5 rounded-full bg-brand-primary group-hover/item:bg-white transition-colors"></div>
+                            </div>
+                            <span className="text-gray-700 font-medium text-[15px] leading-snug">
                               {point}
                             </span>
                           </li>
@@ -333,8 +362,8 @@ export default function BenefitsPage() {
                     </div>
 
                     <div className="mt-auto border-t border-gray-100 pt-8">
-                      <p className="text-lg text-gray-500 italic">
-                        "{benefitsList[activeTab].outro}"
+                      <p className="text-lg text-gray-500 italic font-light leading-relaxed">
+                        &quot;{benefitsList[activeTab].outro}&quot;
                       </p>
                     </div>
                   </motion.div>
