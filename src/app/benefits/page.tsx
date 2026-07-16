@@ -244,7 +244,7 @@ export default function BenefitsPage() {
                 </span>
               </h2>
 
-              <div className="space-y-6 text-lg md:text-xl text-gray-600 font-light leading-relaxed">
+              <div className="space-y-6 text-lg md:text-xl text-gray-600 font-light leading-relaxed text-justify">
                 <p>
                   When practiced regularly under proper guidance, Kriya Yogam
                   may contribute significantly to physical, mental, emotional,
@@ -356,7 +356,7 @@ export default function BenefitsPage() {
                       </h3>
                     </div>
 
-                    <p className="text-xl text-gray-600 leading-relaxed mb-10 font-light">
+                    <p className="text-xl text-gray-600 leading-relaxed mb-10 font-light text-justify">
                       {benefitsList[activeTab].intro}
                     </p>
 

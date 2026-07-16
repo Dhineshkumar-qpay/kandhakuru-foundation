@@ -104,7 +104,7 @@ export default function AboutPage() {
                 Sri Kandhaguru Foundation
               </h2>
 
-              <div className="space-y-6 text-xl text-gray-600 font-light leading-relaxed">
+              <div className="space-y-6 text-xl text-gray-600 font-light leading-relaxed text-justify">
                 <p>
                   Sri Kandhaguru Foundation was established in 2022 by Sri
                   Kandhaguru, a revered spiritual master committed to sharing
@@ -244,7 +244,7 @@ export default function AboutPage() {
               className="bg-white p-10 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:-translate-y-2 transition-transform duration-300"
             >
               <h4 className="text-xl font-bold text-gray-900 mb-4">Spiritual Education & Retreats</h4>
-              <p className="text-gray-600 leading-relaxed font-light">
+              <p className="text-gray-600 leading-relaxed font-light text-justify">
                 We conduct regular workshops, seminars, and intensive retreats focusing on the ancient science of Shiva Kriya Yogam. These programs are meticulously designed to teach advanced meditation techniques, dynamic breathwork (pranayama), and profound spiritual philosophy. Seekers of all levels are given personalized guidance to experience true inner silence and accelerated spiritual evolution.
               </p>
             </motion.div>
@@ -257,7 +257,7 @@ export default function AboutPage() {
               className="bg-white p-10 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:-translate-y-2 transition-transform duration-300"
             >
               <h4 className="text-xl font-bold text-gray-900 mb-4">Community Service & Charity</h4>
-              <p className="text-gray-600 leading-relaxed font-light">
+              <p className="text-gray-600 leading-relaxed font-light text-justify">
                 Our foundation actively participates in massive humanitarian efforts. We organize widespread food distribution drives (Annadanam), set up free rural health camps, and provide vital educational support and scholarships for underprivileged children. We believe that translating spiritual values into compassionate, tangible action is the highest form of worship.
               </p>
             </motion.div>
@@ -270,7 +270,7 @@ export default function AboutPage() {
               className="bg-white p-10 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:-translate-y-2 transition-transform duration-300"
             >
               <h4 className="text-xl font-bold text-gray-900 mb-4">Holistic Wellness & Ayurveda</h4>
-              <p className="text-gray-600 leading-relaxed font-light">
+              <p className="text-gray-600 leading-relaxed font-light text-justify">
                 Beyond spiritual teachings, we strongly emphasize the inseparable connection between the mind, body, and spirit. We offer comprehensive guidance on ancient Ayurvedic lifestyle practices, proper yogic diet (Sattvic food), and mindful daily living habits to help individuals achieve vibrant physical health, emotional stability, and unparalleled mental clarity.
               </p>
             </motion.div>
@@ -283,7 +283,7 @@ export default function AboutPage() {
               className="bg-white p-10 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:-translate-y-2 transition-transform duration-300"
             >
               <h4 className="text-xl font-bold text-gray-900 mb-4">Global Outreach & Online Programs</h4>
-              <p className="text-gray-600 leading-relaxed font-light">
+              <p className="text-gray-600 leading-relaxed font-light text-justify">
                 To ensure that geographical boundaries do not limit spiritual growth, we have expanded our reach through interactive digital platforms. We host weekly global live-streamed guided meditations, extensive online courses, and one-on-one virtual mentoring sessions, allowing thousands of international seekers to easily stay connected and practice from their homes.
               </p>
             </motion.div>

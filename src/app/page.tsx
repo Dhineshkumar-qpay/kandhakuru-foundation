@@ -69,7 +69,7 @@ function Hero() {
           className="max-w-4xl mx-auto"
         >
           <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight mb-4">
-            The Way of <span className="text-brand-primary"> Life</span>
+            The Way of <span className="text-brand-primary"> Kriya Yogam</span>
           </h1>
 
           {/* <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight text-brand-accent mb-8">
@@ -143,8 +143,8 @@ function KriyaYogam() {
               Kriya Yogam
             </h3>
 
-            <div className="space-y-6 text-lg text-gray-700 leading-relaxed relative">
-              <div className="absolute -left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-brand-primary via-brand-secondary to-transparent"></div>
+            <div className="space-y-6 text-lg text-gray-700 leading-relaxed relative text-justify">
+              <div className="absolute -left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-brand-primary via-brand-secondary to-transparent "></div>
 
               <p>
                 Kriya Yogam is more than a set of techniques-it is a way of
@@ -243,6 +243,12 @@ function SpiritualPhilosophy() {
 
   return (
     <section className="py-32 relative overflow-hidden bg-[#FAFAF9]">
+      {/* Professional Fixed Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-fixed bg-center opacity-70 z-0 pointer-events-none"
+        style={{ backgroundImage: "url('https://img.magnific.com/free-photo/abstract-creative-illustration_23-2151980688.jpg?semt=ais_hybrid&w=740&q=80')" }}
+      ></div>
+      
       {/* Luxurious Background Elements */}
       <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-gradient-to-br from-amber-200 to-orange-100 blur-3xl opacity-60"></div>
@@ -265,79 +271,73 @@ function SpiritualPhilosophy() {
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.1 }}
-          transition={{ duration: 0.8 }}
-          className="text-center max-w-4xl mx-auto mb-20"
-        >
-          <div className="inline-flex items-center justify-center gap-4 mb-6">
-            <div className="h-px w-12 bg-gradient-to-r from-transparent to-amber-300"></div>
-            <span className="text-sm font-semibold tracking-widest text-amber-700 uppercase">
-              Spiritual Philosophy
-            </span>
-            <div className="h-px w-12 bg-gradient-to-l from-transparent to-amber-300"></div>
-          </div>
-
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-8">
-            One Truth,{" "}
-            <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500">
-              Many Divine Paths
-            </span>
-          </h2>
-
-          <p className="text-lg md:text-xl text-slate-600 font-light leading-relaxed mb-16 px-4 max-w-3xl mx-auto">
-            We respectfully acknowledge that every religion provides a unique
-            and sacred path toward divine realization. They are all valid
-            expressions of humanity's eternal search for Truth.
-          </p>
-
-          {/* Highlight Quote Card */}
+        <div className="flex flex-col items-center">
+          {/* Main Title Area */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.1 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            className="relative group mx-auto max-w-4xl"
+            transition={{ duration: 0.8 }}
+            className="w-full max-w-4xl bg-white/60 backdrop-blur-3xl border border-white/50 p-10 md:p-16 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] mb-20 text-center relative overflow-hidden"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-amber-200 to-orange-200 rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-700"></div>
-            <div className="relative bg-white/80 backdrop-blur-xl border border-white p-8 md:p-12 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-              <Quote className="absolute top-6 left-6 w-12 h-12 text-amber-100 rotate-180 opacity-50" />
-              <p className="text-xl md:text-2xl text-slate-800 font-medium italic relative z-10 leading-relaxed text-center">
+            {/* Subtle inner glow */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/40 to-transparent pointer-events-none"></div>
+            
+            <div className="relative z-10">
+              <span className="inline-block py-1.5 px-4 rounded-full bg-amber-500/10 text-amber-700 text-xs font-bold tracking-[0.2em] uppercase mb-6 border border-amber-200/50 shadow-sm">
+                Spiritual Philosophy
+              </span>
+
+              <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-6">
+                One Truth, <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500 font-light">Many Paths</span>
+              </h2>
+
+              <p className="text-lg md:text-xl text-slate-700 font-light leading-relaxed max-w-2xl mx-auto mb-10">
+                We respectfully acknowledge that every religion provides a unique
+                and sacred path toward divine realization. They are all valid
+                expressions of humanity's eternal search for Truth.
+              </p>
+
+              <div className="relative px-8 py-8 bg-white/50 rounded-2xl border border-white/60 italic text-slate-800 font-medium shadow-[inset_0_2px_15px_rgba(255,255,255,0.7)]">
+                <Quote className="absolute top-4 left-4 w-6 h-6 text-amber-500/30 rotate-180" />
                 "Sanatana Dharma preserves ancient yogic wisdom while deeply
                 respecting all faiths. Kriya Yogam is a universal science that
                 transcends boundaries."
-              </p>
+                <Quote className="absolute bottom-4 right-4 w-6 h-6 text-amber-500/30" />
+              </div>
             </div>
           </motion.div>
-        </motion.div>
 
-        {/* Religions Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-          {religions.map((religion, index) => (
-            <motion.div
-              key={religion.name}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.1 }}
-              transition={{ delay: index * 0.15, duration: 0.7 }}
-              className="group relative"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-orange-50 rounded-3xl blur-lg opacity-0 group-hover:opacity-80 transition-opacity duration-500"></div>
-              <div className="relative h-full bg-white/70 backdrop-blur-xl border border-white p-8 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_40px_-15px_rgba(217,119,6,0.15)] hover:-translate-y-2 transition-all duration-500 flex flex-col items-center text-center">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center text-amber-600 mb-6 shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)] group-hover:scale-110 group-hover:text-amber-500 transition-all duration-500 border border-amber-100/50">
-                  {religion.icon}
+          {/* Religions Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+            {religions.map((religion, index) => (
+              <motion.div
+                key={religion.name}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ delay: index * 0.15, duration: 0.7 }}
+                className="group h-full"
+              >
+                <div className="relative h-full bg-white/40 backdrop-blur-2xl border border-white/60 p-8 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:bg-white/60 hover:shadow-[0_20px_40px_-15px_rgba(217,119,6,0.2)] hover:-translate-y-2 transition-all duration-500 overflow-hidden flex flex-col items-center text-center">
+                  {/* Decorative corner element */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-amber-200/30 to-transparent rounded-bl-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                  
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-white to-amber-50/50 flex items-center justify-center text-amber-600 mb-6 shadow-sm border border-white group-hover:scale-110 group-hover:text-orange-500 transition-all duration-500 relative z-10">
+                    {religion.icon}
+                  </div>
+                  
+                  <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">
+                    {religion.name}
+                  </h3>
+                  
+                  <p className="text-slate-600 leading-relaxed font-light text-sm relative z-10">
+                    {religion.desc}
+                  </p>
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-3 tracking-wide">
-                  {religion.name}
-                </h3>
-                <p className="text-slate-500 leading-relaxed font-light text-sm">
-                  {religion.desc}
-                </p>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -369,7 +369,7 @@ function RoleOfReligions() {
               The Role of Religions in Connecting with the Divine
             </h2>
 
-            <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
+            <div className="space-y-6 text-lg text-gray-600 leading-relaxed text-justify">
               <p>
                 Every religion offers a unique path to connect with the Divine.
                 Sincere devotion, regardless of faith, leads to spiritual
@@ -861,11 +861,10 @@ function Gallery() {
                 <button
                   key={category}
                   onClick={() => setActiveCategory(category)}
-                  className={`pb-2 text-sm font-semibold transition-all duration-300 border-b-2 ${
-                    activeCategory === category
+                  className={`pb-2 text-sm font-semibold transition-all duration-300 border-b-2 ${activeCategory === category
                       ? "border-brand-primary text-gray-900"
                       : "border-transparent text-gray-400 hover:text-gray-900 hover:border-gray-300"
-                  }`}
+                    }`}
                 >
                   {category}
                 </button>
@@ -1048,7 +1047,7 @@ function Testimonials() {
                 ))}
               </div>
 
-              <p className="text-gray-600 leading-relaxed mb-8 relative z-10 min-h-[120px]">
+              <p className="text-gray-600 leading-relaxed mb-8 relative z-10 min-h-[120px] text-justify">
                 "{testimonial.text}"
               </p>
 

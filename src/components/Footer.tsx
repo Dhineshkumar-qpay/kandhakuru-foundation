@@ -7,39 +7,11 @@ export default function Footer() {
     <footer className="relative bg-[#FAFAF9] pt-24 pb-12 font-sans overflow-hidden">
       {/* Decorative gradient backgrounds */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-gradient-to-br from-amber-200/30 to-orange-100/20 blur-3xl"></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-gradient-to-tl from-orange-200/30 to-amber-100/20 blur-3xl"></div>
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-gradient-to-br from-amber-300/50 to-orange-200/40 blur-3xl"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-gradient-to-tl from-orange-300/50 to-amber-200/40 blur-3xl"></div>
       </div>
 
       <div className="w-full px-4 md:px-8 max-w-7xl mx-auto relative z-10">
-        {/* Top CTA Banner - Alternate Design */}
-        <div className="relative bg-white border border-amber-100 rounded-2xl overflow-hidden mb-16 shadow-lg shadow-amber-900/5 flex flex-col md:flex-row items-center justify-between p-6 md:p-8 gap-6 max-w-4xl mx-auto">
-          {/* Spiritual Gradient Background */}
-          <div className="absolute inset-0 bg-gradient-to-r from-amber-50/80 via-white to-orange-50/80 pointer-events-none"></div>
-          
-          {/* Subtle Decorative Accent */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-200/20 to-transparent rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-
-          <div className="relative z-10 max-w-lg text-center md:text-left">
-            <div className="inline-block px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold uppercase tracking-wider mb-3 rounded-md shadow-sm">Free Resources</div>
-            <h3 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight mb-2">
-              Deepen Your Daily Practice
-            </h3>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Explore our extensive library of guided meditations, profound spiritual discourses, and practical teachings from Sri Guruji.
-            </p>
-          </div>
-          
-          <div className="relative z-10 shrink-0 mt-4 md:mt-0">
-            <Link
-              href="/videos"
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-3 rounded-full font-bold text-sm hover:from-amber-600 hover:to-orange-600 transition-all duration-300 shadow-md shadow-orange-500/30 group"
-            >
-              Explore Video Library
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-        </div>
 
         {/* Main Footer Content */}
         <div className="bg-white/80 backdrop-blur-xl rounded-[1rem] p-8 md:p-12 border border-white/60 shadow-[0_8px_40px_rgb(0,0,0,0.04)] mb-12">
@@ -63,7 +35,7 @@ export default function Footer() {
                   </span>
                 </div>
               </Link>
-              <p className="text-slate-600 text-base leading-relaxed pr-4 font-light">
+              <p className="text-slate-600 text-base leading-relaxed pr-4 font-light text-justify">
                 Guiding individuals toward inner peace, self-realization, and
                 holistic well-being through the timeless wisdom of Shiva Kriya
                 Yogam.
