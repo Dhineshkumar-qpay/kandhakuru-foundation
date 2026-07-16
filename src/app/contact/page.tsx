@@ -75,7 +75,7 @@ export default function Contact() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 tracking-tight drop-shadow-md"
+            className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-6 tracking-tight drop-shadow-md"
           >
             Get in Touch <span className="text-brand-primary"> With Us</span>
           </motion.h1>
@@ -91,7 +91,7 @@ export default function Contact() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-lg md:text-xl text-gray-200 leading-relaxed max-w-2xl mx-auto font-light drop-shadow-sm"
+            className="text-lg md:text-lg text-gray-200 leading-relaxed max-w-2xl mx-auto font-light drop-shadow-sm"
           >
             Reach out to our administrative team for inquiries or register
             directly for our upcoming foundation programs.

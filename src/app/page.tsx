@@ -24,6 +24,8 @@ import {
   Sparkles,
   Activity,
   Heart,
+  Play,
+  Video,
 } from "lucide-react";
 
 export default function Home() {
@@ -36,6 +38,7 @@ export default function Home() {
       <Programs />
       <Eligibility />
       <Gallery />
+      <Videos />
       <Testimonials />
     </>
   );
@@ -65,11 +68,11 @@ function Hero() {
           transition={{ duration: 0.8 }}
           className="max-w-4xl mx-auto"
         >
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight mb-4">
             The Way of <span className="text-brand-primary"> Life</span>
           </h1>
 
-          {/* <h2 className="text-2xl md:text-3xl text-brand-accent font-medium mb-8">
+          {/* <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight text-brand-accent mb-8">
             The Way of Life
           </h2> */}
 
@@ -130,13 +133,13 @@ function KriyaYogam() {
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
+            viewport={{ once: true, amount: 0.1 }}
             className="w-full lg:w-1/2"
           >
             <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3">
               The Way of Life
             </h2>
-            <h3 className="text-3xl md:text-5xl font-bold text-foreground mb-8">
+            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-8">
               Kriya Yogam
             </h3>
 
@@ -163,7 +166,7 @@ function KriyaYogam() {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: '-50px' }}
+            viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.8 }}
             className="w-full lg:w-1/2 relative"
           >
@@ -187,9 +190,8 @@ function KriyaYogam() {
                 <div
                   className="w-full h-full bg-cover bg-center"
                   style={{
-                    backgroundImage:
-                      "url('babaji.jpg')",
-                    objectFit: "contain"
+                    backgroundImage: "url('babaji.jpg')",
+                    objectFit: "contain",
                   }}
                 ></div>
                 <div className="absolute inset-0 bg-brand-primary/20 mix-blend-multiply"></div>
@@ -266,7 +268,7 @@ function SpiritualPhilosophy() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, amount: 0.1 }}
           transition={{ duration: 0.8 }}
           className="text-center max-w-4xl mx-auto mb-20"
         >
@@ -278,7 +280,7 @@ function SpiritualPhilosophy() {
             <div className="h-px w-12 bg-gradient-to-l from-transparent to-amber-300"></div>
           </div>
 
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-slate-900 mb-8 tracking-tight">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-8">
             One Truth,{" "}
             <span className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500">
               Many Divine Paths
@@ -295,7 +297,7 @@ function SpiritualPhilosophy() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: '-50px' }}
+            viewport={{ once: true, amount: 0.1 }}
             transition={{ delay: 0.2, duration: 0.8 }}
             className="relative group mx-auto max-w-4xl"
           >
@@ -318,7 +320,7 @@ function SpiritualPhilosophy() {
               key={religion.name}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
+              viewport={{ once: true, amount: 0.1 }}
               transition={{ delay: index * 0.15, duration: 0.7 }}
               className="group relative"
             >
@@ -352,7 +354,7 @@ function RoleOfReligions() {
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
+            viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.8 }}
             className="space-y-8"
           >
@@ -363,7 +365,7 @@ function RoleOfReligions() {
               <div className="h-px w-12 bg-gradient-to-r from-brand-primary to-transparent"></div>
             </div>
 
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
               The Role of Religions in Connecting with the Divine
             </h2>
 
@@ -406,7 +408,7 @@ function RoleOfReligions() {
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
+            viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.8 }}
             className="grid grid-cols-2 gap-4 h-full relative mt-12 lg:mt-0"
           >
@@ -493,13 +495,13 @@ function Programs() {
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
+            viewport={{ once: true, amount: 0.1 }}
             className="max-w-2xl"
           >
             <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3">
               Join Us
             </h2>
-            <h3 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
+            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-4">
               Upcoming Programs
             </h3>
             <p className="text-lg text-gray-600">
@@ -511,13 +513,17 @@ function Programs() {
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
+            viewport={{ once: true, amount: 0.1 }}
           >
             <Link
               href="/programs"
-              className="hidden md:inline-flex items-center gap-2 text-brand-secondary font-semibold hover:text-brand-primary transition-colors"
+              className="text-brand-primary font-bold hover:text-brand-secondary transition-colors inline-flex items-center gap-1 text-sm uppercase tracking-wider group"
             >
-              View All Programs <ArrowRight size={20} />
+              View All Programs{" "}
+              <ArrowRight
+                size={16}
+                className="group-hover:translate-x-1 transition-transform"
+              />
             </Link>
           </motion.div>
         </div>
@@ -528,7 +534,7 @@ function Programs() {
               key={program.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
+              viewport={{ once: true, amount: 0.1 }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
               className="group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col cursor-pointer"
             >
@@ -646,7 +652,7 @@ function Eligibility() {
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
+            viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="flex flex-col justify-center"
           >
@@ -657,7 +663,7 @@ function Eligibility() {
               <div className="h-px w-20 bg-gradient-to-r from-amber-300 to-transparent"></div>
             </div>
 
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-slate-900 mb-8 tracking-tight leading-tight">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-8">
               Who Can Attend <br />
               <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500">
                 Our Program?
@@ -672,7 +678,7 @@ function Eligibility() {
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
+              viewport={{ once: true, amount: 0.1 }}
               transition={{ delay: 0.2, duration: 0.7 }}
               className="bg-white/90 backdrop-blur-xl border border-white p-10 rounded-3xl shadow-[0_8px_40px_rgb(0,0,0,0.06)] relative group overflow-hidden"
             >
@@ -684,7 +690,7 @@ function Eligibility() {
                     key={i}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: '-50px' }}
+                    viewport={{ once: true, amount: 0.1 }}
                     transition={{ delay: 0.4 + i * 0.15, duration: 0.5 }}
                     className="flex items-center gap-6 group/item"
                   >
@@ -704,7 +710,7 @@ function Eligibility() {
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
+            viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
             className="relative"
           >
@@ -713,7 +719,7 @@ function Eligibility() {
             <div className="relative bg-white/80 backdrop-blur-2xl border border-white p-10 md:p-14 rounded-[1rem] shadow-[0_20px_50px_-15px_rgba(217,119,6,0.15)] overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-amber-100/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
 
-              <h3 className="text-3xl md:text-4xl font-semibold text-slate-900 mb-6 flex items-center gap-4 relative z-10">
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-6 flex items-center gap-4 relative z-10">
                 <div className="p-3 bg-amber-100 rounded-2xl text-amber-600">
                   <Shirt className="w-8 h-8" strokeWidth={2} />
                 </div>
@@ -843,7 +849,7 @@ function Gallery() {
             <h2 className="text-xs font-bold tracking-widest text-brand-primary uppercase mb-2">
               Visual Archives
             </h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
               Our Gallery
             </h3>
           </div>
@@ -855,10 +861,11 @@ function Gallery() {
                 <button
                   key={category}
                   onClick={() => setActiveCategory(category)}
-                  className={`pb-2 text-sm font-semibold transition-all duration-300 border-b-2 ${activeCategory === category
-                    ? "border-brand-primary text-gray-900"
-                    : "border-transparent text-gray-400 hover:text-gray-900 hover:border-gray-300"
-                    }`}
+                  className={`pb-2 text-sm font-semibold transition-all duration-300 border-b-2 ${
+                    activeCategory === category
+                      ? "border-brand-primary text-gray-900"
+                      : "border-transparent text-gray-400 hover:text-gray-900 hover:border-gray-300"
+                  }`}
                 >
                   {category}
                 </button>
@@ -879,20 +886,24 @@ function Gallery() {
 
         {/* Gallery Grid - Corporate Bento Box */}
         <motion.div
-          layout
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:auto-rows-[250px]"
         >
           <AnimatePresence>
             {filteredImages.map((image, index) => {
               // Bento Box Grid Logic
-              let spanClass = "md:col-span-1 md:row-span-1 aspect-square md:aspect-auto"; // Default small square
-              if (index === 0) spanClass = "md:col-span-2 md:row-span-2 aspect-square md:aspect-auto"; // Featured Large
-              else if (index === 3 || index === 4) spanClass = "md:col-span-2 md:row-span-1 aspect-[2/1] md:aspect-auto"; // Wide
+              let spanClass =
+                "md:col-span-1 md:row-span-1 aspect-square md:aspect-auto"; // Default small square
+              if (index === 0)
+                spanClass =
+                  "md:col-span-2 md:row-span-2 aspect-square md:aspect-auto";
+              // Featured Large
+              else if (index === 3 || index === 4)
+                spanClass =
+                  "md:col-span-2 md:row-span-1 aspect-[2/1] md:aspect-auto"; // Wide
 
               return (
                 <motion.div
                   key={image.id}
-                  layout
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
@@ -1003,14 +1014,14 @@ function Testimonials() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
+            viewport={{ once: true, amount: 0.1 }}
             className="max-w-2xl"
           >
             <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3 flex items-center gap-2">
               <span className="w-8 h-px bg-brand-primary"></span>
               Testimonials
             </h2>
-            <h3 className="text-3xl md:text-5xl font-bold text-gray-900">
+            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
               Voices of Transformation
             </h3>
           </motion.div>
@@ -1022,9 +1033,9 @@ function Testimonials() {
               key={testimonial.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
+              viewport={{ once: true, amount: 0.1 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 relative group"
+              className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 relative group"
             >
               <Quote className="absolute top-8 right-8 w-10 h-10 text-gray-100 group-hover:text-brand-primary/10 transition-colors duration-300" />
 
@@ -1058,6 +1069,211 @@ function Testimonials() {
           ))}
         </div>
       </div>
+    </section>
+  );
+}
+
+// Videos
+const featuredVideos = [
+  {
+    id: 1,
+    title: "Introduction to Shiva Kriya Yogam",
+    description:
+      "Discover the ancient roots and profound benefits of this sacred meditative practice.",
+    thumbnail:
+      "https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&q=80&w=800",
+    duration: "12:45",
+    videoUrl: "https://www.youtube.com/embed/jfKfPfyJRdk",
+    category: "Foundation",
+    instructor: "Sri Guruji",
+    avatar:
+      "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=150",
+    date: "Oct 12, 2025",
+  },
+  {
+    id: 2,
+    title: "The Power of Deep Meditation",
+    description:
+      "Learn how to quiet your mind and connect with your inner divine consciousness.",
+    thumbnail:
+      "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&q=80&w=800",
+    duration: "08:30",
+    videoUrl: "https://www.youtube.com/embed/inpok4MKVLM",
+    category: "Meditation",
+    instructor: "Sri Guruji",
+    avatar:
+      "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=150",
+    date: "Nov 05, 2025",
+  },
+  {
+    id: 3,
+    title: "Understanding Sanatana Dharma",
+    description:
+      "Explore the eternal truths and universal principles guiding our spiritual journey.",
+    thumbnail:
+      "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
+    duration: "15:20",
+    videoUrl: "https://www.youtube.com/embed/86mCBZhnO-Y",
+    category: "Philosophy",
+    instructor: "Sri Guruji",
+    avatar:
+      "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=150",
+    date: "Dec 21, 2025",
+  },
+];
+
+function Videos() {
+  const [activeVideo, setActiveVideo] = useState<string | null>(null);
+
+  return (
+    <section className="py-20 relative overflow-hidden bg-[#FAFAF9]">
+      {/* Background Ambience */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-40">
+        <div className="absolute top-0 right-0 w-[50%] h-[50%] rounded-full bg-gradient-to-bl from-amber-200/50 to-orange-100/20 blur-[120px]"></div>
+        <div className="absolute bottom-0 left-0 w-[50%] h-[50%] rounded-full bg-gradient-to-tr from-orange-200/40 to-amber-100/20 blur-[120px]"></div>
+      </div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8 border-b border-amber-900/5 pb-8">
+          <div className="max-w-xl">
+            <h2 className="text-sm font-bold tracking-widest text-amber-600 uppercase mb-3 flex items-center gap-2">
+              <span className="w-8 h-px bg-amber-600"></span>
+              Sacred Teachings
+            </h2>
+            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
+              Video Library
+            </h3>
+          </div>
+
+          <Link
+            href="/videos"
+            className="text-brand-primary font-bold hover:text-brand-secondary transition-colors inline-flex items-center gap-1 text-sm uppercase tracking-wider group"
+          >
+            View Full Library
+            <ArrowRight
+              size={16}
+              className="group-hover:translate-x-1 transition-transform"
+            />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {featuredVideos.map((video, index) => (
+            <motion.div
+              key={video.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              transition={{ delay: index * 0.1, duration: 0.6 }}
+              className="group flex flex-col cursor-pointer bg-white/80 backdrop-blur-xl border border-white rounded-[0px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_-15px_rgba(217,119,6,0.2)] hover:-translate-y-2 transition-all duration-500 overflow-hidden"
+              onClick={() => setActiveVideo(video.videoUrl)}
+            >
+              {/* Thumbnail Section */}
+              <div className="relative aspect-[16/9] overflow-hidden">
+                <img
+                  src={video.thumbnail}
+                  alt={video.title}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
+
+                {/* Play Button Overlay */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center group-hover:bg-amber-500 group-hover:border-amber-500 group-hover:scale-110 transition-all duration-500 shadow-[0_0_30px_rgba(251,191,36,0.3)]">
+                    <Play className="w-6 h-6 text-white ml-1 fill-white" />
+                  </div>
+                </div>
+
+                {/* Badges */}
+                <div className="absolute top-4 left-4">
+                  <span className="bg-white/20 backdrop-blur-md text-white border border-white/30 text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm tracking-wide">
+                    {video.category}
+                  </span>
+                </div>
+                <div className="absolute bottom-4 right-4">
+                  <span className="bg-black/60 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm">
+                    <Play className="w-3 h-3" /> {video.duration}
+                  </span>
+                </div>
+              </div>
+
+              {/* Content Section */}
+              <div className="p-8 flex-1 flex flex-col justify-between">
+                <div>
+                  <h4 className="font-bold text-slate-900 text-xl leading-tight mb-3 group-hover:text-amber-600 transition-colors line-clamp-2">
+                    {video.title}
+                  </h4>
+                  <p className="text-slate-500 text-sm font-light leading-relaxed mb-6 line-clamp-2">
+                    {video.description}
+                  </p>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between pt-5 border-t border-slate-100">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={video.avatar}
+                        alt={video.instructor}
+                        className="w-8 h-8 rounded-full object-cover border border-slate-200"
+                      />
+                      <div className="flex flex-col">
+                        <span className="text-xs font-bold text-slate-900">
+                          {video.instructor}
+                        </span>
+                        <span className="text-[10px] text-slate-400">
+                          {video.date}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-amber-600 font-semibold text-sm group-hover:translate-x-1 transition-transform flex items-center gap-1">
+                      Watch <ArrowRight size={14} />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Video Lightbox */}
+      <AnimatePresence>
+        {activeVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-12"
+            onClick={() => setActiveVideo(null)}
+          >
+            <button
+              className="absolute top-6 right-6 text-white/50 hover:text-white hover:bg-white/10 transition-all bg-white/5 backdrop-blur-md border border-white/10 p-3 rounded-full z-50"
+              onClick={() => setActiveVideo(null)}
+            >
+              <X size={24} />
+            </button>
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              transition={{ duration: 0.4, type: "spring", bounce: 0.3 }}
+              className="relative max-w-5xl w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <iframe
+                width="100%"
+                height="100%"
+                src={`${activeVideo}?autoplay=1`}
+                title="Video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full"
+              ></iframe>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

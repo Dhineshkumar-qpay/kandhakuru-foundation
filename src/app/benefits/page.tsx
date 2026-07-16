@@ -140,7 +140,7 @@ export default function BenefitsPage() {
             className="absolute inset-0 bg-cover bg-center"
             style={{
               backgroundImage:
-                "url('https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&q=80&w=1920')",
+                "url('spiritual.jpg')",
             }}
           ></div>
           <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-[2px]"></div>
@@ -159,10 +159,10 @@ export default function BenefitsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 tracking-tight drop-shadow-lg"
+            className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-6 tracking-tight drop-shadow-lg"
           >
             The Power of
-            <span className="text-brand-primary block mt-2"> Kriya Yogam</span>
+            <span className="text-brand-primary  mt-2"> Kriya Yogam</span>
           </motion.h1>
 
           <motion.div
@@ -176,7 +176,7 @@ export default function BenefitsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-lg md:text-2xl text-gray-100 leading-relaxed max-w-3xl mx-auto font-light drop-shadow-sm"
+            className="text-lg md:text-lg text-gray-100 leading-relaxed max-w-3xl mx-auto font-light drop-shadow-sm"
           >
             A holistic spiritual practice combining conscious breathing,
             meditation, and inner awareness to unlock your highest potential.

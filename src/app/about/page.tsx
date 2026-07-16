@@ -27,7 +27,7 @@ export default function AboutPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 tracking-tight drop-shadow-md"
+            className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-6 tracking-tight drop-shadow-md"
           >
             Empowering Humanity Through
             <br className="hidden md:block" />
@@ -45,7 +45,7 @@ export default function AboutPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-lg md:text-xl text-gray-200 leading-relaxed max-w-2xl mx-auto font-light drop-shadow-sm"
+            className="text-lg md:text-lg text-gray-200 leading-relaxed max-w-2xl mx-auto font-light drop-shadow-sm"
           >
             Dedicated to transforming lives through spiritual awakening, mental
             clarity, and enlightened living since 2022.
