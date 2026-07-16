@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import {
@@ -47,6 +47,21 @@ export default function Home() {
 // Hero section
 
 function Hero() {
+  const heroImages = [
+    "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcR2xj-V--K9M8rbnjDBiONg42HzmlWGDqA901Poz0OETFvAUJxo",
+    "https://scontent.fmaa2-2.fna.fbcdn.net/v/t51.82787-15/733831259_18059112200778949_178341886422952852_n.jpg?stp=dst-jpg_tt6&cstp=mx1080x1350&ctp=s1080x1350&_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=P616qBrMYe8Q7kNvwGcEvVB&_nc_oc=Adrk3qpNSXUKGtZe4dKSeCGOMF0fzM6D2hzDzW-o5PVc7XaL-YNJNRgYHiWu5EHzSSFtzv_dcx-f-UcVTL6i5frI&_nc_zt=23&_nc_ht=scontent.fmaa2-2.fna&_nc_gid=BETKhbRkD0-4r0vRSckmpA&_nc_ss=7b2a8&oh=00_AQDCzvauezlAVjPQhvJGE2ItPMuBH8GGQ4xOHaHgJ_hOsQ&oe=6A5E7BB3",
+    "https://scontent.fmaa2-4.fna.fbcdn.net/v/t51.82787-15/735238499_18058841468778949_2465957740438833201_n.jpg?stp=dst-jpg_tt6&cstp=mx1440x1416&ctp=s1440x1416&_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_ohc=-7HUPVxPBOgQ7kNvwFt6qVq&_nc_oc=Adrmioa_ICXvvQ1qCHj3o0TdBdAfVGAlxo1ZtqL67iDfmvrZT1MVsLtELDBLmBn79R7WTxFF_zBL3yPkzzr1tCqC&_nc_zt=23&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=-qAeNjVcNLXWXdqpcl2VdA&_nc_ss=7b2a8&oh=00_AQASh2yv5gnz1cyO3u85L7yux5mAQgebzvDkhnXz_I3aZw&oe=6A5E7E4D"
+  ];
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section
       id="home"
@@ -61,41 +76,64 @@ function Hero() {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
       </div>
 
-      <div className="container mx-auto px-2 z-10 text-center text-white pt-20">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-4xl mx-auto"
-        >
-          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight mb-4">
-            The Way of <span className="text-brand-primary"> Kriya Yogam</span>
-          </h1>
+      <div className="container mx-auto px-4 lg:px-8 z-10 text-white pt-20 h-full flex items-center">
+        <div className="flex flex-col lg:flex-row items-center justify-between w-full gap-12">
+          {/* Left Content */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="w-full lg:w-1/2 text-center lg:text-left"
+          >
+            <h1 className="text-3xl md:text-4xl lg:text-4xl font-extrabold text-white tracking-tight mb-6 drop-shadow-lg">
+              The Way of <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Kriya Yogam</span>
+            </h1>
 
-          {/* <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight text-brand-accent mb-8">
-            The Way of Life
-          </h2> */}
+            <p className="text-lg md:text-lg text-white/90 mb-10 leading-relaxed drop-shadow-md max-w-2xl mx-auto lg:mx-0">
+              Guide visitors toward inner peace, self-realization, and holistic
+              well-being through the timeless wisdom of Shiva Kriya Yogam.
+            </p>
 
-          <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Guide visitors toward inner peace, self-realization, and holistic
-            well-being through the timeless wisdom of Shiva Kriya Yogam.
-          </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+              <Link
+                href="/contact"
+                className="bg-brand-primary text-white px-8 py-4 rounded-[0rem] font-medium hover:bg-brand-primary/90 transition-all hover:scale-105 shadow-xl shadow-brand-primary/30 flex items-center gap-2 w-full sm:w-auto justify-center"
+              >
+                Join Program <ArrowRight size={18} />
+              </Link>
+              <Link
+                href="/about"
+                className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-8 py-4 rounded-[0rem] font-medium hover:bg-white/20 transition-all hover:scale-105 shadow-xl w-full sm:w-auto justify-center flex"
+              >
+                Learn More
+              </Link>
+            </div>
+          </motion.div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/contact"
-              className="bg-brand-primary text-white px-8 py-3 rounded-[0rem] font-medium hover:bg-brand-primary/90 transition-all hover:scale-105 shadow-xl shadow-brand-primary/30 flex items-center gap-2 w-full sm:w-auto justify-center"
-            >
-              Join Program <ArrowRight size={18} />
-            </Link>
-            <Link
-              href="/about"
-              className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-8 py-3 rounded-[0rem] font-medium hover:bg-white/20 transition-all hover:scale-105 w-full sm:w-auto justify-center flex"
-            >
-              Learn More
-            </Link>
-          </div>
-        </motion.div>
+          {/* Right Image Slider */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="w-full lg:w-1/2 flex justify-center lg:justify-end hidden md:flex"
+          >
+            <div className="relative w-48 h-48 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-full overflow-hidden border-4 border-white/20 shadow-[0_0_50px_rgba(251,191,36,0.3)] backdrop-blur-md group">
+              <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/20 to-transparent z-20 mix-blend-overlay pointer-events-none"></div>
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={currentImageIndex}
+                  src={heroImages[currentImageIndex]}
+                  alt="Spiritual Journey"
+                  initial={{ x: "100%", opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: "-100%", opacity: 0 }}
+                  transition={{ duration: 0.8, ease: "easeInOut" }}
+                  className="absolute inset-0 w-full h-full object-cover object-center z-10"
+                />
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        </div>
       </div>
 
       {/* Scroll indicator */}
@@ -418,14 +456,14 @@ function RoleOfReligions() {
             <div className="space-y-4 lg:translate-y-8">
               <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-lg group">
                 <img
-                  src="https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&q=80&w=600"
+                  src="https://scontent.fmaa2-4.fna.fbcdn.net/v/t51.82787-15/732026674_18059112143778949_8418241914655641321_n.jpg?stp=dst-jpg_tt6&cstp=mx1080x1350&ctp=s1080x1350&_nc_cat=105&ccb=1-7&_nc_sid=127cfc&_nc_ohc=fNUe62sblx8Q7kNvwHto6RT&_nc_oc=AdorVC5vgCRIpcX7dK8okbbqX-gShmgL0CITRM3YboJcsSeEByBFPggXaO0qixZQl8hBuSdhiV1y8RkhDYq47ZET&_nc_zt=23&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=bWCk6oBXQFqtMSzW1K7tPA&_nc_ss=7b2a8&oh=00_AQCP6M20aMxBgTTpF0vVs0qXIjXydOAmp4OoyG0i3X4jNA&oe=6A5E70C5"
                   alt="Spiritual path"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
               </div>
               <div className="aspect-square rounded-3xl overflow-hidden shadow-lg group">
                 <img
-                  src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&q=80&w=600"
+                  src="https://scontent.fmaa2-1.fna.fbcdn.net/v/t51.82787-15/703474180_18052060787778949_8457861926810728480_n.jpg?stp=dst-jpg_tt6&cstp=mx1079x721&ctp=s1079x721&_nc_cat=102&ccb=1-7&_nc_sid=127cfc&_nc_ohc=rr34U8XjS3AQ7kNvwGTUKJI&_nc_oc=AdoAHGg9fTHLPKnouseZtPVNhzTzKwPNvXJaC7G6dZmOSQsmGM56Id_sLoC95V2Ip29qTImMT222JTL6syz1q7c1&_nc_zt=23&_nc_ht=scontent.fmaa2-1.fna&_nc_gid=wRvhZKYCnSBd515i8y7-pA&_nc_ss=7b2a8&oh=00_AQDDiBEtDXIDsrXfRoMSBefL6h03fSb9tqmZiUa-Aq1qKA&oe=6A5E7966"
                   alt="Meditation"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
@@ -435,14 +473,14 @@ function RoleOfReligions() {
             <div className="space-y-4 lg:-translate-y-8">
               <div className="aspect-square rounded-3xl overflow-hidden shadow-lg group">
                 <img
-                  src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=600"
+                  src="https://scontent.fmaa2-3.fna.fbcdn.net/v/t51.82787-15/581966390_18028738976778949_2554845895955878752_n.jpg?stp=dst-jpegr_tt6&cstp=mx1440x1080&ctp=s1440x1080&_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=JDd93tpvO08Q7kNvwESuiZ7&_nc_oc=AdqZ5ughy3BkZiTPz-8QnYLzze4CoAEfhXXCixwGnpN5eRgKcVm4Iok_X7RKxnwV-LgxYF3ba5WOXTmY9hfb64cL&_nc_zt=23&se=-1&_nc_ht=scontent.fmaa2-3.fna&_nc_gid=K7RcVl4vfzumzuRVzG0Bcg&_nc_ss=7b2a8&oh=00_AQC-m1r9iXqvajnHAWgC7wl_m6hRUgFmjw-Xe-yzfp7bpQ&oe=6A5E903F"
                   alt="Divine connection"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
               </div>
               <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-lg group">
                 <img
-                  src="https://img.magnific.com/free-photo/focused-young-indian-man-meditating-lotus-pose_1262-12658.jpg?semt=ais_hybrid&w=740&q=80"
+                  src="https://scontent.fmaa2-4.fna.fbcdn.net/v/t39.30808-6/487097612_122198317190129648_108626807348356310_n.jpg?stp=dst-jpg_tt6&cstp=mx1366x2048&ctp=s1366x2048&_nc_cat=104&ccb=1-7&_nc_sid=833d8c&_nc_ohc=qQ8am27LUQsQ7kNvwFWFT45&_nc_oc=AdquWX3wlSotAdhUOCFMvjnhCf2l3EKZR__0uAz1dJ0dlub31fns4W6I-bSmtPGV-gyoS0EVmmkZaFuAz8L-AnD7&_nc_zt=23&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=AIBK6FNmOcQQHnV5GN1Edg&_nc_ss=7b2a8&oh=00_AQCLzVov-if6lOq50isrlSfsQph8tQcMW23QfuelVoitRw&oe=6A5E8940"
                   alt="Yoga practice"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
@@ -797,19 +835,19 @@ const galleryImages = [
   {
     id: 1,
     category: "Programs",
-    src: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
+    src: "https://scontent.fmaa2-4.fna.fbcdn.net/v/t39.30808-6/486718075_122198317136129648_5350356878139007208_n.jpg?stp=dst-jpg_tt6&cstp=mx1366x2048&ctp=s1366x2048&_nc_cat=105&ccb=1-7&_nc_sid=833d8c&_nc_ohc=w7hfLEAUgNwQ7kNvwFHB4FG&_nc_oc=Adr6Rzb8Nx4SCH9IGxb9t8_MMcSxjQdy-WjuPvLfgg84tsRBouIVSVb3aYeRSuYzc6aRYORDpRl6IhKLjSz_VfLv&_nc_zt=23&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=SuLbm6f_c_zizeMVCn_Dog&_nc_ss=7b2a8&oh=00_AQC_WgYl0sZuanJyujYT3sFs9x5EqcZRfB5azmWYQYglUg&oe=6A5E8C0A",
     alt: "Program Session",
   },
   {
     id: 2,
     category: "Meditation",
-    src: "https://img.magnific.com/free-photo/focused-young-indian-man-meditating-lotus-pose_1262-12658.jpg?semt=ais_hybrid&w=740&q=80",
+    src: "https://scontent.fmaa2-4.fna.fbcdn.net/v/t39.30808-6/487144762_122198317124129648_6170654583762633426_n.jpg?stp=dst-jpg_tt6&cstp=mx2048x1536&ctp=s2048x1536&_nc_cat=105&ccb=1-7&_nc_sid=833d8c&_nc_ohc=k-f9MkVDsAoQ7kNvwHaUDby&_nc_oc=AdqxEGUDPC1iLIsnZoDqZcEsomOBjQeOgDM_Pe2W2xOPG9WGZe3QQ8RSqac1lyqtbkgZRuuxsZweJVLhV1-XGN88&_nc_zt=23&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=PQGjp7eiF-T-cIV3uHGVrA&_nc_ss=7b2a8&oh=00_AQD9HJxUQpROeRKJ90P-G7mezb-9qkMiSrh8q90am1c86g&oe=6A5E6AFD",
     alt: "Meditation Practice",
   },
   {
     id: 3,
     category: "Foundation Activities",
-    src: "https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&q=80&w=800",
+    src: "https://scontent.fmaa2-4.fna.fbcdn.net/v/t39.30808-6/469692607_122181950810129648_2961953229839701786_n.jpg?stp=dst-jpg_tt6&cstp=mx1280x853&ctp=s1280x853&_nc_cat=105&ccb=1-7&_nc_sid=833d8c&_nc_ohc=dJeF9244EW0Q7kNvwH3PWPH&_nc_oc=AdrvBmHKGgLtvX_ClSdn6uISdh-EVleO-OQWrzusAczSaCjIL2bF38d2mZNv1hwG-21QrS5OrU31l5iEwaQ6OYs_&_nc_zt=23&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=nP4Tsn9zL25ZlENlmPXhrQ&_nc_ss=7b2a8&oh=00_AQCJff750pKJd4cwM_KeY9IBO1_S42VH2tvuyP5MlKduFQ&oe=6A5E8491",
     alt: "Foundation Activity",
   },
   {
@@ -821,13 +859,13 @@ const galleryImages = [
   {
     id: 5,
     category: "Programs",
-    src: "https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&q=80&w=800",
+    src: "https://scontent.fmaa2-3.fna.fbcdn.net/v/t51.82787-15/567970680_18025851623778949_2345957150328352155_n.webp?stp=dst-jpg_tt6&cstp=mx1440x810&ctp=s1440x810&_nc_cat=100&ccb=1-7&_nc_sid=127cfc&_nc_ohc=jDLFqYI08TIQ7kNvwF8JAkH&_nc_oc=AdoIHhQVZPF4Ufa8VG3l6QlsLCu4zUFiQYZLmkmnUqvSUkjSZ7odg7goLQziOaSF1w90p6g8bpWROUXUMIJPeIxs&_nc_zt=23&_nc_ht=scontent.fmaa2-3.fna&_nc_gid=reyFRjjkOZ40n89A-ptuyQ&_nc_ss=7b2a8&oh=00_AQDZf76V024ASOXGsik0wTMyt6G2uKGpKbRmyBtGv7PyYw&oe=6A5E7761",
     alt: "Level II Program",
   },
   {
     id: 6,
     category: "Meditation",
-    src: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&q=80&w=800",
+    src: "https://scontent.fmaa2-3.fna.fbcdn.net/v/t39.30808-6/486811595_122198317178129648_7700598055592410884_n.jpg?stp=dst-jpg_tt6&cstp=mx1366x2048&ctp=s1366x2048&_nc_cat=103&ccb=1-7&_nc_sid=833d8c&_nc_ohc=uHRgGVjaTYsQ7kNvwEsfhWh&_nc_oc=AdpgM8uc0iXSO6-tqRP9I2-v846rAQtvXnp6ygbh7_u0PdpZ5qQ19_hcHsRjZF0WpUEK_p81Nq3JIcLdV6D8MhvQ&_nc_zt=23&_nc_ht=scontent.fmaa2-3.fna&_nc_gid=saxax4DdERNIXW4Z7HUCVQ&_nc_ss=7b2a8&oh=00_AQDfhk0dzNtI2-6vO6qgh_bJVoYEe756l08e40tmftzfsg&oe=6A5E6BC0",
     alt: "Peaceful Meditation",
   },
 ];
@@ -844,7 +882,7 @@ function Gallery() {
   return (
     <section id="gallery" className="py-24 bg-white border-t border-gray-100">
       <div className="container mx-auto px-4 max-w-7xl">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-8 border-b border-gray-100 pb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-8 border-b border-gray-100 pb-8">
           <div className="max-w-xl">
             <h2 className="text-xs font-bold tracking-widest text-brand-primary uppercase mb-2">
               Visual Archives
@@ -854,9 +892,9 @@ function Gallery() {
             </h3>
           </div>
 
-          <div className="flex flex-col items-end gap-4">
+          <div className="flex flex-col items-start md:items-end gap-4">
             {/* Professional Minimalist Filters */}
-            <div className="flex flex-wrap gap-6 justify-end">
+            <div className="flex flex-wrap gap-6 justify-start md:justify-end">
               {categories.map((category) => (
                 <button
                   key={category}
@@ -1009,7 +1047,7 @@ function Testimonials() {
       <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-30"></div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1133,7 +1171,7 @@ function Videos() {
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8 border-b border-amber-900/5 pb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8 border-b border-amber-900/5 pb-8">
           <div className="max-w-xl">
             <h2 className="text-sm font-bold tracking-widest text-amber-600 uppercase mb-3 flex items-center gap-2">
               <span className="w-8 h-px bg-amber-600"></span>
@@ -1256,7 +1294,7 @@ function Videos() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               transition={{ duration: 0.4, type: "spring", bounce: 0.3 }}
-              className="relative max-w-5xl w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10"
+              className="relative max-w-3xl w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10"
               onClick={(e) => e.stopPropagation()}
             >
               <iframe

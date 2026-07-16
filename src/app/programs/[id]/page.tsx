@@ -67,7 +67,7 @@ const programsData = [
 export default function ProgramDetailsPage() {
   const params = useParams();
   const id = params.id as string;
-  
+
   const program = programsData.find(p => p.id === id);
 
   if (!program) {
@@ -86,18 +86,18 @@ export default function ProgramDetailsPage() {
     <main className="pt-24 bg-gray-50 min-h-screen pb-24">
       {/* Hero Image */}
       <div className="w-full h-[40vh] md:h-[50vh] relative">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url('${program.image}')` }}
         ></div>
         <div className="absolute inset-0 bg-gray-900/60"></div>
-        
+
         <div className="absolute inset-0 flex items-center">
           <div className="container mx-auto px-4 max-w-5xl">
             <Link href="/programs" className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-6 text-sm font-medium uppercase tracking-wider">
               <ArrowLeft size={16} /> Back to Programs
             </Link>
-            <motion.h1 
+            <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight max-w-3xl leading-tight"
@@ -111,10 +111,10 @@ export default function ProgramDetailsPage() {
       {/* Content Container */}
       <div className="container mx-auto px-4 max-w-5xl -mt-16 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
+
           {/* Main Details (Left) */}
           <div className="lg:col-span-2 space-y-8">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
@@ -124,7 +124,7 @@ export default function ProgramDetailsPage() {
               <p className="text-gray-700 leading-relaxed text-lg font-light mb-8">
                 {program.description}
               </p>
-              
+
               <h3 className="text-xl font-bold text-gray-900 mb-4">What You Will Learn</h3>
               <ul className="space-y-4">
                 {program.benefits.map((benefit, index) => (
@@ -136,14 +136,14 @@ export default function ProgramDetailsPage() {
               </ul>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
               className="bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-gray-100"
             >
               <h3 className="text-xl font-bold text-gray-900 mb-6">Guidelines & Eligibility</h3>
-              
+
               <div className="space-y-6">
                 <div>
                   <h4 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-2">Eligibility</h4>
@@ -159,7 +159,7 @@ export default function ProgramDetailsPage() {
 
           {/* Sidebar / Info Card (Right) */}
           <div className="lg:col-span-1">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -209,21 +209,21 @@ export default function ProgramDetailsPage() {
 
               <div className="pt-6 border-t border-gray-100">
                 {program.status === "open" ? (
-                  <Link 
+                  <Link
                     href="/contact#register"
-                    className="block w-full py-4 text-center bg-gray-900 text-white font-bold rounded-xl hover:bg-brand-primary transition-colors shadow-md hover:shadow-xl"
+                    className="block w-full py-4 text-center bg-brand-primary text-white font-bold rounded-[0px] hover:bg-brand-primary transition-colors shadow-md hover:shadow-xl"
                   >
                     Register Now
                   </Link>
                 ) : (
-                  <button 
+                  <button
                     disabled
                     className="block w-full py-4 text-center bg-gray-100 text-gray-400 font-bold rounded-xl cursor-not-allowed"
                   >
                     Not Available Yet
                   </button>
                 )}
-                
+
                 <p className="text-xs text-center text-gray-500 mt-4">
                   For inquiries, please <Link href="/contact" className="text-brand-primary hover:underline">contact support</Link>.
                 </p>
