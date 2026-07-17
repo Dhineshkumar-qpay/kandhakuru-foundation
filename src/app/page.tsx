@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { getEvents } from "../services/api";
+import { EventModel } from "../models/event_model";
 import {
   X,
   ZoomIn,
@@ -495,37 +497,23 @@ function RoleOfReligions() {
 
 // Programs
 
-const programs = [
-  {
-    id: 1,
-    title: "Shiva Kriya Yogam (Level I)",
-    date: "09 August 2026",
-    location: "Hotel Zion, Near Race Course, Bangalore",
-    status: "open",
-    image:
-      "https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&q=80&w=800",
-  },
-  {
-    id: 2,
-    title: "Shiva Kriya Yogam (Level II)",
-    date: "12–13 September 2026",
-    location: "Rathna Residency, VOC Park Road, Near Bus Stand, Erode",
-    status: "open",
-    image:
-      "https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&q=80&w=800",
-  },
-  {
-    id: 3,
-    title: "Sivanodu Shivarathiri",
-    date: "Coming Soon",
-    location: "To be announced",
-    status: "upcoming",
-    image:
-      "https://images.unsplash.com/photo-1604944985226-79173ebfc486?auto=format&fit=crop&q=80&w=800",
-  },
-];
-
 function Programs() {
+  const [events, setEvents] = useState<EventModel[]>([]);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await getEvents(1);
+        if (response.success && response.data?.events) {
+          setEvents(response.data.events.slice(0, 6));
+        }
+      } catch (error) {
+        console.error("Failed to load events", error);
+      }
+    };
+    fetchEvents();
+  }, []);
+
   return (
     <section id="programs" className="py-24 bg-white">
       <div className="w-full px-4 md:px-8 lg:px-12 mx-auto max-w-[1920px]">
@@ -540,7 +528,7 @@ function Programs() {
               Join Us
             </h2>
             <h3 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-4">
-              Upcoming Programs
+              Our Programs
             </h3>
             <p className="text-lg text-gray-600">
               Take the first step towards spiritual transformation by joining
@@ -567,14 +555,14 @@ function Programs() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {programs.map((program, index) => (
+          {events.map((program, index) => (
             <motion.div
               key={program.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.1 }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
-              className="group bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col cursor-pointer"
+              className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col cursor-pointer"
             >
               <Link
                 href={`/programs/${program.id}`}
@@ -584,11 +572,11 @@ function Programs() {
                 <div className="relative h-56 overflow-hidden shrink-0">
                   <div
                     className="absolute inset-0 bg-cover bg-center transform group-hover:scale-110 transition-transform duration-700"
-                    style={{ backgroundImage: `url('${program.image}')` }}
+                    style={{ backgroundImage: `url('http://localhost:3003${program.image}')` }}
                   ></div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
 
-                  {program.status === "open" ? (
+                  {program.status === "active" ? (
                     <div className="absolute top-4 right-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
                       Registering
                     </div>
@@ -608,17 +596,17 @@ function Programs() {
                   <div className="space-y-4 mb-8 flex-grow">
                     <div className="flex items-start gap-3 text-gray-600">
                       <Calendar className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
-                      <span className="font-medium">{program.date}</span>
+                      <span className="font-medium">{new Date(program.eventdate).toLocaleDateString()}</span>
                     </div>
                     <div className="flex items-start gap-3 text-gray-600">
                       <MapPin className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
                       <span className="text-sm leading-relaxed">
-                        {program.location}
+                        {program.address}, {program.city}, {program.state}
                       </span>
                     </div>
                   </div>
 
-                  {program.status === "open" ? (
+                  {program.status === "active" ? (
                     <span className="block w-full py-3 px-6 text-center bg-white border-2 border-brand-primary text-brand-primary font-bold rounded-xl group-hover:bg-brand-primary group-hover:text-white transition-colors duration-300">
                       View Details
                     </span>

@@ -1,157 +1,197 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Calendar, MapPin, Clock, Users, CheckCircle, ArrowLeft } from "lucide-react";
-
-const programsData = [
-  {
-    id: "1",
-    title: "Shiva Kriya Yogam (Level I)",
-    date: "09 August 2026",
-    time: "6:00 AM - 6:00 PM",
-    location: "Hotel Zion, Near Race Course, Bangalore",
-    status: "open",
-    image:
-      "https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&q=80&w=1200",
-    description: "The Level I program introduces the foundational practices of Shiva Kriya Yogam. Participants will learn basic meditation techniques, breathing exercises (pranayama), and spiritual principles that form the core of a balanced, peaceful life.",
-    benefits: [
-      "Introduction to foundational breathing techniques",
-      "Stress reduction and mental clarity",
-      "Techniques for emotional balance",
-      "Guided meditation sessions"
-    ],
-    eligibility: "Open to anyone above 12 years of age.",
-    dressCode: "Traditional and comfortable wear (Vesti & Shirt / Track Pants & T-Shirt)",
-  },
-  {
-    id: "2",
-    title: "Shiva Kriya Yogam (Level II)",
-    date: "12–13 September 2026",
-    time: "6:00 AM - 6:00 PM",
-    location: "Rathna Residency, VOC Park Road, Near Bus Stand, Erode",
-    status: "open",
-    image:
-      "https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&q=80&w=1200",
-    description: "Building upon the foundations of Level I, the Level II program dives deeper into advanced yogic practices, intense meditation, and self-realization techniques. This program requires prior completion of Level I.",
-    benefits: [
-      "Advanced pranayama techniques",
-      "Deep dive into spiritual philosophy",
-      "Intensive guided meditation",
-      "Techniques for sustained inner peace"
-    ],
-    eligibility: "Must have completed Shiva Kriya Yogam Level I.",
-    dressCode: "Traditional and comfortable wear (Vesti & Shirt / Track Pants & T-Shirt)",
-  },
-  {
-    id: "3",
-    title: "Sivanodu Shivarathiri",
-    date: "Coming Soon",
-    time: "To be announced",
-    location: "To be announced",
-    status: "upcoming",
-    image:
-      "https://images.unsplash.com/photo-1604944985226-79173ebfc486?auto=format&fit=crop&q=80&w=1200",
-    description: "A profound spiritual gathering celebrating the divine energy of Shiva. Experience a night of continuous meditation, chanting, and spiritual awakening.",
-    benefits: [
-      "Experience intense spiritual energy",
-      "Community chanting and devotion",
-      "Special guidance from Guruji"
-    ],
-    eligibility: "Open to all sincere seekers.",
-    dressCode: "Traditional wear highly recommended.",
-  },
-];
+import {
+  Calendar,
+  MapPin,
+  Clock,
+  Users,
+  ArrowLeft,
+  Tag,
+  CreditCard,
+} from "lucide-react";
+import { getEventDetails } from "../../../services/api";
+import { EventDetailData } from "../../../models/event_model";
 
 export default function ProgramDetailsPage() {
   const params = useParams();
   const id = params.id as string;
+  const [program, setProgram] = useState<EventDetailData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const program = programsData.find(p => p.id === id);
+  useEffect(() => {
+    const fetchDetail = async () => {
+      try {
+        const data = await getEventDetails(Number(id));
+        setProgram(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (id) fetchDetail();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-32 flex flex-col justify-center items-center text-brand-primary font-medium bg-brand-primary/5">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+          className="w-12 h-12 border-4 border-brand-primary/20 border-t-brand-primary rounded-full mb-4"
+        ></motion.div>
+        <p className="animate-pulse">Loading Event Details...</p>
+      </div>
+    );
+  }
 
   if (!program) {
     return (
-      <div className="min-h-screen pt-32 flex flex-col items-center justify-center text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Program Not Found</h1>
-        <p className="text-gray-600 mb-8">The program you are looking for does not exist or has been removed.</p>
-        <Link href="/programs" className="px-6 py-3 bg-brand-primary text-white rounded-full hover:bg-brand-primary/90 font-medium">
-          Back to Programs
+      <div className="min-h-screen pt-32 flex flex-col items-center justify-center text-center bg-gray-50">
+        <h1 className="text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">
+          Program Not Found
+        </h1>
+        <p className="text-lg text-gray-600 mb-8 max-w-md mx-auto">
+          The sacred gathering you are looking for does not exist or has been
+          removed.
+        </p>
+        <Link
+          href="/programs"
+          className="px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full hover:shadow-lg hover:shadow-amber-500/30 transition-all font-semibold transform hover:-translate-y-1"
+        >
+          Return to Programs
         </Link>
       </div>
     );
   }
 
   return (
-    <main className="pt-24 bg-gray-50 min-h-screen pb-24">
-      {/* Hero Image */}
-      <div className="w-full h-[40vh] md:h-[50vh] relative">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url('${program.image}')` }}
-        ></div>
-        <div className="absolute inset-0 bg-gray-900/60"></div>
+    <main className="bg-[#FAFAF9] min-h-screen pt-20 pb-24 relative overflow-hidden">
+      {/* Background Decorative Elements */}
+      <div className="absolute top-0 right-0 w-[40vw] h-[40vw] bg-amber-200/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-orange-200/20 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
 
-        <div className="absolute inset-0 flex items-center">
-          <div className="container mx-auto px-4 max-w-5xl">
-            <Link href="/programs" className="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-6 text-sm font-medium uppercase tracking-wider">
-              <ArrowLeft size={16} /> Back to Programs
-            </Link>
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight max-w-3xl leading-tight"
+      {/* Hero Section */}
+      <div className="w-full h-[55vh] md:h-[65vh] relative overflow-hidden">
+        <motion.div
+          initial={{ scale: 1.1 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url('http://localhost:3003${program.image}')`,
+          }}
+        ></motion.div>
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent mix-blend-multiply"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent"></div>
+
+        <div className="absolute inset-0 flex flex-col justify-end pb-24">
+          <div className="container mx-auto px-4 max-w-6xl relative z-10">
+            {/* <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
             >
-              {program.title}
-            </motion.h1>
+              <Link
+                href="/programs"
+                className="inline-flex items-center gap-2 text-white/80 hover:text-white hover:bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm transition-all mb-8 text-sm font-semibold uppercase tracking-widest border border-white/20"
+              >
+                <ArrowLeft size={16} /> Back to Programs
+              </Link>
+            </motion.div> */}
+
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="max-w-3xl"
+              >
+                <div className="flex flex-wrap items-center gap-3 mb-4">
+                  <span className="bg-amber-500/20 text-amber-300 border border-amber-400/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md">
+                    {program.category}
+                  </span>
+                </div>
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight drop-shadow-2xl">
+                  {program.title}
+                </h1>
+              </motion.div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Content Container */}
-      <div className="container mx-auto px-4 max-w-5xl -mt-16 relative z-10">
+      <div className="container mx-auto px-4 max-w-6xl -mt-16 relative z-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
           {/* Main Details (Left) */}
           <div className="lg:col-span-2 space-y-8">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-gray-100"
+              transition={{ delay: 0.4 }}
+              className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative overflow-hidden"
             >
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">About the Program</h2>
-              <p className="text-gray-700 leading-relaxed text-lg font-light mb-8">
-                {program.description}
-              </p>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-amber-100/50 rounded-bl-full -z-10 blur-2xl"></div>
 
-              <h3 className="text-xl font-bold text-gray-900 mb-4">What You Will Learn</h3>
-              <ul className="space-y-4">
-                {program.benefits.map((benefit, index) => (
-                  <li key={index} className="flex items-start gap-3 text-gray-700">
-                    <CheckCircle className="w-6 h-6 text-brand-primary shrink-0" />
-                    <span className="leading-relaxed">{benefit}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="flex items-center gap-4 mb-8">
+                <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
+                <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+                  About the Event
+                </h2>
+              </div>
+
+              <div className="prose prose-lg text-gray-600 font-light leading-relaxed max-w-none">
+                <p>{program.description}</p>
+              </div>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-gray-100"
+              transition={{ delay: 0.5 }}
+              className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white"
             >
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Guidelines & Eligibility</h3>
+              <div className="flex items-center gap-4 mb-8">
+                <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
+                <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight">
+                  Key Information
+                </h3>
+              </div>
 
-              <div className="space-y-6">
-                <div>
-                  <h4 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-2">Eligibility</h4>
-                  <p className="text-gray-700">{program.eligibility}</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-md transition-shadow group">
+                  <Tag className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 transition-transform" />
+                  <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
+                    Category
+                  </h4>
+                  <p className="text-lg font-semibold text-gray-900">
+                    {program.category}
+                  </p>
                 </div>
-                <div>
-                  <h4 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-2">Dress Code</h4>
-                  <p className="text-gray-700">{program.dressCode}</p>
+
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-md transition-shadow group">
+                  <CreditCard className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 transition-transform" />
+                  <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
+                    Registration
+                  </h4>
+                  <p className="text-lg font-semibold text-gray-900">
+                    ₹{program.registrationfee}
+                  </p>
+                </div>
+
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-md transition-shadow group">
+                  <Users className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 transition-transform" />
+                  <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
+                    Capacity
+                  </h4>
+                  <p className="text-lg font-semibold text-gray-900">
+                    {program.partcipants} Max
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -160,77 +200,112 @@ export default function ProgramDetailsPage() {
           {/* Sidebar / Info Card (Right) */}
           <div className="lg:col-span-1">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-brand-primary sticky top-28"
+              transition={{ delay: 0.6 }}
+              className="bg-white p-1 rounded-3xl shadow-2xl sticky top-28 bg-gradient-to-b from-amber-400 to-orange-500"
             >
-              {program.status === "open" ? (
-                <div className="bg-green-50 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider w-max mb-6">
-                  Registrations Open
-                </div>
-              ) : (
-                <div className="bg-amber-50 text-amber-700 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider w-max mb-6">
-                  Coming Soon
-                </div>
-              )}
-
-              <div className="space-y-6 mb-8">
-                <div className="flex items-start gap-4 text-gray-700">
-                  <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100 text-brand-primary">
-                    <Calendar size={20} />
+              <div className="bg-white rounded-[22px] p-8 h-full">
+                {program.status === "active" ? (
+                  <div className="bg-green-100 text-green-700 text-xs font-bold px-4 py-2 rounded-full uppercase tracking-wider text-center w-full mb-8 border border-green-200">
+                    Registration is Active
                   </div>
-                  <div>
-                    <h5 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Date</h5>
-                    <p className="font-medium text-gray-900">{program.date}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4 text-gray-700">
-                  <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100 text-brand-primary">
-                    <Clock size={20} />
-                  </div>
-                  <div>
-                    <h5 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Time</h5>
-                    <p className="font-medium text-gray-900">{program.time}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4 text-gray-700">
-                  <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100 text-brand-primary">
-                    <MapPin size={20} />
-                  </div>
-                  <div>
-                    <h5 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Location</h5>
-                    <p className="font-medium text-gray-900 leading-relaxed text-sm">{program.location}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-6 border-t border-gray-100">
-                {program.status === "open" ? (
-                  <Link
-                    href="/contact#register"
-                    className="block w-full py-4 text-center bg-brand-primary text-white font-bold rounded-[0px] hover:bg-brand-primary transition-colors shadow-md hover:shadow-xl"
-                  >
-                    Register Now
-                  </Link>
                 ) : (
-                  <button
-                    disabled
-                    className="block w-full py-4 text-center bg-gray-100 text-gray-400 font-bold rounded-xl cursor-not-allowed"
-                  >
-                    Not Available Yet
-                  </button>
+                  <div className="bg-gray-100 text-gray-500 text-xs font-bold px-4 py-2 rounded-full uppercase tracking-wider text-center w-full mb-8 border border-gray-200">
+                    Registration Closed
+                  </div>
                 )}
 
-                <p className="text-xs text-center text-gray-500 mt-4">
-                  For inquiries, please <Link href="/contact" className="text-brand-primary hover:underline">contact support</Link>.
-                </p>
+                <div className="space-y-8 mb-10">
+                  <div className="flex gap-5 group">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
+                      <Calendar size={22} />
+                    </div>
+                    <div>
+                      <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+                        Date
+                      </h5>
+                      <p className="font-semibold text-gray-900">
+                        {new Date(program.eventdate).toLocaleDateString(
+                          undefined,
+                          {
+                            weekday: "short",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          },
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-5 group">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
+                      <Clock size={22} />
+                    </div>
+                    <div>
+                      <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+                        Time
+                      </h5>
+                      <p className="font-semibold text-gray-900">
+                        {program.starttime} - {program.endtime}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-5 group">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
+                      <MapPin size={22} />
+                    </div>
+                    <div>
+                      <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+                        Location
+                      </h5>
+                      <p className="font-medium text-gray-600 leading-relaxed text-sm">
+                        <span className="font-bold text-gray-900 block mb-0.5 text-base">
+                          {program.venuename}
+                        </span>
+                        {program.address},<br />
+                        {program.city}, {program.state}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-8 border-t border-gray-100">
+                  {program.status === "active" ? (
+                    <Link
+                      href="/contact#register"
+                      className="relative flex items-center justify-center w-full py-5 font-bold text-white rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 transition-all shadow-[0_8px_25px_-8px_rgba(245,158,11,0.6)] hover:shadow-[0_12px_30px_-8px_rgba(245,158,11,0.8)] overflow-hidden group/btn"
+                    >
+                      <span className="relative z-10 text-lg">
+                        Register Now
+                      </span>
+                      <div className="absolute inset-0 h-full w-full bg-white/20 scale-x-0 group-hover/btn:scale-x-100 transition-transform origin-left ease-out duration-300"></div>
+                    </Link>
+                  ) : (
+                    <button
+                      disabled
+                      className="block w-full py-5 text-center bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed text-lg"
+                    >
+                      Currently Unavailable
+                    </button>
+                  )}
+
+                  <p className="text-sm text-center text-gray-500 mt-6 font-light">
+                    Have questions?{" "}
+                    <Link
+                      href="/contact"
+                      className="text-amber-500 hover:text-orange-600 font-medium underline underline-offset-4 decoration-amber-500/30"
+                    >
+                      Contact us
+                    </Link>
+                    .
+                  </p>
+                </div>
               </div>
             </motion.div>
           </div>
-
         </div>
       </div>
     </main>
