@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Calendar, MapPin, ArrowRight } from "lucide-react";
-import { getEvents } from "../../services/api";
+import { getEvents, getImageVideoUrl } from "../../services/api";
 import { EventModel } from "../../models/event_model";
 
 export default function ProgramsPage() {
@@ -25,7 +25,7 @@ export default function ProgramsPage() {
         if (pageNum === 1) {
           setEvents(response.data.events);
         } else {
-          setEvents(prev => [...prev, ...response.data.events]);
+          setEvents((prev) => [...prev, ...response.data.events]);
         }
         setHasNextPage(response.data.meta.hasNextPage);
       }
@@ -46,7 +46,7 @@ export default function ProgramsPage() {
       {/* Header Section */}
       <section className="bg-white border-b border-gray-200 py-16 md:py-24">
         <div className="container mx-auto px-4 max-w-7xl">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="max-w-3xl text-center mx-auto"
@@ -58,7 +58,9 @@ export default function ProgramsPage() {
               Spiritual Programs
             </h1>
             <p className="text-lg text-gray-600 leading-relaxed font-light">
-              Join our upcoming sessions and events to deepen your practice, connect with the community, and experience profound inner transformation.
+              Join our upcoming sessions and events to deepen your practice,
+              connect with the community, and experience profound inner
+              transformation.
             </p>
           </motion.div>
         </div>
@@ -76,24 +78,19 @@ export default function ProgramsPage() {
                 transition={{ delay: index * 0.1, duration: 0.5 }}
                 className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col cursor-pointer"
               >
-                <Link href={`/programs/${program.id}`} className="flex flex-col h-full">
+                <Link
+                  href={`/programs/${program.id}`}
+                  className="flex flex-col h-full"
+                >
                   {/* Image Section */}
                   <div className="relative h-56 overflow-hidden shrink-0">
                     <div
                       className="absolute inset-0 bg-cover bg-center transform group-hover:scale-110 transition-transform duration-700"
-                      style={{ backgroundImage: `url('http://localhost:3003${program.image}')` }}
+                      style={{
+                        backgroundImage: `url('${getImageVideoUrl(program.image)}')`,
+                      }}
                     ></div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-
-                    {program.status === "active" ? (
-                      <div className="absolute top-4 right-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
-                        Registering
-                      </div>
-                    ) : (
-                      <div className="absolute top-4 right-4 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
-                        Coming Soon
-                      </div>
-                    )}
                   </div>
 
                   {/* Content Section */}
@@ -105,7 +102,9 @@ export default function ProgramsPage() {
                     <div className="space-y-4 mb-8 flex-grow">
                       <div className="flex items-start gap-3 text-gray-600">
                         <Calendar className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
-                        <span className="font-medium">{new Date(program.eventdate).toLocaleDateString()}</span>
+                        <span className="font-medium">
+                          {new Date(program.eventdate).toLocaleDateString()}
+                        </span>
                       </div>
                       <div className="flex items-start gap-3 text-gray-600">
                         <MapPin className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />

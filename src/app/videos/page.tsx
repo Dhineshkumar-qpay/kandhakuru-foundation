@@ -1,88 +1,72 @@
 "use client";
 
-import { Play, ArrowRight, Video, X, Search, SlidersHorizontal } from "lucide-react";
+import {
+  Play,
+  ArrowRight,
+  Video,
+  X,
+  Search,
+  SlidersHorizontal,
+} from "lucide-react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const allVideos = [
-  {
-    id: 1,
-    title: "Introduction to Shiva Kriya Yogam",
-    description: "Discover the ancient roots and profound benefits of this sacred meditative practice.",
-    thumbnail: "https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&q=80&w=800",
-    duration: "12:45",
-    videoUrl: "https://www.youtube.com/embed/jfKfPfyJRdk",
-    category: "Foundation",
-    instructor: "Sri Guruji",
-    avatar: "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=150",
-    date: "Oct 12, 2025"
-  },
-  {
-    id: 2,
-    title: "The Power of Deep Meditation",
-    description: "Learn how to quiet your mind and connect with your inner divine consciousness.",
-    thumbnail: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&q=80&w=800",
-    duration: "08:30",
-    videoUrl: "https://www.youtube.com/embed/inpok4MKVLM",
-    category: "Meditation",
-    instructor: "Sri Guruji",
-    avatar: "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=150",
-    date: "Nov 05, 2025"
-  },
-  {
-    id: 3,
-    title: "Understanding Sanatana Dharma",
-    description: "Explore the eternal truths and universal principles guiding our spiritual journey.",
-    thumbnail: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
-    duration: "15:20",
-    videoUrl: "https://www.youtube.com/embed/86mCBZhnO-Y",
-    category: "Philosophy",
-    instructor: "Sri Guruji",
-    avatar: "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=150",
-    date: "Dec 21, 2025"
-  },
-  {
-    id: 4,
-    title: "Guru Purnima Celebrations 2025",
-    description: "Experience the divine grace and blessings from our latest spiritual gathering.",
-    thumbnail: "https://images.unsplash.com/photo-1526413232644-8a40f411b01e?auto=format&fit=crop&q=80&w=800",
-    duration: "45:10",
-    videoUrl: "https://www.youtube.com/embed/jfKfPfyJRdk",
-    category: "Events",
-    instructor: "Sri Guruji",
-    avatar: "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=150",
-    date: "Jan 15, 2026"
-  },
-  {
-    id: 5,
-    title: "Benefits of Daily Chanting",
-    description: "Unlock the vibrational healing power of ancient mantras and sounds.",
-    thumbnail: "https://images.unsplash.com/photo-1519682577862-22b62b24e493?auto=format&fit=crop&q=80&w=800",
-    duration: "10:05",
-    videoUrl: "https://www.youtube.com/embed/inpok4MKVLM",
-    category: "Practices",
-    instructor: "Sri Guruji",
-    avatar: "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=150",
-    date: "Feb 02, 2026"
-  },
-  {
-    id: 6,
-    title: "Q&A Session with Guruji",
-    description: "Answers to common spiritual questions from seekers around the world.",
-    thumbnail: "https://images.unsplash.com/photo-1604944985226-79173ebfc486?auto=format&fit=crop&q=80&w=800",
-    duration: "55:30",
-    videoUrl: "https://www.youtube.com/embed/86mCBZhnO-Y",
-    category: "Satsang",
-    instructor: "Sri Guruji",
-    avatar: "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=150",
-    date: "Mar 10, 2026"
-  }
-];
+import { getCategories, getImageVideoUrl, getVideos } from "../../services/api";
+import { CategoryModel, VideoModel } from "../../models/image_video_model";
 
 export default function VideosPage() {
+  const [categories, setCategories] = useState<CategoryModel[]>([]);
+  const [activeCategory, setActiveCategory] = useState<number | null>(null);
+  const [videos, setVideos] = useState<VideoModel[]>([]);
+  const [page, setPage] = useState(1);
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(false);
+
+  useEffect(() => {
+    const fetchCats = async () => {
+      try {
+        const res = await getCategories();
+        if (res.success && res.data) {
+          setCategories(res.data);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchCats();
+  }, []);
+
+  const fetchVideoList = async (pageNum: number, catId: number | null) => {
+    try {
+      const res = await getVideos(pageNum, catId);
+      if (res.success && res.data && res.data.videos) {
+        if (pageNum === 1) {
+          setVideos(res.data.videos);
+        } else {
+          setVideos((prev) => [...prev, ...res.data.videos]);
+        }
+        setHasMore(
+          res.data.meta
+            ? res.data.meta.hasNextPage
+            : res.data.videos.length === 50,
+        );
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    setPage(1);
+    fetchVideoList(1, activeCategory);
+  }, [activeCategory]);
+
+  const loadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchVideoList(nextPage, activeCategory);
+  };
 
   return (
     <main className="min-h-screen bg-[#FAFAF9] pt-24 pb-24 relative overflow-hidden">
@@ -95,15 +79,25 @@ export default function VideosPage() {
       {/* Premium Page Header */}
       <div className="relative z-10 pt-5 pb-12 mb-12">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-          <nav className="flex text-sm font-medium text-slate-500 mb-8" aria-label="Breadcrumb">
+          <nav
+            className="flex text-sm font-medium text-slate-500 mb-8"
+            aria-label="Breadcrumb"
+          >
             <ol className="inline-flex items-center space-x-1 md:space-x-3 bg-white/50 backdrop-blur-md px-4 py-2 rounded-full shadow-sm border border-white/60">
               <li className="inline-flex items-center">
-                <Link href="/" className="hover:text-amber-600 transition-colors">Home</Link>
+                <Link
+                  href="/"
+                  className="hover:text-amber-600 transition-colors"
+                >
+                  Home
+                </Link>
               </li>
               <li>
                 <div className="flex items-center">
                   <ChevronRight className="w-4 h-4 mx-1" />
-                  <span className="text-slate-900 font-semibold">Video Library</span>
+                  <span className="text-slate-900 font-semibold">
+                    Video Library
+                  </span>
                 </div>
               </li>
             </ol>
@@ -118,22 +112,27 @@ export default function VideosPage() {
                 </span>
               </div>
               <h1 className="text-2xl md:text-3xl lg:text-4xl font-light text-slate-900 tracking-tight">
-                Video <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500">Library</span>
+                Video{" "}
+                <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500">
+                  Library
+                </span>
               </h1>
               <p className="mt-6 text-slate-600 text-sm leading-relaxed font-light">
-                Explore our comprehensive collection of talks, guided meditations, and spiritual discourses designed to elevate your consciousness and bring inner peace.
+                Explore our comprehensive collection of talks, guided
+                meditations, and spiritual discourses designed to elevate your
+                consciousness and bring inner peace.
               </p>
             </div>
-            
+
             {/* Search Bar */}
             <div className="w-full md:w-auto flex-shrink-0">
               <div className="relative bg-white/80 backdrop-blur-xl rounded-full p-2 flex items-center border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
                 <div className="pl-4 pr-2 text-slate-400">
                   <Search size={20} />
                 </div>
-                <input 
-                  type="text" 
-                  placeholder="Search teachings..." 
+                <input
+                  type="text"
+                  placeholder="Search teachings..."
                   className="bg-transparent border-none focus:ring-0 text-slate-700 w-full md:w-64 placeholder:text-slate-400 text-sm"
                 />
                 <button className="bg-amber-500 hover:bg-amber-600 text-white rounded-full p-2.5 transition-colors shadow-md">
@@ -142,29 +141,56 @@ export default function VideosPage() {
               </div>
             </div>
           </div>
+
+          <div className="flex flex-wrap gap-4 mt-8">
+            <button
+              onClick={() => setActiveCategory(null)}
+              className={`px-4 py-2 text-sm font-semibold rounded-full transition-all duration-300 ${
+                activeCategory === null
+                  ? "bg-amber-500 text-white shadow-md"
+                  : "bg-white text-slate-600 hover:bg-amber-50"
+              }`}
+            >
+              All
+            </button>
+            {categories.map((category) => (
+              <button
+                key={category.categoryid}
+                onClick={() => setActiveCategory(category.categoryid)}
+                className={`px-4 py-2 text-sm font-semibold rounded-full transition-all duration-300 ${
+                  activeCategory === category.categoryid
+                    ? "bg-amber-500 text-white shadow-md"
+                    : "bg-white text-slate-600 hover:bg-amber-50"
+                }`}
+              >
+                {category.categoryname}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {allVideos.map((video, index) => (
+          {videos.map((video, index) => (
             <motion.div
               key={video.id}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1, duration: 0.6 }}
               className="group flex flex-col cursor-pointer bg-white/80 backdrop-blur-xl border border-white rounded-[0px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_-15px_rgba(217,119,6,0.2)] hover:-translate-y-2 transition-all duration-500 overflow-hidden"
-              onClick={() => setActiveVideo(video.videoUrl)}
+              onClick={() => setActiveVideo(getImageVideoUrl(video.video))}
             >
               {/* Thumbnail Section */}
-              <div className="relative aspect-[16/9] overflow-hidden">
-                <img 
-                  src={video.thumbnail} 
-                  alt={video.title} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
-                
+              <div className="relative aspect-[16/9] overflow-hidden bg-gray-200">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent  group-hover:opacity-90 transition-opacity duration-300">
+                  <img
+                    src={getImageVideoUrl(video.thumbnail)}
+                    alt={video.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
                 {/* Play Button Overlay */}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center group-hover:bg-amber-500 group-hover:border-amber-500 group-hover:scale-110 transition-all duration-500 shadow-[0_0_30px_rgba(251,191,36,0.3)]">
@@ -175,12 +201,7 @@ export default function VideosPage() {
                 {/* Badges */}
                 <div className="absolute top-4 left-4">
                   <span className="bg-white/20 backdrop-blur-md text-white border border-white/30 text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm tracking-wide">
-                    {video.category}
-                  </span>
-                </div>
-                <div className="absolute bottom-4 right-4">
-                  <span className="bg-black/60 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm">
-                    <Play className="w-3 h-3" /> {video.duration}
+                    {video.categoryname}
                   </span>
                 </div>
               </div>
@@ -199,10 +220,10 @@ export default function VideosPage() {
                 <div>
                   <div className="flex items-center justify-between pt-5 border-t border-slate-100">
                     <div className="flex items-center gap-3">
-                      <img src={video.avatar} alt={video.instructor} className="w-8 h-8 rounded-full object-cover border border-slate-200" />
                       <div className="flex flex-col">
-                        <span className="text-xs font-bold text-slate-900">{video.instructor}</span>
-                        <span className="text-[10px] text-slate-400">{video.date}</span>
+                        <span className="text-[10px] text-slate-400">
+                          {new Date(video.createdAt).toLocaleDateString()}
+                        </span>
                       </div>
                     </div>
                     <span className="text-amber-600 font-semibold text-sm group-hover:translate-x-1 transition-transform flex items-center gap-1">
@@ -214,6 +235,17 @@ export default function VideosPage() {
             </motion.div>
           ))}
         </div>
+
+        {hasMore && (
+          <div className="flex justify-center mt-12">
+            <button
+              onClick={loadMore}
+              className="px-8 py-3 bg-amber-500 text-white font-semibold rounded-full hover:bg-amber-600 transition-colors shadow-lg"
+            >
+              Load More
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Video Lightbox */}
@@ -240,16 +272,14 @@ export default function VideosPage() {
               className="relative max-w-3xl w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10"
               onClick={(e) => e.stopPropagation()}
             >
-              <iframe
+              <video
                 width="100%"
                 height="100%"
-                src={`${activeVideo}?autoplay=1`}
-                title="Video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
+                controls
+                autoPlay
+                src={activeVideo}
                 className="w-full h-full"
-              ></iframe>
+              ></video>
             </motion.div>
           </motion.div>
         )}

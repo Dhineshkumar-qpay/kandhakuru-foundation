@@ -6,18 +6,16 @@ import { Phone, Mail, MapPin, Send, MessageCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { addContactUs } from "../../services/api";
 
 const formSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  age: z.string().min(1, { message: "Age is required" }),
-  phone: z.string().min(10, { message: "Valid phone number is required" }),
+  firstName: z.string().min(2, { message: "First name is required" }),
+  lastName: z.string().min(1, { message: "Last name is required" }),
   email: z.string().email({ message: "Invalid email address" }),
-  whatsapp: z
+  mobile: z.string().min(10, { message: "Valid mobile number is required" }),
+  message: z
     .string()
-    .min(10, { message: "Valid WhatsApp number is required" }),
-  district: z.string().min(2, { message: "District is required" }),
-  state: z.string().min(2, { message: "State is required" }),
-  country: z.string().min(2, { message: "Country is required" }),
+    .min(10, { message: "Message must be at least 10 characters" }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -37,13 +35,26 @@ export default function Contact() {
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log(data);
-    setIsSubmitting(false);
-    setIsSuccess(true);
-    reset();
-    setTimeout(() => setIsSuccess(false), 5000);
+    try {
+      const res = await addContactUs({
+        firstname: data.firstName,
+        lastname: data.lastName,
+        email: data.email,
+        mobile: data.mobile,
+        message: data.message,
+      });
+      if (res.success) {
+        setIsSuccess(true);
+        reset();
+        setTimeout(() => setIsSuccess(false), 5000);
+      } else {
+        alert(res.message || "Something went wrong.");
+      }
+    } catch (error) {
+      alert("Failed to send message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -55,8 +66,7 @@ export default function Contact() {
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage:
-                "url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=1920')",
+              backgroundImage: "url('contact.jpeg')",
             }}
           ></div>
           <div className="absolute inset-0 bg-gray-900/70"></div>
@@ -108,7 +118,7 @@ export default function Contact() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
+                viewport={{ once: true, margin: "-50px" }}
                 className="bg-white/80 backdrop-blur-xl border border-white p-8 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl"
               >
                 <h4 className="text-xl font-bold text-gray-900 mb-8 tracking-tight flex items-center gap-3">
@@ -170,7 +180,7 @@ export default function Contact() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
+                viewport={{ once: true, margin: "-50px" }}
                 transition={{ delay: 0.1 }}
                 className="bg-white border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] h-64 relative overflow-hidden rounded-3xl"
               >
@@ -192,13 +202,13 @@ export default function Contact() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
+                viewport={{ once: true, margin: "-50px" }}
                 transition={{ delay: 0.1 }}
                 className="bg-white/80 backdrop-blur-xl border border-white p-8 md:p-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl"
               >
                 <div className="flex items-center justify-between mb-8 border-b border-gray-100 pb-4">
                   <h4 className="text-xl font-bold text-gray-900 tracking-tight ">
-                    Program Registration Application
+                    Send Us a Message
                   </h4>
                 </div>
 
@@ -211,14 +221,14 @@ export default function Contact() {
                       Application Submitted
                     </h5>
                     <p className="text-gray-600 font-light mb-8 max-w-md">
-                      Your registration has been securely logged in our system.
-                      A foundation representative will contact you shortly.
+                      Your message has been securely sent to our team. A
+                      foundation representative will contact you shortly.
                     </p>
                     <button
                       onClick={() => setIsSuccess(false)}
-                      className="px-8 py-3 bg-gray-900 text-white text-sm font-bold tracking-widest uppercase hover:bg-gray-800 transition-colors rounded-full shadow-md"
+                      className="px-8 py-3 bg-brand-primary text-white text-sm font-bold tracking-widest uppercase hover:bg-brand-primary transition-colors rounded-[0px] shadow-md"
                     >
-                      Submit Another Application
+                      Send Another Message
                     </button>
                   </div>
                 ) : (
@@ -226,71 +236,35 @@ export default function Contact() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                          Full Name{" "}
+                          First Name{" "}
                           <span className="text-brand-primary">*</span>
                         </label>
                         <input
-                          {...register("name")}
+                          {...register("firstName")}
                           type="text"
-                          className={`w-full px-5 py-3.5 rounded-xl border ${errors.name ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 text-gray-900 shadow-sm hover:border-gray-300`}
-                          placeholder="Enter your full name"
+                          className={`w-full px-5 py-3.5 rounded-xl border ${errors.firstName ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 text-gray-900 shadow-sm hover:border-gray-300`}
+                          placeholder="First Name"
                         />
-                        {errors.name && (
+                        {errors.firstName && (
                           <p className="mt-1.5 text-xs text-red-500 font-medium">
-                            {errors.name.message}
+                            {errors.firstName.message}
                           </p>
                         )}
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                          Age <span className="text-brand-primary">*</span>
-                        </label>
-                        <input
-                          {...register("age")}
-                          type="number"
-                          className={`w-full px-5 py-3.5 rounded-xl border ${errors.age ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 text-gray-900 shadow-sm hover:border-gray-300`}
-                          placeholder="Enter your age"
-                        />
-                        {errors.age && (
-                          <p className="mt-1.5 text-xs text-red-500 font-medium">
-                            {errors.age.message}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                          Phone Number{" "}
+                          Last Name{" "}
                           <span className="text-brand-primary">*</span>
                         </label>
                         <input
-                          {...register("phone")}
-                          type="tel"
-                          className={`w-full px-5 py-3.5 rounded-xl border ${errors.phone ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 text-gray-900 shadow-sm hover:border-gray-300`}
-                          placeholder="Enter phone number"
+                          {...register("lastName")}
+                          type="text"
+                          className={`w-full px-5 py-3.5 rounded-xl border ${errors.lastName ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 text-gray-900 shadow-sm hover:border-gray-300`}
+                          placeholder="Last Name"
                         />
-                        {errors.phone && (
+                        {errors.lastName && (
                           <p className="mt-1.5 text-xs text-red-500 font-medium">
-                            {errors.phone.message}
-                          </p>
-                        )}
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                          WhatsApp Number{" "}
-                          <span className="text-brand-primary">*</span>
-                        </label>
-                        <input
-                          {...register("whatsapp")}
-                          type="tel"
-                          className={`w-full px-5 py-3.5 rounded-xl border ${errors.whatsapp ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 text-gray-900 shadow-sm hover:border-gray-300`}
-                          placeholder="Enter WhatsApp number"
-                        />
-                        {errors.whatsapp && (
-                          <p className="mt-1.5 text-xs text-red-500 font-medium">
-                            {errors.whatsapp.message}
+                            {errors.lastName.message}
                           </p>
                         )}
                       </div>
@@ -306,7 +280,7 @@ export default function Contact() {
                           {...register("email")}
                           type="email"
                           className={`w-full px-5 py-3.5 rounded-xl border ${errors.email ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 text-gray-900 shadow-sm hover:border-gray-300`}
-                          placeholder="Enter email address"
+                          placeholder="Email Address"
                         />
                         {errors.email && (
                           <p className="mt-1.5 text-xs text-red-500 font-medium">
@@ -316,55 +290,38 @@ export default function Contact() {
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                          District <span className="text-brand-primary">*</span>
+                          Mobile Number{" "}
+                          <span className="text-brand-primary">*</span>
                         </label>
                         <input
-                          {...register("district")}
-                          type="text"
-                          className={`w-full px-5 py-3.5 rounded-xl border ${errors.district ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 text-gray-900 shadow-sm hover:border-gray-300`}
-                          placeholder="Enter your district"
+                          {...register("mobile")}
+                          type="tel"
+                          className={`w-full px-5 py-3.5 rounded-xl border ${errors.mobile ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 text-gray-900 shadow-sm hover:border-gray-300`}
+                          placeholder="Mobile Number"
                         />
-                        {errors.district && (
+                        {errors.mobile && (
                           <p className="mt-1.5 text-xs text-red-500 font-medium">
-                            {errors.district.message}
+                            {errors.mobile.message}
                           </p>
                         )}
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                          State <span className="text-brand-primary">*</span>
-                        </label>
-                        <input
-                          {...register("state")}
-                          type="text"
-                          className={`w-full px-5 py-3.5 rounded-xl border ${errors.state ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 text-gray-900 shadow-sm hover:border-gray-300`}
-                          placeholder="Enter your state"
-                        />
-                        {errors.state && (
-                          <p className="mt-1.5 text-xs text-red-500 font-medium">
-                            {errors.state.message}
-                          </p>
-                        )}
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                          Country <span className="text-brand-primary">*</span>
-                        </label>
-                        <input
-                          {...register("country")}
-                          type="text"
-                          className={`w-full px-5 py-3.5 rounded-xl border ${errors.country ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 text-gray-900 shadow-sm hover:border-gray-300`}
-                          placeholder="Enter your country"
-                        />
-                        {errors.country && (
-                          <p className="mt-1.5 text-xs text-red-500 font-medium">
-                            {errors.country.message}
-                          </p>
-                        )}
-                      </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
+                        Message <span className="text-brand-primary">*</span>
+                      </label>
+                      <textarea
+                        {...register("message")}
+                        rows={5}
+                        className={`w-full px-5 py-3.5 rounded-xl border ${errors.message ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 text-gray-900 shadow-sm hover:border-gray-300 resize-none`}
+                        placeholder="Your Message..."
+                      />
+                      {errors.message && (
+                        <p className="mt-1.5 text-xs text-red-500 font-medium">
+                          {errors.message.message}
+                        </p>
+                      )}
                     </div>
 
                     <div className="pt-8 mt-4 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -381,7 +338,7 @@ export default function Contact() {
                           <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
                         ) : (
                           <>
-                            Submit Application <Send size={16} />
+                            Send Message <Send size={16} />
                           </>
                         )}
                       </button>

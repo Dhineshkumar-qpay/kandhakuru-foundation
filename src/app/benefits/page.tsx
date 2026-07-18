@@ -137,13 +137,12 @@ export default function BenefitsPage() {
         {/* Hero Background Image */}
         <div className="absolute inset-0 z-0">
           <div
-            className="absolute inset-0 bg-cover bg-center"
+            className="absolute inset-0 bg-contain bg-center"
             style={{
-              backgroundImage:
-                "url('spiritual.jpg')",
+              backgroundImage: "url('benefit.jpeg')",
             }}
           ></div>
-          <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-[2px]"></div>
+          <div className="absolute inset-0 bg-gray-900/70"></div>
         </div>
 
         <div className="container mx-auto px-4 max-w-5xl relative z-10 flex flex-col items-center text-center">
@@ -194,7 +193,7 @@ export default function BenefitsPage() {
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
+              viewport={{ once: true, margin: "-50px" }}
               className="w-full lg:w-5/12 relative"
             >
               <div className="relative rounded-3xl overflow-hidden aspect-[4/5] shadow-[0_20px_50px_rgba(0,0,0,0.1)] group">
@@ -234,7 +233,7 @@ export default function BenefitsPage() {
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
+              viewport={{ once: true, margin: "-50px" }}
               className="w-full lg:w-7/12"
             >
               <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-8 leading-tight">

@@ -1,8 +1,28 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Mail, Phone, MapPin, ArrowRight, Send } from "lucide-react";
-import { url } from "inspector";
+import { getEvents } from "../services/api";
+import { EventModel } from "../models/event_model";
 
 export default function Footer() {
+  const [programs, setPrograms] = useState<EventModel[]>([]);
+
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      try {
+        const response = await getEvents(1);
+        if (response.success && response.data?.events) {
+          setPrograms(response.data.events.slice(0, 3));
+        }
+      } catch (error) {
+        console.error("Failed to load footer programs", error);
+      }
+    };
+    fetchPrograms();
+  }, []);
+
   return (
     <footer className="relative bg-[#FAFAF9] pt-24 pb-12 font-sans overflow-hidden">
       {/* Decorative gradient backgrounds */}
@@ -98,30 +118,16 @@ export default function Footer() {
                 Programs
               </h4>
               <ul className="space-y-4 text-slate-500 font-medium">
-                <li>
-                  <Link
-                    href="/programs/1"
-                    className="hover:text-amber-600 hover:translate-x-1 inline-block transition-all duration-300"
-                  >
-                    Shiva Kriya Yogam I
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/programs/2"
-                    className="hover:text-amber-600 hover:translate-x-1 inline-block transition-all duration-300"
-                  >
-                    Shiva Kriya Yogam II
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/programs/3"
-                    className="hover:text-amber-600 hover:translate-x-1 inline-block transition-all duration-300"
-                  >
-                    Sivanodu Shivarathiri
-                  </Link>
-                </li>
+                {programs.map((program) => (
+                  <li key={program.id}>
+                    <Link
+                      href={`/programs/${program.id}`}
+                      className="hover:text-amber-600 hover:translate-x-1 inline-block transition-all duration-300 line-clamp-1"
+                    >
+                      {program.title}
+                    </Link>
+                  </li>
+                ))}
                 <li className="pt-2">
                   <Link
                     href="/programs"

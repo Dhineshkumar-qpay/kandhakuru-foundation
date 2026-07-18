@@ -3,8 +3,17 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { getEvents } from "../services/api";
+import {
+  getEvents,
+  getGallery,
+  getImageVideoUrl,
+  getVideos,
+  getTestimonials,
+  getBanners,
+} from "../services/api";
 import { EventModel } from "../models/event_model";
+import { GalleryModel, VideoModel, BannerModel } from "../models/image_video_model";
+import { TestimonialModel } from "../models/contact_model";
 import {
   X,
   ZoomIn,
@@ -49,20 +58,35 @@ export default function Home() {
 // Hero section
 
 function Hero() {
-  const heroImages = [
+  const [heroImages, setHeroImages] = useState<string[]>([
     "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcR2xj-V--K9M8rbnjDBiONg42HzmlWGDqA901Poz0OETFvAUJxo",
     "https://scontent.fmaa2-2.fna.fbcdn.net/v/t51.82787-15/733831259_18059112200778949_178341886422952852_n.jpg?stp=dst-jpg_tt6&cstp=mx1080x1350&ctp=s1080x1350&_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=P616qBrMYe8Q7kNvwGcEvVB&_nc_oc=Adrk3qpNSXUKGtZe4dKSeCGOMF0fzM6D2hzDzW-o5PVc7XaL-YNJNRgYHiWu5EHzSSFtzv_dcx-f-UcVTL6i5frI&_nc_zt=23&_nc_ht=scontent.fmaa2-2.fna&_nc_gid=BETKhbRkD0-4r0vRSckmpA&_nc_ss=7b2a8&oh=00_AQDCzvauezlAVjPQhvJGE2ItPMuBH8GGQ4xOHaHgJ_hOsQ&oe=6A5E7BB3",
-    "https://scontent.fmaa2-4.fna.fbcdn.net/v/t51.82787-15/735238499_18058841468778949_2465957740438833201_n.jpg?stp=dst-jpg_tt6&cstp=mx1440x1416&ctp=s1440x1416&_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_ohc=-7HUPVxPBOgQ7kNvwFt6qVq&_nc_oc=Adrmioa_ICXvvQ1qCHj3o0TdBdAfVGAlxo1ZtqL67iDfmvrZT1MVsLtELDBLmBn79R7WTxFF_zBL3yPkzzr1tCqC&_nc_zt=23&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=-qAeNjVcNLXWXdqpcl2VdA&_nc_ss=7b2a8&oh=00_AQASh2yv5gnz1cyO3u85L7yux5mAQgebzvDkhnXz_I3aZw&oe=6A5E7E4D"
-  ];
+    "https://scontent.fmaa2-4.fna.fbcdn.net/v/t51.82787-15/735238499_18058841468778949_2465957740438833201_n.jpg?stp=dst-jpg_tt6&cstp=mx1440x1416&ctp=s1440x1416&_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_ohc=-7HUPVxPBOgQ7kNvwFt6qVq&_nc_oc=Adrmioa_ICXvvQ1qCHj3o0TdBdAfVGAlxo1ZtqL67iDfmvrZT1MVsLtELDBLmBn79R7WTxFF_zBL3yPkzzr1tCqC&_nc_zt=23&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=-qAeNjVcNLXWXdqpcl2VdA&_nc_ss=7b2a8&oh=00_AQASh2yv5gnz1cyO3u85L7yux5mAQgebzvDkhnXz_I3aZw&oe=6A5E7E4D",
+  ]);
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const res = await getBanners();
+        if (res.success && res.data && res.data.length > 0) {
+          setHeroImages(res.data.map((b: BannerModel) => getImageVideoUrl(b.image)));
+        }
+      } catch (error) {
+        console.error("Failed to load banners", error);
+      }
+    };
+    fetchBanners();
+  }, []);
+
+  useEffect(() => {
+    if (heroImages.length === 0) return;
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [heroImages]);
 
   return (
     <section
@@ -88,7 +112,10 @@ function Hero() {
             className="w-full lg:w-1/2 text-center lg:text-left"
           >
             <h1 className="text-3xl md:text-4xl lg:text-4xl font-extrabold text-white tracking-tight mb-6 drop-shadow-lg">
-              The Way of <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Kriya Yogam</span>
+              The Way of{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">
+                Kriya Yogam
+              </span>
             </h1>
 
             <p className="text-lg md:text-lg text-white/90 mb-10 leading-relaxed drop-shadow-md max-w-2xl mx-auto lg:mx-0">
@@ -284,11 +311,14 @@ function SpiritualPhilosophy() {
   return (
     <section className="py-32 relative overflow-hidden bg-[#FAFAF9]">
       {/* Professional Fixed Background Image */}
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-fixed bg-center opacity-70 z-0 pointer-events-none"
-        style={{ backgroundImage: "url('https://img.magnific.com/free-photo/abstract-creative-illustration_23-2151980688.jpg?semt=ais_hybrid&w=740&q=80')" }}
+        style={{
+          backgroundImage:
+            "url('https://img.magnific.com/free-photo/abstract-creative-illustration_23-2151980688.jpg?semt=ais_hybrid&w=740&q=80')",
+        }}
       ></div>
-      
+
       {/* Luxurious Background Elements */}
       <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-gradient-to-br from-amber-200 to-orange-100 blur-3xl opacity-60"></div>
@@ -322,20 +352,23 @@ function SpiritualPhilosophy() {
           >
             {/* Subtle inner glow */}
             <div className="absolute inset-0 bg-gradient-to-b from-white/40 to-transparent pointer-events-none"></div>
-            
+
             <div className="relative z-10">
               <span className="inline-block py-1.5 px-4 rounded-full bg-amber-500/10 text-amber-700 text-xs font-bold tracking-[0.2em] uppercase mb-6 border border-amber-200/50 shadow-sm">
                 Spiritual Philosophy
               </span>
 
               <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-6">
-                One Truth, <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500 font-light">Many Paths</span>
+                One Truth,{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500 font-light">
+                  Many Paths
+                </span>
               </h2>
 
               <p className="text-lg md:text-xl text-slate-700 font-light leading-relaxed max-w-2xl mx-auto mb-10">
-                We respectfully acknowledge that every religion provides a unique
-                and sacred path toward divine realization. They are all valid
-                expressions of humanity's eternal search for Truth.
+                We respectfully acknowledge that every religion provides a
+                unique and sacred path toward divine realization. They are all
+                valid expressions of humanity's eternal search for Truth.
               </p>
 
               <div className="relative px-8 py-8 bg-white/50 rounded-2xl border border-white/60 italic text-slate-800 font-medium shadow-[inset_0_2px_15px_rgba(255,255,255,0.7)]">
@@ -362,15 +395,15 @@ function SpiritualPhilosophy() {
                 <div className="relative h-full bg-white/40 backdrop-blur-2xl border border-white/60 p-8 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:bg-white/60 hover:shadow-[0_20px_40px_-15px_rgba(217,119,6,0.2)] hover:-translate-y-2 transition-all duration-500 overflow-hidden flex flex-col items-center text-center">
                   {/* Decorative corner element */}
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-amber-200/30 to-transparent rounded-bl-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                  
+
                   <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-white to-amber-50/50 flex items-center justify-center text-amber-600 mb-6 shadow-sm border border-white group-hover:scale-110 group-hover:text-orange-500 transition-all duration-500 relative z-10">
                     {religion.icon}
                   </div>
-                  
+
                   <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">
                     {religion.name}
                   </h3>
-                  
+
                   <p className="text-slate-600 leading-relaxed font-light text-sm relative z-10">
                     {religion.desc}
                   </p>
@@ -572,19 +605,11 @@ function Programs() {
                 <div className="relative h-56 overflow-hidden shrink-0">
                   <div
                     className="absolute inset-0 bg-cover bg-center transform group-hover:scale-110 transition-transform duration-700"
-                    style={{ backgroundImage: `url('http://localhost:3003${program.image}')` }}
+                    style={{
+                      backgroundImage: `url('${getImageVideoUrl(program.image)}')`,
+                    }}
                   ></div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-
-                  {program.status === "active" ? (
-                    <div className="absolute top-4 right-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
-                      Registering
-                    </div>
-                  ) : (
-                    <div className="absolute top-4 right-4 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg">
-                      Coming Soon
-                    </div>
-                  )}
                 </div>
 
                 {/* Content Section */}
@@ -596,7 +621,9 @@ function Programs() {
                   <div className="space-y-4 mb-8 flex-grow">
                     <div className="flex items-start gap-3 text-gray-600">
                       <Calendar className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
-                      <span className="font-medium">{new Date(program.eventdate).toLocaleDateString()}</span>
+                      <span className="font-medium">
+                        {new Date(program.eventdate).toLocaleDateString()}
+                      </span>
                     </div>
                     <div className="flex items-start gap-3 text-gray-600">
                       <MapPin className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
@@ -811,61 +838,26 @@ function Eligibility() {
 
 // Gallery
 
-const categories = [
-  "All",
-  "Programs",
-  "Meditation",
-  "Foundation Activities",
-  "Spiritual Gatherings",
-];
-
-const galleryImages = [
-  {
-    id: 1,
-    category: "Programs",
-    src: "https://scontent.fmaa2-4.fna.fbcdn.net/v/t39.30808-6/486718075_122198317136129648_5350356878139007208_n.jpg?stp=dst-jpg_tt6&cstp=mx1366x2048&ctp=s1366x2048&_nc_cat=105&ccb=1-7&_nc_sid=833d8c&_nc_ohc=w7hfLEAUgNwQ7kNvwFHB4FG&_nc_oc=Adr6Rzb8Nx4SCH9IGxb9t8_MMcSxjQdy-WjuPvLfgg84tsRBouIVSVb3aYeRSuYzc6aRYORDpRl6IhKLjSz_VfLv&_nc_zt=23&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=SuLbm6f_c_zizeMVCn_Dog&_nc_ss=7b2a8&oh=00_AQC_WgYl0sZuanJyujYT3sFs9x5EqcZRfB5azmWYQYglUg&oe=6A5E8C0A",
-    alt: "Program Session",
-  },
-  {
-    id: 2,
-    category: "Meditation",
-    src: "https://scontent.fmaa2-4.fna.fbcdn.net/v/t39.30808-6/487144762_122198317124129648_6170654583762633426_n.jpg?stp=dst-jpg_tt6&cstp=mx2048x1536&ctp=s2048x1536&_nc_cat=105&ccb=1-7&_nc_sid=833d8c&_nc_ohc=k-f9MkVDsAoQ7kNvwHaUDby&_nc_oc=AdqxEGUDPC1iLIsnZoDqZcEsomOBjQeOgDM_Pe2W2xOPG9WGZe3QQ8RSqac1lyqtbkgZRuuxsZweJVLhV1-XGN88&_nc_zt=23&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=PQGjp7eiF-T-cIV3uHGVrA&_nc_ss=7b2a8&oh=00_AQD9HJxUQpROeRKJ90P-G7mezb-9qkMiSrh8q90am1c86g&oe=6A5E6AFD",
-    alt: "Meditation Practice",
-  },
-  {
-    id: 3,
-    category: "Foundation Activities",
-    src: "https://scontent.fmaa2-4.fna.fbcdn.net/v/t39.30808-6/469692607_122181950810129648_2961953229839701786_n.jpg?stp=dst-jpg_tt6&cstp=mx1280x853&ctp=s1280x853&_nc_cat=105&ccb=1-7&_nc_sid=833d8c&_nc_ohc=dJeF9244EW0Q7kNvwH3PWPH&_nc_oc=AdrvBmHKGgLtvX_ClSdn6uISdh-EVleO-OQWrzusAczSaCjIL2bF38d2mZNv1hwG-21QrS5OrU31l5iEwaQ6OYs_&_nc_zt=23&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=nP4Tsn9zL25ZlENlmPXhrQ&_nc_ss=7b2a8&oh=00_AQCJff750pKJd4cwM_KeY9IBO1_S42VH2tvuyP5MlKduFQ&oe=6A5E8491",
-    alt: "Foundation Activity",
-  },
-  {
-    id: 4,
-    category: "Spiritual Gatherings",
-    src: "https://scontent.fmaa2-4.fna.fbcdn.net/v/t51.82787-15/731232742_18058841333778949_4401756343962784014_n.jpg?stp=dst-jpegr_tt6&cstp=mx1440x1419&ctp=s1440x1419&_nc_cat=110&ccb=1-7&_nc_sid=127cfc&_nc_ohc=P6C60Jy2cQ0Q7kNvwEzL6Vx&_nc_oc=AdoJvn7IOy_nDh4MY_FsCm2JUM2VMvCJcxeDBRTF7FV4dumAHcXJNXWcgW6lO6yMwR1ZQGWMOa7c5cU-AI9HtZJh&_nc_zt=23&se=-1&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=wuB7V5xi0Hw_SwfLFKFjgA&_nc_ss=7b2a8&oh=00_AQCV7jFOzbhqc0Szl9qgiMhUYjWK4BfLazdWobF5ry2rKg&oe=6A5C0570",
-    alt: "Gathering",
-  },
-  {
-    id: 5,
-    category: "Programs",
-    src: "https://scontent.fmaa2-3.fna.fbcdn.net/v/t51.82787-15/567970680_18025851623778949_2345957150328352155_n.webp?stp=dst-jpg_tt6&cstp=mx1440x810&ctp=s1440x810&_nc_cat=100&ccb=1-7&_nc_sid=127cfc&_nc_ohc=jDLFqYI08TIQ7kNvwF8JAkH&_nc_oc=AdoIHhQVZPF4Ufa8VG3l6QlsLCu4zUFiQYZLmkmnUqvSUkjSZ7odg7goLQziOaSF1w90p6g8bpWROUXUMIJPeIxs&_nc_zt=23&_nc_ht=scontent.fmaa2-3.fna&_nc_gid=reyFRjjkOZ40n89A-ptuyQ&_nc_ss=7b2a8&oh=00_AQDZf76V024ASOXGsik0wTMyt6G2uKGpKbRmyBtGv7PyYw&oe=6A5E7761",
-    alt: "Level II Program",
-  },
-  {
-    id: 6,
-    category: "Meditation",
-    src: "https://scontent.fmaa2-3.fna.fbcdn.net/v/t39.30808-6/486811595_122198317178129648_7700598055592410884_n.jpg?stp=dst-jpg_tt6&cstp=mx1366x2048&ctp=s1366x2048&_nc_cat=103&ccb=1-7&_nc_sid=833d8c&_nc_ohc=uHRgGVjaTYsQ7kNvwEsfhWh&_nc_oc=AdpgM8uc0iXSO6-tqRP9I2-v846rAQtvXnp6ygbh7_u0PdpZ5qQ19_hcHsRjZF0WpUEK_p81Nq3JIcLdV6D8MhvQ&_nc_zt=23&_nc_ht=scontent.fmaa2-3.fna&_nc_gid=saxax4DdERNIXW4Z7HUCVQ&_nc_ss=7b2a8&oh=00_AQDfhk0dzNtI2-6vO6qgh_bJVoYEe756l08e40tmftzfsg&oe=6A5E6BC0",
-    alt: "Peaceful Meditation",
-  },
-];
-
 function Gallery() {
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [images, setImages] = useState<GalleryModel[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  const filteredImages =
-    activeCategory === "All"
-      ? galleryImages
-      : galleryImages.filter((img) => img.category === activeCategory);
+  useEffect(() => {
+    const fetchGallery = async () => {
+      try {
+        const response = await getGallery(1, null);
+        if (response.success && response.data) {
+          const galleryArr = Array.isArray(response.data)
+            ? response.data
+            : response.data.images || response.data.gallery || [];
+          setImages(galleryArr.slice(0, 10));
+        }
+      } catch (error) {
+        console.error("Failed to load gallery", error);
+      }
+    };
+    fetchGallery();
+  }, []);
 
   return (
     <section id="gallery" className="py-24 bg-white border-t border-gray-100">
@@ -881,21 +873,6 @@ function Gallery() {
           </div>
 
           <div className="flex flex-col items-start md:items-end gap-4">
-            {/* Professional Minimalist Filters */}
-            <div className="flex flex-wrap gap-6 justify-start md:justify-end">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setActiveCategory(category)}
-                  className={`pb-2 text-sm font-semibold transition-all duration-300 border-b-2 ${activeCategory === category
-                      ? "border-brand-primary text-gray-900"
-                      : "border-transparent text-gray-400 hover:text-gray-900 hover:border-gray-300"
-                    }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
             <Link
               href="/gallery"
               className="text-brand-primary font-bold hover:text-brand-secondary transition-colors inline-flex items-center gap-1 text-sm uppercase tracking-wider group"
@@ -910,11 +887,9 @@ function Gallery() {
         </div>
 
         {/* Gallery Grid - Corporate Bento Box */}
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:auto-rows-[250px]"
-        >
+        <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:auto-rows-[250px]">
           <AnimatePresence>
-            {filteredImages.map((image, index) => {
+            {images.map((image, index) => {
               // Bento Box Grid Logic
               let spanClass =
                 "md:col-span-1 md:row-span-1 aspect-square md:aspect-auto"; // Default small square
@@ -934,11 +909,13 @@ function Gallery() {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.4 }}
                   className={`group relative overflow-hidden bg-gray-100 cursor-pointer shadow-sm rounded-xl hover:shadow-2xl hover:shadow-brand-primary/10 transition-all duration-500 ${spanClass}`}
-                  onClick={() => setSelectedImage(image.src)}
+                  onClick={() =>
+                    setSelectedImage(getImageVideoUrl(image.image))
+                  }
                 >
                   <img
-                    src={image.src}
-                    alt={image.alt}
+                    src={getImageVideoUrl(image.image)}
+                    alt={image.title}
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
 
@@ -947,10 +924,10 @@ function Gallery() {
                     <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500 flex justify-between items-end">
                       <div>
                         <p className="text-white font-bold text-xl tracking-tight">
-                          {image.alt}
+                          {image.title}
                         </p>
                         <p className="text-brand-primary text-xs font-bold uppercase tracking-wider mt-1.5">
-                          {image.category}
+                          {image.categoryname}
                         </p>
                       </div>
                       <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white border border-white/20 hover:bg-brand-primary hover:border-brand-primary transition-colors">
@@ -976,7 +953,7 @@ function Gallery() {
             onClick={() => setSelectedImage(null)}
           >
             <button
-              className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors bg-gray-800 p-3 rounded-full"
+              className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors bg-gray-800 p-3 rounded-full z-50"
               onClick={() => setSelectedImage(null)}
             >
               <X size={24} />
@@ -1004,31 +981,23 @@ function Gallery() {
 
 // Testimonials
 
-const testimonials = [
-  {
-    id: 1,
-    name: "Rajesh Kumar",
-    role: "Software Engineer",
-    text: "Shiva Kriya Yogam has completely transformed my approach to life and work. I've found an inner peace that allows me to handle stress with grace. The mental clarity I've gained is truly priceless.",
-    rating: 5,
-  },
-  {
-    id: 2,
-    name: "Priya Sharma",
-    role: "Entrepreneur",
-    text: "The teachings at Sri Kandhaguru Foundation are profound yet practical. They don't ask you to leave your worldly duties, but instead teach you how to perform them with a spiritual center. Highly recommended.",
-    rating: 5,
-  },
-  {
-    id: 3,
-    name: "Dr. Ananya Reddy",
-    role: "Physician",
-    text: "As a doctor, I was initially skeptical, but the physical and mental benefits of this practice are undeniable. It enhances immunity and brings a deep sense of balance to both body and mind.",
-    rating: 5,
-  },
-];
-
 function Testimonials() {
+  const [testimonials, setTestimonials] = useState<TestimonialModel[]>([]);
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const response = await getTestimonials();
+        if (response.success && response.data) {
+          setTestimonials(response.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch testimonials", error);
+      }
+    };
+    fetchTestimonials();
+  }, []);
+
   return (
     <section className="py-24 bg-white relative overflow-hidden">
       {/* Subtle Background Pattern */}
@@ -1065,7 +1034,7 @@ function Testimonials() {
               <Quote className="absolute top-8 right-8 w-10 h-10 text-gray-100 group-hover:text-brand-primary/10 transition-colors duration-300" />
 
               <div className="flex gap-1 mb-6">
-                {[...Array(testimonial.rating)].map((_, i) => (
+                {[...Array(Math.floor(testimonial.rating) || 5)].map((_, i) => (
                   <Star
                     key={i}
                     className="w-4 h-4 fill-amber-400 text-amber-400"
@@ -1074,7 +1043,7 @@ function Testimonials() {
               </div>
 
               <p className="text-gray-600 leading-relaxed mb-8 relative z-10 min-h-[120px] text-justify">
-                "{testimonial.text}"
+                "{testimonial.message}"
               </p>
 
               <div className="flex items-center gap-4 mt-auto pt-6 border-t border-gray-50">
@@ -1086,7 +1055,7 @@ function Testimonials() {
                     {testimonial.name}
                   </h4>
                   <p className="text-sm text-brand-secondary">
-                    {testimonial.role}
+                    Reviewer
                   </p>
                 </div>
               </div>
@@ -1099,56 +1068,23 @@ function Testimonials() {
 }
 
 // Videos
-const featuredVideos = [
-  {
-    id: 1,
-    title: "Introduction to Shiva Kriya Yogam",
-    description:
-      "Discover the ancient roots and profound benefits of this sacred meditative practice.",
-    thumbnail:
-      "https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&q=80&w=800",
-    duration: "12:45",
-    videoUrl: "https://www.youtube.com/embed/jfKfPfyJRdk",
-    category: "Foundation",
-    instructor: "Sri Guruji",
-    avatar:
-      "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=150",
-    date: "Oct 12, 2025",
-  },
-  {
-    id: 2,
-    title: "The Power of Deep Meditation",
-    description:
-      "Learn how to quiet your mind and connect with your inner divine consciousness.",
-    thumbnail:
-      "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&q=80&w=800",
-    duration: "08:30",
-    videoUrl: "https://www.youtube.com/embed/inpok4MKVLM",
-    category: "Meditation",
-    instructor: "Sri Guruji",
-    avatar:
-      "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=150",
-    date: "Nov 05, 2025",
-  },
-  {
-    id: 3,
-    title: "Understanding Sanatana Dharma",
-    description:
-      "Explore the eternal truths and universal principles guiding our spiritual journey.",
-    thumbnail:
-      "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
-    duration: "15:20",
-    videoUrl: "https://www.youtube.com/embed/86mCBZhnO-Y",
-    category: "Philosophy",
-    instructor: "Sri Guruji",
-    avatar:
-      "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=150",
-    date: "Dec 21, 2025",
-  },
-];
-
 function Videos() {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
+  const [videos, setVideos] = useState<VideoModel[]>([]);
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const response = await getVideos(1, null);
+        if (response.success && response.data && response.data.videos) {
+          setVideos(response.data.videos.slice(0, 10));
+        }
+      } catch (error) {
+        console.error("Failed to load videos", error);
+      }
+    };
+    fetchVideos();
+  }, []);
 
   return (
     <section className="py-20 relative overflow-hidden bg-[#FAFAF9]">
@@ -1183,7 +1119,7 @@ function Videos() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {featuredVideos.map((video, index) => (
+          {videos.map((video, index) => (
             <motion.div
               key={video.id}
               initial={{ opacity: 0, y: 30 }}
@@ -1191,16 +1127,17 @@ function Videos() {
               viewport={{ once: true, amount: 0.1 }}
               transition={{ delay: index * 0.1, duration: 0.6 }}
               className="group flex flex-col cursor-pointer bg-white/80 backdrop-blur-xl border border-white rounded-[0px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_-15px_rgba(217,119,6,0.2)] hover:-translate-y-2 transition-all duration-500 overflow-hidden"
-              onClick={() => setActiveVideo(video.videoUrl)}
+              onClick={() => setActiveVideo(getImageVideoUrl(video.video))}
             >
               {/* Thumbnail Section */}
-              <div className="relative aspect-[16/9] overflow-hidden">
-                <img
-                  src={video.thumbnail}
-                  alt={video.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
+              <div className="relative aspect-[16/9] overflow-hidden bg-gray-200">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:opacity-90 transition-opacity duration-300">
+                  <img
+                    src={getImageVideoUrl(video.thumbnail)}
+                    alt={video.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
 
                 {/* Play Button Overlay */}
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -1212,12 +1149,7 @@ function Videos() {
                 {/* Badges */}
                 <div className="absolute top-4 left-4">
                   <span className="bg-white/20 backdrop-blur-md text-white border border-white/30 text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm tracking-wide">
-                    {video.category}
-                  </span>
-                </div>
-                <div className="absolute bottom-4 right-4">
-                  <span className="bg-black/60 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm">
-                    <Play className="w-3 h-3" /> {video.duration}
+                    {video.categoryname}
                   </span>
                 </div>
               </div>
@@ -1236,17 +1168,9 @@ function Videos() {
                 <div>
                   <div className="flex items-center justify-between pt-5 border-t border-slate-100">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={video.avatar}
-                        alt={video.instructor}
-                        className="w-8 h-8 rounded-full object-cover border border-slate-200"
-                      />
                       <div className="flex flex-col">
-                        <span className="text-xs font-bold text-slate-900">
-                          {video.instructor}
-                        </span>
                         <span className="text-[10px] text-slate-400">
-                          {video.date}
+                          {new Date(video.createdAt).toLocaleDateString()}
                         </span>
                       </div>
                     </div>
@@ -1285,16 +1209,14 @@ function Videos() {
               className="relative max-w-3xl w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10"
               onClick={(e) => e.stopPropagation()}
             >
-              <iframe
+              <video
                 width="100%"
                 height="100%"
-                src={`${activeVideo}?autoplay=1`}
-                title="Video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
+                controls
+                autoPlay
+                src={activeVideo}
                 className="w-full h-full"
-              ></iframe>
+              ></video>
             </motion.div>
           </motion.div>
         )}

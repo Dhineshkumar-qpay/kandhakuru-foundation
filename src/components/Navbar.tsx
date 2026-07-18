@@ -23,9 +23,8 @@ export default function Navbar() {
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "About Us", href: "/about" },
-    { name: "Benefits", href: "/benefits" },
     { name: "Programs", href: "/programs" },
-    { name: "FAQ", href: "/faq" },
+    { name: "Benefits", href: "/benefits" },
     { name: "Contact Us", href: "/contact" },
   ];
 
@@ -45,13 +44,21 @@ export default function Navbar() {
       <div className="w-full px-4 md:px-8 flex justify-between items-center">
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-12 h-12 bg-white rounded-xl shadow-md border border-gray-100/50 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
-            <img src="/appLogo.png" alt="Sri Kandhaguru Foundation" className="w-10 h-10 object-contain" />
+            <img
+              src="/appLogo.png"
+              alt="Sri Kandhaguru Foundation"
+              className="w-10 h-10 object-contain"
+            />
           </div>
           <div className="flex flex-col">
-            <span className={`font-extrabold text-lg tracking-tight leading-none ${brandColor}`}>
+            <span
+              className={`font-extrabold text-lg tracking-tight leading-none ${brandColor}`}
+            >
               Sri Kandhaguru
             </span>
-            <span className={`text-[9px] font-bold uppercase tracking-[0.25em] mt-1 ${isScrolled || !isHomePage ? "text-gray-500" : "text-white/70"}`}>
+            <span
+              className={`text-[9px] font-bold uppercase tracking-[0.25em] mt-1 ${isScrolled || !isHomePage ? "text-gray-500" : "text-white/70"}`}
+            >
               Foundation
             </span>
           </div>

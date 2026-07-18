@@ -1,16 +1,53 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Eye, Target, Users } from "lucide-react";
+import { Eye, Target, Users, Send, Star } from "lucide-react";
+import { addTestimonial } from "../../services/api";
 
 export default function AboutPage() {
+  const [rating, setRating] = useState(5);
+  const [hoveredRating, setHoveredRating] = useState(0);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setSuccessMsg("");
+    try {
+      const res = await addTestimonial({ rating, name, email, message });
+      if (res.success) {
+        setSuccessMsg("Testimonial submitted successfully!");
+        setName("");
+        setEmail("");
+        setMessage("");
+        setRating(5);
+      } else {
+        alert(res.message || "Something went wrong.");
+      }
+    } catch (error) {
+      alert("Failed to submit testimonial");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="pt-10 bg-white">
       {/* Corporate Foundation Header */}
       <section className="pt-32 pb-20 relative overflow-hidden">
         {/* Hero Background Image */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&q=80&w=1920')" }}></div>
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: "url('about.jpeg')",
+            }}
+          ></div>
           <div className="absolute inset-0 bg-gray-900/70"></div>
         </div>
 
@@ -59,7 +96,7 @@ export default function AboutPage() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
+            viewport={{ once: true, margin: "-50px" }}
             className="bg-white rounded-3xl shadow-[0_20px_60px_rgb(0,0,0,0.05)] border border-gray-100 overflow-hidden flex flex-col lg:flex-row group"
           >
             {/* Image Side */}
@@ -76,7 +113,7 @@ export default function AboutPage() {
               <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 1 }}
-                viewport={{ once: true, margin: '-50px' }}
+                viewport={{ once: true, margin: "-50px" }}
                 transition={{ delay: 0.3 }}
                 className="absolute bottom-6 left-6 bg-white p-6 rounded-xl shadow-xl border border-gray-100 flex items-center gap-4"
               >
@@ -169,7 +206,7 @@ export default function AboutPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
+              viewport={{ once: true, margin: "-50px" }}
               className="flex-1 bg-gray-50 border-t-4 border-brand-primary p-10 lg:p-14 shadow-sm"
             >
               <div className="flex items-center gap-4 mb-8">
@@ -196,7 +233,7 @@ export default function AboutPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
+              viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: 0.1 }}
               className="flex-1 bg-gray-900 border-t-4 border-brand-accent p-10 lg:p-14 shadow-sm"
             >
@@ -228,66 +265,209 @@ export default function AboutPage() {
       <section className="py-24 bg-gray-50 border-t border-gray-100">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3">What We Do</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">How We Make a Difference</h3>
+            <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3">
+              What We Do
+            </h2>
+            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+              How We Make a Difference
+            </h3>
             <div className="w-16 h-1 bg-brand-primary/20 mx-auto mt-6 rounded-full"></div>
             <p className="text-gray-600 mt-6 text-lg font-light leading-relaxed">
-              Our multifaceted approach ensures that every aspect of human growth—spiritual, physical, mental, and social—is nurtured. Here is an in-depth look at the foundational pillars of our daily work.
+              Our multifaceted approach ensures that every aspect of human
+              growth—spiritual, physical, mental, and social—is nurtured. Here
+              is an in-depth look at the foundational pillars of our daily work.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
+              viewport={{ once: true, margin: "-50px" }}
               className="bg-white p-10 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:-translate-y-2 transition-transform duration-300"
             >
-              <h4 className="text-xl font-bold text-gray-900 mb-4">Spiritual Education & Retreats</h4>
+              <h4 className="text-xl font-bold text-gray-900 mb-4">
+                Spiritual Education & Retreats
+              </h4>
               <p className="text-gray-600 leading-relaxed font-light text-justify">
-                We conduct regular workshops, seminars, and intensive retreats focusing on the ancient science of Shiva Kriya Yogam. These programs are meticulously designed to teach advanced meditation techniques, dynamic breathwork (pranayama), and profound spiritual philosophy. Seekers of all levels are given personalized guidance to experience true inner silence and accelerated spiritual evolution.
-              </p>
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ delay: 0.1 }}
-              className="bg-white p-10 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:-translate-y-2 transition-transform duration-300"
-            >
-              <h4 className="text-xl font-bold text-gray-900 mb-4">Community Service & Charity</h4>
-              <p className="text-gray-600 leading-relaxed font-light text-justify">
-                Our foundation actively participates in massive humanitarian efforts. We organize widespread food distribution drives (Annadanam), set up free rural health camps, and provide vital educational support and scholarships for underprivileged children. We believe that translating spiritual values into compassionate, tangible action is the highest form of worship.
-              </p>
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ delay: 0.2 }}
-              className="bg-white p-10 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:-translate-y-2 transition-transform duration-300"
-            >
-              <h4 className="text-xl font-bold text-gray-900 mb-4">Holistic Wellness & Ayurveda</h4>
-              <p className="text-gray-600 leading-relaxed font-light text-justify">
-                Beyond spiritual teachings, we strongly emphasize the inseparable connection between the mind, body, and spirit. We offer comprehensive guidance on ancient Ayurvedic lifestyle practices, proper yogic diet (Sattvic food), and mindful daily living habits to help individuals achieve vibrant physical health, emotional stability, and unparalleled mental clarity.
+                We conduct regular workshops, seminars, and intensive retreats
+                focusing on the ancient science of Shiva Kriya Yogam. These
+                programs are meticulously designed to teach advanced meditation
+                techniques, dynamic breathwork (pranayama), and profound
+                spiritual philosophy. Seekers of all levels are given
+                personalized guidance to experience true inner silence and
+                accelerated spiritual evolution.
               </p>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: 0.1 }}
+              className="bg-white p-10 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:-translate-y-2 transition-transform duration-300"
+            >
+              <h4 className="text-xl font-bold text-gray-900 mb-4">
+                Community Service & Charity
+              </h4>
+              <p className="text-gray-600 leading-relaxed font-light text-justify">
+                Our foundation actively participates in massive humanitarian
+                efforts. We organize widespread food distribution drives
+                (Annadanam), set up free rural health camps, and provide vital
+                educational support and scholarships for underprivileged
+                children. We believe that translating spiritual values into
+                compassionate, tangible action is the highest form of worship.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: 0.2 }}
+              className="bg-white p-10 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:-translate-y-2 transition-transform duration-300"
+            >
+              <h4 className="text-xl font-bold text-gray-900 mb-4">
+                Holistic Wellness & Ayurveda
+              </h4>
+              <p className="text-gray-600 leading-relaxed font-light text-justify">
+                Beyond spiritual teachings, we strongly emphasize the
+                inseparable connection between the mind, body, and spirit. We
+                offer comprehensive guidance on ancient Ayurvedic lifestyle
+                practices, proper yogic diet (Sattvic food), and mindful daily
+                living habits to help individuals achieve vibrant physical
+                health, emotional stability, and unparalleled mental clarity.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: 0.3 }}
               className="bg-white p-10 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:-translate-y-2 transition-transform duration-300"
             >
-              <h4 className="text-xl font-bold text-gray-900 mb-4">Global Outreach & Online Programs</h4>
+              <h4 className="text-xl font-bold text-gray-900 mb-4">
+                Global Outreach & Online Programs
+              </h4>
               <p className="text-gray-600 leading-relaxed font-light text-justify">
-                To ensure that geographical boundaries do not limit spiritual growth, we have expanded our reach through interactive digital platforms. We host weekly global live-streamed guided meditations, extensive online courses, and one-on-one virtual mentoring sessions, allowing thousands of international seekers to easily stay connected and practice from their homes.
+                To ensure that geographical boundaries do not limit spiritual
+                growth, we have expanded our reach through interactive digital
+                platforms. We host weekly global live-streamed guided
+                meditations, extensive online courses, and one-on-one virtual
+                mentoring sessions, allowing thousands of international seekers
+                to easily stay connected and practice from their homes.
               </p>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* Testimonial Form Section */}
+      <section className="py-24 bg-white border-t border-gray-100">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3">
+              Share Your Experience
+            </h2>
+            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+              Submit a Testimonial
+            </h3>
+            <div className="w-16 h-1 bg-brand-primary/20 mx-auto mt-6 rounded-full"></div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            className="bg-white p-8 md:p-12 rounded-xl shadow-[0_10px_40px_rgb(0,0,0,0.1)] border border-gray-100"
+          >
+            {successMsg && (
+              <div className="mb-6 p-4 bg-green-50 text-green-700 rounded-lg border border-green-200">
+                {successMsg}
+              </div>
+            )}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Rating */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-3">
+                  Your Rating
+                </label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      type="button"
+                      key={star}
+                      onClick={() => setRating(star)}
+                      onMouseEnter={() => setHoveredRating(star)}
+                      onMouseLeave={() => setHoveredRating(0)}
+                      className="transition-transform hover:scale-110 focus:outline-none"
+                    >
+                      <Star
+                        className={`w-8 h-8 transition-colors ${
+                          star <= (hoveredRating || rating)
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "fill-transparent text-gray-300"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Enter your name"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-primary focus:border-transparent outline-none transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-primary focus:border-transparent outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  Your Message
+                </label>
+                <textarea
+                  rows={5}
+                  required
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Share your experience..."
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-primary focus:border-transparent outline-none transition-all resize-none"
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-brand-primary text-white font-bold py-4 px-8 rounded-[0px] shadow-lg hover:bg-brand-primary/90 hover:shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                <Send size={18} />
+                {loading ? "Submitting..." : "Submit Testimonial"}
+              </button>
+            </form>
+          </motion.div>
         </div>
       </section>
     </div>
