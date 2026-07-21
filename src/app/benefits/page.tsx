@@ -133,11 +133,11 @@ export default function BenefitsPage() {
   return (
     <div className="bg-white">
       {/* Hero Header */}
-      <section className="pt-32 pb-24 relative overflow-hidden">
+      <section className="pt-38 pb-24 relative overflow-hidden">
         {/* Hero Background Image */}
         <div className="absolute inset-0 z-0">
           <div
-            className="absolute inset-0 bg-contain bg-center"
+            className="absolute inset-0 bg-cover bg-center"
             style={{
               backgroundImage: "url('benefit.jpeg')",
             }}

@@ -32,7 +32,6 @@ export default function Footer() {
       </div>
 
       <div className="w-full px-4 md:px-8 max-w-7xl mx-auto relative z-10">
-
         {/* Main Footer Content */}
         <div className="bg-white/80 backdrop-blur-xl rounded-[1rem] p-8 md:p-12 border border-white/60 shadow-[0_8px_40px_rgb(0,0,0,0.04)] mb-12">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16">
@@ -99,14 +98,6 @@ export default function Footer() {
                     className="hover:text-amber-600 hover:translate-x-1 inline-block transition-all duration-300"
                   >
                     Gallery
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/faq"
-                    className="hover:text-amber-600 hover:translate-x-1 inline-block transition-all duration-300"
-                  >
-                    FAQ
                   </Link>
                 </li>
               </ul>
@@ -242,6 +233,13 @@ export default function Footer() {
               className="hover:text-amber-600 transition-colors"
             >
               Terms and Conditions
+            </Link>
+            <div className="w-1 h-1 bg-slate-300 rounded-full"></div>
+            <Link
+              href="/faq"
+              className="hover:text-amber-600 transition-colors"
+            >
+              FAQ
             </Link>
           </div>
         </div>

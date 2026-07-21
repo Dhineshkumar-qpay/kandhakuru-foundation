@@ -27,7 +27,7 @@ const api = axios.create({
 
 export const getEvents = async (page: number = 1) => {
   try {
-    const response = await api.post("/event/get", { page });
+    const response = await api.post("/event/get", { page, status: "active" });
     if (
       response.data.success &&
       response.data.data &&
@@ -122,7 +122,12 @@ export const getVideos = async (
   }
 };
 
-export const addTestimonial = async (data: { rating: number; name: string; email: string; message: string }) => {
+export const addTestimonial = async (data: {
+  rating: number;
+  name: string;
+  email: string;
+  message: string;
+}) => {
   try {
     const response = await api.post("/testimonial/add", data);
     return response.data;
@@ -134,9 +139,11 @@ export const addTestimonial = async (data: { rating: number; name: string; email
 
 export const getTestimonials = async () => {
   try {
-    const response = await api.post("/testimonial/get");
+    const response = await api.post("/testimonial/get",{status:"active"});
     if (response.data.success && response.data.data) {
-      response.data.data = response.data.data.map((t: any) => new TestimonialModel(t));
+      response.data.data = response.data.data.map(
+        (t: any) => new TestimonialModel(t),
+      );
     }
     return response.data;
   } catch (error) {
@@ -145,7 +152,13 @@ export const getTestimonials = async () => {
   }
 };
 
-export const addContactUs = async (data: { firstname: string; lastname: string; email: string; mobile: string; message: string }) => {
+export const addContactUs = async (data: {
+  firstname: string;
+  lastname: string;
+  email: string;
+  mobile: string;
+  message: string;
+}) => {
   try {
     const response = await api.post("/contactus/add", data);
     return response.data;
@@ -159,7 +172,9 @@ export const getBanners = async () => {
   try {
     const response = await api.post("/banner/get");
     if (response.data.success && response.data.data) {
-      response.data.data = response.data.data.map((b: any) => new BannerModel(b));
+      response.data.data = response.data.data.map(
+        (b: any) => new BannerModel(b),
+      );
     }
     return response.data;
   } catch (error) {

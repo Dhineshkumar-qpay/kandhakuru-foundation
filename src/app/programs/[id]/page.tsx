@@ -30,9 +30,14 @@ const formSchema = z.object({
   whatsapp: z
     .string()
     .min(10, { message: "Valid WhatsApp number is required" }),
+  gender: z.string().optional(),
   district: z.string().min(2, { message: "District is required" }),
   state: z.string().min(2, { message: "State is required" }),
   country: z.string().min(2, { message: "Country is required" }),
+  participants: z.string().min(1, { message: "Required" }),
+  adultcount: z.string().min(1, { message: "Required" }),
+  childrencount: z.string().min(1, { message: "Required" }),
+  remarks: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -54,25 +59,64 @@ export default function ProgramDetailsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  
 
   const {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
+    defaultValues: { participants: "1", adultcount: "1", childrencount: "0" }
   });
+
+  const participantsCount = watch("participants") || "1";
+  const amount = program ? Number(program.registrationfee) * Number(participantsCount) : 0;
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log(data);
+    try {
+      const payload = {
+        eventid: Number(id),
+        fullname: data.name,
+        phone: data.phone,
+        whatsapp: data.whatsapp,
+        email: data.email,
+        gender: data.gender || "Male",
+        age: Number(data.age),
+        city: data.district,
+        state: data.state,
+        participants: Number(data.participants),
+        adultcount: Number(data.adultcount),
+        childrencount: Number(data.childrencount),
+        amount: amount,
+        remarks: data.remarks || ""
+      };
+
+      const response = await fetch("http://localhost:3003/api/booking/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        setIsSuccess(true);
+        reset();
+        setTimeout(() => {
+          setIsSuccess(false);
+          setIsDialogOpen(false);
+        }, 3000);
+      } else {
+        console.error("Booking failed");
+      }
+    } catch (error) {
+      console.error(error);
+    }
     setIsSubmitting(false);
-    setIsSuccess(true);
-    reset();
-    setTimeout(() => setIsSuccess(false), 5000);
   };
 
   useEffect(() => {
@@ -217,8 +261,8 @@ export default function ProgramDetailsPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-md transition-shadow group">
-                  <Tag className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 transition-transform" />
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                  <Tag className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
                   <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
                     Category
                   </h4>
@@ -227,8 +271,8 @@ export default function ProgramDetailsPage() {
                   </p>
                 </div>
 
-                <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-md transition-shadow group">
-                  <CreditCard className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 transition-transform" />
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                  <CreditCard className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
                   <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
                     Registration
                   </h4>
@@ -237,8 +281,8 @@ export default function ProgramDetailsPage() {
                   </p>
                 </div>
 
-                <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-md transition-shadow group">
-                  <Users className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 transition-transform" />
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                  <Users className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
                   <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
                     Capacity
                   </h4>
@@ -287,7 +331,9 @@ export default function ProgramDetailsPage() {
               className="bg-white p-1 rounded-3xl shadow-2xl sticky top-28 bg-gradient-to-b from-amber-400 to-orange-500"
             >
               <div className="bg-white rounded-[22px] p-8 h-full">
-                {program.status === "active" ? (
+                {program.status === "active" && 
+                 program.eventtype?.toLowerCase() !== "completed" && 
+                 program.eventtype?.toLowerCase() !== "cancelled" ? (
                   <div className="bg-green-100 text-green-700 text-xs font-bold px-4 py-2 rounded-full uppercase tracking-wider text-center w-full mb-8 border border-green-200">
                     Registration is Active
                   </div>
@@ -354,10 +400,12 @@ export default function ProgramDetailsPage() {
                 </div>
 
                 <div className="pt-8 border-t border-gray-100">
-                  {program.status === "active" ? (
+                  {program.status === "active" && 
+                   program.eventtype?.toLowerCase() !== "completed" && 
+                   program.eventtype?.toLowerCase() !== "cancelled" ? (
                     <button
                       onClick={() => setIsDialogOpen(true)}
-                      className="relative flex items-center justify-center w-full py-5 font-bold text-white rounded-[0px] bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 transition-all shadow-[0_8px_25px_-8px_rgba(245,158,11,0.6)] hover:shadow-[0_12px_30px_-8px_rgba(245,158,11,0.8)] overflow-hidden group/btn cursor-pointer"
+                      className="relative flex items-center justify-center w-full py-3 font-bold text-white rounded-[0px] bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 transition-all shadow-[0_8px_25px_-8px_rgba(245,158,11,0.6)] hover:shadow-[0_12px_30px_-8px_rgba(245,158,11,0.8)] overflow-hidden group/btn cursor-pointer"
                     >
                       <span className="relative z-10 text-lg">
                         Register Now
@@ -369,7 +417,7 @@ export default function ProgramDetailsPage() {
                       disabled
                       className="block w-full py-5 text-center bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed text-lg"
                     >
-                      Currently Unavailable
+                      Completed
                     </button>
                   )}
 
@@ -396,7 +444,7 @@ export default function ProgramDetailsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/80 backdrop-blur-sm p-4 overflow-y-auto"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/80 backdrop-blur-md p-4 overflow-y-auto"
             onClick={() => setIsDialogOpen(false)}
           >
             <motion.div
@@ -413,11 +461,19 @@ export default function ProgramDetailsPage() {
                 <X size={20} />
               </button>
               
-              <div className="mb-6 border-b border-gray-100 pb-4">
-                <h4 className="text-xl font-bold text-gray-900 tracking-tight">
-                  Program Registration Application
-                </h4>
-                <p className="text-sm text-gray-500 mt-1">{program.title}</p>
+              <div className="mb-6 border-b border-gray-100 pb-4 flex justify-between items-start">
+                <div>
+                  <h4 className="text-xl font-bold text-gray-900 tracking-tight">
+                    Program Registration Application
+                  </h4>
+                  <p className="text-sm text-gray-500 mt-1">{program.title}</p>
+                </div>
+                {!isSuccess && (
+                  <div className="text-right mr-8">
+                    <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Amount</p>
+                    <p className="text-2xl font-bold text-amber-500">₹{amount}</p>
+                  </div>
+                )}
               </div>
 
               {isSuccess ? (
@@ -543,11 +599,62 @@ export default function ProgramDetailsPage() {
                     </div>
                   </div>
 
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+                        Participants <span className="text-brand-primary">*</span>
+                      </label>
+                      <input
+                        {...register("participants")}
+                        type="number"
+                        min="1"
+                        className={`w-full px-4 py-3 rounded-xl border ${errors.participants ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                      />
+                      {errors.participants && <p className="mt-1 text-xs text-red-500">{errors.participants.message}</p>}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+                        Adults <span className="text-brand-primary">*</span>
+                      </label>
+                      <input
+                        {...register("adultcount")}
+                        type="number"
+                        min="0"
+                        className={`w-full px-4 py-3 rounded-xl border ${errors.adultcount ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                      />
+                      {errors.adultcount && <p className="mt-1 text-xs text-red-500">{errors.adultcount.message}</p>}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+                        Children <span className="text-brand-primary">*</span>
+                      </label>
+                      <input
+                        {...register("childrencount")}
+                        type="number"
+                        min="0"
+                        className={`w-full px-4 py-3 rounded-xl border ${errors.childrencount ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                      />
+                      {errors.childrencount && <p className="mt-1 text-xs text-red-500">{errors.childrencount.message}</p>}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+                      Remarks
+                    </label>
+                    <textarea
+                      {...register("remarks")}
+                      rows={2}
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm resize-none"
+                      placeholder="Any additional remarks..."
+                    ></textarea>
+                  </div>
+
                   <div className="pt-4 mt-2 border-t border-gray-100 flex justify-end">
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                     className="group/btn relative flex w-full md:w-auto items-center justify-center overflow-hidden rounded-[0px] bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-5 font-bold text-white shadow-[0_8px_25px_-8px_rgba(245,158,11,0.6)] transition-all duration-300 hover:from-amber-600 hover:to-orange-600 hover:shadow-[0_12px_30px_-8px_rgba(245,158,11,0.8)] cursor-pointer"
+                     className="group/btn relative flex w-full md:w-auto items-center justify-center overflow-hidden rounded-[0px] bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-4 font-bold text-white shadow-[0_8px_25px_-8px_rgba(245,158,11,0.6)] transition-all duration-300 hover:from-amber-600 hover:to-orange-600 hover:shadow-[0_12px_30px_-8px_rgba(245,158,11,0.8)] cursor-pointer"
                     >
                       {isSubmitting ? (
                         <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>

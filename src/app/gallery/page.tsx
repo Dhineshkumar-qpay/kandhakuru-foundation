@@ -176,34 +176,45 @@ export default function GalleryPage() {
         </div>
       </section>
 
-      {/* Professional Lightbox */}
+      {/* Cinematic Lightbox */}
       <AnimatePresence>
         {selectedImage && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-gray-900/95 backdrop-blur-md flex items-center justify-center p-4 md:p-12"
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-2xl flex items-center justify-center p-4 md:p-12"
             onClick={() => setSelectedImage(null)}
           >
-            <button
-              className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors bg-gray-800 p-3 rounded-full hover:bg-brand-primary z-50"
+            <motion.button
+              initial={{ opacity: 0, y: -20, rotate: 90 }}
+              animate={{ opacity: 1, y: 0, rotate: 0 }}
+              exit={{ opacity: 0, y: -20, rotate: -90 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              className="absolute top-6 right-6 md:top-10 md:right-10 text-white/50 hover:text-white transition-colors bg-white/10 hover:bg-brand-primary p-4 rounded-full z-50 backdrop-blur-md border border-white/10"
               onClick={() => setSelectedImage(null)}
             >
-              <X size={24} />
-            </button>
+              <X size={28} />
+            </motion.button>
+
             <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              initial={{ scale: 0.8, opacity: 0, y: 40 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              transition={{ duration: 0.3 }}
-              className="relative max-w-6xl w-full h-full flex items-center justify-center"
+              exit={{ scale: 1.1, opacity: 0, y: -40 }}
+              transition={{
+                type: "spring",
+                damping: 25,
+                stiffness: 300,
+                mass: 0.8
+              }}
+              className="relative max-w-7xl w-full h-full flex items-center justify-center perspective-[1000px]"
               onClick={(e) => e.stopPropagation()}
             >
               <img
                 src={selectedImage}
                 alt="Enlarged gallery image"
-                className="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl border border-gray-800/50"
+                className="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.8)] border border-white/20 ring-1 ring-black/50"
               />
             </motion.div>
           </motion.div>

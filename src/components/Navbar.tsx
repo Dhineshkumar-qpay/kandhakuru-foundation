@@ -82,7 +82,7 @@ export default function Navbar() {
             href="/contact"
             className="bg-brand-primary text-white px-6 py-2 rounded-[0rem] font-medium hover:bg-brand-primary/90 transition-all hover:scale-105 shadow-lg shadow-brand-primary/30"
           >
-            Join Program
+            Join Us
           </Link>
         </div>
 
@@ -117,7 +117,7 @@ export default function Navbar() {
             className="bg-brand-primary text-white text-center px-6 py-3 rounded-full font-medium mt-2"
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            Join Program
+            Join Us
           </Link>
         </motion.div>
       )}
