@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import {
   getEvents,
   getGallery,
@@ -41,6 +43,7 @@ import {
   Heart,
   Play,
   Video,
+  ShoppingCart,
 } from "lucide-react";
 
 export default function Home() {
@@ -52,6 +55,7 @@ export default function Home() {
       <RoleOfReligions />
       <Programs />
       <Eligibility />
+      <BookShopPreview />
       <Gallery />
       <Videos />
       <Testimonials />
@@ -320,7 +324,7 @@ function SpiritualPhilosophy() {
       <div
         className="absolute inset-0 bg-cover bg-fixed bg-center opacity-70 z-0 pointer-events-none"
         style={{
-          backgroundImage: "url('spiritual.jpeg')",
+          backgroundImage: "url('https://t3.ftcdn.net/jpg/07/16/46/44/360_F_716464441_DvxUkPchxMPozb2zAFof1DHEze2dxKHG.jpg')",
         }}
       ></div>
 
@@ -732,10 +736,7 @@ function Eligibility() {
 
               <ul className="space-y-8 relative z-10">
                 {requirements.map((req, i) => (
-                  <li
-                    key={i}
-                    className="flex items-center gap-6 group/item"
-                  >
+                  <li key={i} className="flex items-center gap-6 group/item">
                     <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 shadow-[inset_0_2px_10px_rgba(0,0,0,0.04)] group-hover/item:scale-110 group-hover/item:bg-amber-100 transition-all duration-300">
                       {req.icon}
                     </div>
@@ -870,7 +871,7 @@ function Gallery() {
         </div>
 
         {/* Gallery Grid - Corporate Bento Box */}
-        <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:auto-rows-[250px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:auto-rows-[250px]">
           <AnimatePresence>
             {images.map((image, index) => {
               // Bento Box Grid Logic
@@ -885,12 +886,8 @@ function Gallery() {
                   "md:col-span-2 md:row-span-1 aspect-[2/1] md:aspect-auto"; // Wide
 
               return (
-                <motion.div
+                <div
                   key={image.id}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.4 }}
                   className={`group relative overflow-hidden bg-gray-100 cursor-pointer shadow-sm rounded-xl hover:shadow-2xl hover:shadow-brand-primary/10 transition-all duration-500 ${spanClass}`}
                   onClick={() =>
                     setSelectedImage(getImageVideoUrl(image.image))
@@ -918,11 +915,11 @@ function Gallery() {
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </AnimatePresence>
-        </motion.div>
+        </div>
       </div>
 
       {/* Professional Lightbox */}
@@ -1202,6 +1199,107 @@ function Videos() {
           </motion.div>
         )}
       </AnimatePresence>
+    </section>
+  );
+}
+
+// Book Shop Preview
+function BookShopPreview() {
+  const { isLoggedIn, openLogin } = useAuth();
+  const router = useRouter();
+  
+  const books = [
+    {
+      title: "ஸ்ரீ மகாவதார் பாபாஜியின் சிவ கிரியா யோகம்",
+      language: "Tamil",
+      price: "₹399",
+      image:
+        "https://rukminim2.flixcart.com/image/1280/1280/xif0q/book/o/m/5/shree-mahavatar-babaji-s-shiva-kriya-yogam-original-imahfgekkfqtpwyq.jpeg?q=90",
+      link: "/shop",
+    },
+    {
+      title: "SHREE MAHAVATAR BABAJI’S SHIVA KRIYA YOGAM",
+      language: "English",
+      price: "₹399",
+      image:
+        "https://rukminim2.flixcart.com/image/1280/1280/xif0q/book/d/3/z/shree-mahavatar-babaji-s-shiva-kriya-yogam-original-imahfgc8pyk2phjw.jpeg?q=90",
+      link: "/shop",
+    },
+  ];
+
+  return (
+    <section className="py-20 bg-white border-t border-gray-200">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
+          <div className="max-w-2xl">
+            <span className="text-brand-primary font-bold uppercase tracking-widest text-xs mb-3 block border-l-2 border-brand-primary pl-2">
+              Official Publications
+            </span>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
+              Spiritual Wisdom in Print
+            </h2>
+          </div>
+          <div className="mt-4 md:mt-0">
+            <Link
+              href="/shop"
+              className="inline-flex items-center gap-2 text-sm font-bold text-brand-primary hover:text-brand-secondary transition-colors"
+            >
+              View Full Store <ArrowRight size={16} />
+            </Link>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8 mb-12">
+          {books.map((book, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: idx * 0.2 }}
+              className="bg-white border border-gray-200 rounded-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col sm:flex-row group"
+            >
+              <div className="w-full sm:w-2/5 bg-gray-50 relative border-b sm:border-b-0 sm:border-r border-gray-100 p-4 flex items-center justify-center">
+                <img
+                  src={book.image}
+                  alt={book.title}
+                  className="w-full max-h-64 object-contain transform group-hover:scale-105 transition-transform duration-500 shadow-sm"
+                />
+              </div>
+              <div className="p-6 flex flex-col flex-1 justify-between">
+                <div>
+                  <div className="inline-block bg-gray-100 text-gray-600 px-2.5 py-1 rounded-sm text-[10px] font-bold uppercase tracking-widest mb-4">
+                    {book.language} Edition
+                  </div>
+                  <h3
+                    className={`font-bold text-gray-900 leading-tight mb-4 ${book.language === "Tamil" ? "text-xl" : "text-lg"}`}
+                  >
+                    {book.title}
+                  </h3>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
+                  <span className="text-2xl font-extrabold text-brand-primary">
+                    {book.price}
+                  </span>
+                  <button
+                    onClick={() => {
+                      if (!isLoggedIn) {
+                        openLogin();
+                      } else {
+                        router.push(book.link);
+                      }
+                    }}
+                    className="flex items-center gap-2 bg-brand-primary text-white font-bold py-2 px-6 rounded-[0px] hover:bg-brand-primary transition-colors text-sm"
+                  >
+                    <ShoppingCart size={16} /> Buy Now
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }

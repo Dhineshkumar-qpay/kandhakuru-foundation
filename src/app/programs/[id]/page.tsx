@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import {
   Calendar,
   MapPin,
@@ -14,13 +15,14 @@ import {
   CreditCard,
   X,
   Send,
+  ClipboardList,
+  Info,
 } from "lucide-react";
 import { getEventDetails, getImageVideoUrl } from "../../../services/api";
 import { EventDetailData } from "../../../models/event_model";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AnimatePresence } from "framer-motion";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -54,12 +56,13 @@ const getMapEmbedUrl = (link: string) => {
 export default function ProgramDetailsPage() {
   const params = useParams();
   const id = params.id as string;
+  const { isLoggedIn, openLogin } = useAuth();
   const [program, setProgram] = useState<EventDetailData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  
+
 
   const {
     register,
@@ -167,10 +170,12 @@ export default function ProgramDetailsPage() {
   }
 
   return (
-    <main className="bg-[#FAFAF9] min-h-screen pt-20 pb-24 relative overflow-hidden">
+    <main className="bg-[#FAFAF9] min-h-screen pt-20 pb-24 relative">
       {/* Background Decorative Elements */}
-      <div className="absolute top-0 right-0 w-[40vw] h-[40vw] bg-amber-200/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-orange-200/20 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-[40vw] h-[40vw] bg-amber-200/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-orange-200/20 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2"></div>
+      </div>
 
       {/* Hero Section */}
       <div className="w-full h-[55vh] md:h-[65vh] relative overflow-hidden">
@@ -293,6 +298,61 @@ export default function ProgramDetailsPage() {
               </div>
             </motion.div>
 
+            {program.ajanta && program.ajanta.schedule && program.ajanta.schedule.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.52 }}
+                className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white"
+              >
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
+                  <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
+                    <ClipboardList className="text-amber-500 w-8 h-8" />
+                    Event Schedule
+                  </h3>
+                </div>
+
+                <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-amber-200 before:to-transparent">
+                  {program.ajanta.schedule.map((item: any, idx: number) => (
+                    <div key={idx} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-amber-100 text-amber-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300">
+                        <Clock size={16} />
+                      </div>
+                      <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white p-4 rounded-xl border border-gray-100 shadow-sm group-hover:shadow-md group-hover:-translate-y-1 transition-all duration-300">
+                        <div className="flex flex-col gap-1">
+                          <span className="text-sm font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded w-fit">{item.starttime} - {item.endtime}</span>
+                          <h4 className="font-semibold text-gray-900">{item.title}</h4>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {program.instructions && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.54 }}
+                className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white"
+              >
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
+                  <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
+                    <Info className="text-amber-500 w-8 h-8" />
+                    Instructions
+                  </h3>
+                </div>
+                <div className="bg-amber-50/50 border border-amber-100/50 p-6 rounded-2xl">
+                  <p className="text-gray-700 leading-relaxed font-medium">
+                    {program.instructions}
+                  </p>
+                </div>
+              </motion.div>
+            )}
+
             {program.maplink && (
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
@@ -331,9 +391,10 @@ export default function ProgramDetailsPage() {
               className="bg-white p-1 rounded-3xl shadow-2xl sticky top-28 bg-gradient-to-b from-amber-400 to-orange-500"
             >
               <div className="bg-white rounded-[22px] p-8 h-full">
-                {program.status === "active" && 
-                 program.eventtype?.toLowerCase() !== "completed" && 
-                 program.eventtype?.toLowerCase() !== "cancelled" ? (
+                {program.status === "active" &&
+                  program.eventtype?.toLowerCase() !== "completed" &&
+                  program.eventtype?.toLowerCase() !== "cancelled" &&
+                  program.registrationactive ? (
                   <div className="bg-green-100 text-green-700 text-xs font-bold px-4 py-2 rounded-full uppercase tracking-wider text-center w-full mb-8 border border-green-200">
                     Registration is Active
                   </div>
@@ -400,11 +461,18 @@ export default function ProgramDetailsPage() {
                 </div>
 
                 <div className="pt-8 border-t border-gray-100">
-                  {program.status === "active" && 
-                   program.eventtype?.toLowerCase() !== "completed" && 
-                   program.eventtype?.toLowerCase() !== "cancelled" ? (
+                  {program.status === "active" &&
+                    program.eventtype?.toLowerCase() !== "completed" &&
+                    program.eventtype?.toLowerCase() !== "cancelled" &&
+                    program.registrationactive ? (
                     <button
-                      onClick={() => setIsDialogOpen(true)}
+                      onClick={() => {
+                        if (!isLoggedIn) {
+                          openLogin();
+                        } else {
+                          setIsDialogOpen(true);
+                        }
+                      }}
                       className="relative flex items-center justify-center w-full py-3 font-bold text-white rounded-[0px] bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 transition-all shadow-[0_8px_25px_-8px_rgba(245,158,11,0.6)] hover:shadow-[0_12px_30px_-8px_rgba(245,158,11,0.8)] overflow-hidden group/btn cursor-pointer"
                     >
                       <span className="relative z-10 text-lg">
@@ -417,7 +485,7 @@ export default function ProgramDetailsPage() {
                       disabled
                       className="block w-full py-5 text-center bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed text-lg"
                     >
-                      Completed
+                      Registration Closed
                     </button>
                   )}
 
@@ -460,7 +528,7 @@ export default function ProgramDetailsPage() {
               >
                 <X size={20} />
               </button>
-              
+
               <div className="mb-6 border-b border-gray-100 pb-4 flex justify-between items-start">
                 <div>
                   <h4 className="text-xl font-bold text-gray-900 tracking-tight">
@@ -654,7 +722,7 @@ export default function ProgramDetailsPage() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                     className="group/btn relative flex w-full md:w-auto items-center justify-center overflow-hidden rounded-[0px] bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-4 font-bold text-white shadow-[0_8px_25px_-8px_rgba(245,158,11,0.6)] transition-all duration-300 hover:from-amber-600 hover:to-orange-600 hover:shadow-[0_12px_30px_-8px_rgba(245,158,11,0.8)] cursor-pointer"
+                      className="group/btn relative flex w-full md:w-auto items-center justify-center overflow-hidden rounded-[0px] bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-4 font-bold text-white shadow-[0_8px_25px_-8px_rgba(245,158,11,0.6)] transition-all duration-300 hover:from-amber-600 hover:to-orange-600 hover:shadow-[0_12px_30px_-8px_rgba(245,158,11,0.8)] cursor-pointer"
                     >
                       {isSubmitting ? (
                         <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>

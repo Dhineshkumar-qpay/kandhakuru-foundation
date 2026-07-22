@@ -41,6 +41,9 @@ export class EventDetailData {
   eventtype: string;
   status: string;
   userid: number;
+  ajanta: any;
+  instructions: string;
+  registrationactive: boolean;
 
   constructor(data: any) {
     this.id = data.id;
@@ -61,5 +64,8 @@ export class EventDetailData {
     this.eventtype = data.eventtype;
     this.status = data.status;
     this.userid = data.userid;
+    this.ajanta = data.ajanta;
+    this.instructions = data.instructions;
+    this.registrationactive = data.registrationactive;
   }
 }
