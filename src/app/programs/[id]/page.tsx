@@ -286,24 +286,36 @@ export default function ProgramDetailsPage() {
                   </p>
                 </div>
 
-                <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
-                  <Users className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
-                  <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
-                    Capacity
-                  </h4>
-                  <p className="text-lg font-semibold text-gray-900">
-                    {program.partcipants} Max
-                  </p>
-                </div>
+                {program.participants !== null && program.participants !== undefined ? (
+                  <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                    <Users className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
+                    <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
+                      Capacity
+                    </h4>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {program.participants} Max
+                    </p>
+                  </div>
+                ) : (
+                  <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+                    <Info className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
+                    <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
+                      Program Type
+                    </h4>
+                    <p className="text-lg font-semibold text-gray-900 capitalize">
+                      {program.programtype || "General"}
+                    </p>
+                  </div>
+                )}
               </div>
             </motion.div>
 
-            {program.ajanta && program.ajanta.schedule && program.ajanta.schedule.length > 0 && (
+            {program.agenda && program.agenda.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.52 }}
-                className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white"
+                className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white mt-8"
               >
                 <div className="flex items-center gap-4 mb-8">
                   <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
@@ -314,7 +326,7 @@ export default function ProgramDetailsPage() {
                 </div>
 
                 <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-amber-200 before:to-transparent">
-                  {program.ajanta.schedule.map((item: any, idx: number) => (
+                  {program.agenda.map((item: any, idx: number) => (
                     <div key={idx} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
                       <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-amber-100 text-amber-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300">
                         <Clock size={16} />
@@ -350,6 +362,48 @@ export default function ProgramDetailsPage() {
                     {program.instructions}
                   </p>
                 </div>
+              </motion.div>
+            )}
+
+            {program.benefits && program.benefits.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.53 }}
+                className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white mt-8"
+              >
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
+                  <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
+                    Benefits
+                  </h3>
+                </div>
+                <ul className="list-disc pl-6 space-y-2 text-gray-700 leading-relaxed font-medium">
+                  {program.benefits.map((b, i) => (
+                    <li key={i}>{b}</li>
+                  ))}
+                </ul>
+              </motion.div>
+            )}
+
+            {program.thingstobring && program.thingstobring.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.54 }}
+                className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white mt-8"
+              >
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
+                  <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
+                    Things To Bring
+                  </h3>
+                </div>
+                <ul className="list-disc pl-6 space-y-2 text-gray-700 leading-relaxed font-medium">
+                  {program.thingstobring.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
               </motion.div>
             )}
 
@@ -395,69 +449,134 @@ export default function ProgramDetailsPage() {
                   program.eventtype?.toLowerCase() !== "completed" &&
                   program.eventtype?.toLowerCase() !== "cancelled" &&
                   program.registrationactive ? (
-                  <div className="bg-green-100 text-green-700 text-xs font-bold px-4 py-2 rounded-full uppercase tracking-wider text-center w-full mb-8 border border-green-200">
-                    Registration is Active
+                  <div className="flex justify-center mb-8">
+                    <div className="bg-green-100 text-green-700 text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider text-center border border-green-200 shadow-sm">
+                      Registration is Active
+                    </div>
                   </div>
                 ) : (
-                  <div className="bg-gray-100 text-gray-500 text-xs font-bold px-4 py-2 rounded-full uppercase tracking-wider text-center w-full mb-8 border border-gray-200">
-                    Registration Closed
+                  <div className="flex justify-center mb-8">
+                    <div className="bg-gray-100 text-gray-500 text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider text-center border border-gray-200 shadow-sm">
+                      Registration Closed
+                    </div>
                   </div>
                 )}
 
                 <div className="space-y-8 mb-10">
-                  <div className="flex gap-5 group">
-                    <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
-                      <Calendar size={22} />
+                  {program.eventdate && (
+                    <div className="flex gap-5 group">
+                      <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
+                        <Calendar size={22} />
+                      </div>
+                      <div>
+                        <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+                          Date
+                        </h5>
+                        <p className="font-semibold text-gray-900">
+                          {new Date(program.eventdate).toLocaleDateString(
+                            undefined,
+                            {
+                              weekday: "short",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            },
+                          )}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
-                        Date
-                      </h5>
-                      <p className="font-semibold text-gray-900">
-                        {new Date(program.eventdate).toLocaleDateString(
-                          undefined,
-                          {
-                            weekday: "short",
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          },
+                  )}
+
+                  {(program.starttime || program.endtime || program.duration) && (
+                    <div className="flex gap-5 group">
+                      <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
+                        <Clock size={22} />
+                      </div>
+                      <div>
+                        <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+                          {program.starttime ? "Time" : "Duration"}
+                        </h5>
+                        {program.starttime && (
+                          <p className="font-semibold text-gray-900">
+                            {program.starttime} - {program.endtime}
+                          </p>
                         )}
-                      </p>
+                        {program.duration && (
+                          <p className="font-medium text-gray-600 text-sm mt-0.5">
+                            {program.starttime ? `Duration: ${program.duration}` : program.duration}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
-                  <div className="flex gap-5 group">
-                    <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
-                      <Clock size={22} />
+                  {program.venuename || program.address ? (
+                    <div className="flex gap-5 group">
+                      <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
+                        <MapPin size={22} />
+                      </div>
+                      <div>
+                        <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+                          Location
+                        </h5>
+                        <p className="font-medium text-gray-600 leading-relaxed text-sm">
+                          {program.venuename && (
+                            <span className="font-bold text-gray-900 block mb-0.5 text-base">
+                              {program.venuename}
+                            </span>
+                          )}
+                          {program.address && <>{program.address},<br /></>}
+                          {program.city && <>{program.city}, {program.state}</>}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
-                        Time
-                      </h5>
-                      <p className="font-semibold text-gray-900">
-                        {program.starttime} - {program.endtime}
-                      </p>
+                  ) : (
+                    <div className="flex gap-5 group">
+                      <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
+                        <MapPin size={22} />
+                      </div>
+                      <div>
+                        <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+                          Location
+                        </h5>
+                        <p className="font-bold text-gray-900 block mb-0.5 text-base">
+                          Online Event
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
-                  <div className="flex gap-5 group">
-                    <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
-                      <MapPin size={22} />
+                  {program.eligibility && (
+                    <div className="flex gap-5 group">
+                      <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
+                        <Users size={22} />
+                      </div>
+                      <div>
+                        <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+                          Eligibility
+                        </h5>
+                        <p className="font-medium text-gray-600 leading-relaxed text-sm">
+                          {program.eligibility}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
-                        Location
-                      </h5>
-                      <p className="font-medium text-gray-600 leading-relaxed text-sm">
-                        <span className="font-bold text-gray-900 block mb-0.5 text-base">
-                          {program.venuename}
-                        </span>
-                        {program.address},<br />
-                        {program.city}, {program.state}
-                      </p>
+                  )}
+
+                  {program.dresscode && (
+                    <div className="flex gap-5 group">
+                      <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
+                        <Tag size={22} />
+                      </div>
+                      <div>
+                        <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+                          Dress Code
+                        </h5>
+                        <p className="font-medium text-gray-600 leading-relaxed text-sm">
+                          {program.dresscode}
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 <div className="pt-8 border-t border-gray-100">

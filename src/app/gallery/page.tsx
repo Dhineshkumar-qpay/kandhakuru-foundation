@@ -80,11 +80,10 @@ export default function GalleryPage() {
           <div className="flex flex-wrap gap-3 md:gap-4 justify-center mb-12">
             <button
               onClick={() => setActiveCategory(null)}
-              className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 shadow-sm ${
-                activeCategory === null
-                  ? "bg-brand-primary text-white shadow-md shadow-brand-primary/30 scale-105"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900 hover:shadow-md"
-              }`}
+              className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 shadow-sm ${activeCategory === null
+                ? "bg-brand-primary text-white shadow-md shadow-brand-primary/30 scale-105"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900 hover:shadow-md"
+                }`}
             >
               All
             </button>
@@ -92,11 +91,10 @@ export default function GalleryPage() {
               <button
                 key={category.categoryid}
                 onClick={() => setActiveCategory(category.categoryid)}
-                className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 shadow-sm ${
-                  activeCategory === category.categoryid
-                    ? "bg-brand-primary text-white shadow-md shadow-brand-primary/30 scale-105"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900 hover:shadow-md"
-                }`}
+                className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 shadow-sm ${activeCategory === category.categoryid
+                  ? "bg-brand-primary text-white shadow-md shadow-brand-primary/30 scale-105"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900 hover:shadow-md"
+                  }`}
               >
                 {category.categoryname}
               </button>
@@ -118,11 +116,11 @@ export default function GalleryPage() {
               ))
             ) : (
               <>
-              {images.map((image, index) => (
-                <div
-                  key={image.id}
-                  className="group relative overflow-hidden bg-black rounded-xl cursor-pointer shadow-sm hover:shadow-xl transition-all duration-500"
-                  onClick={() =>
+                {images.map((image, index) => (
+                  <div
+                    key={image.id}
+                    className="group relative overflow-hidden bg-black rounded-xl cursor-pointer shadow-sm hover:shadow-xl transition-all duration-500"
+                    onClick={() =>
                       setSelectedImage(getImageVideoUrl(image.image))
                     }
                   >
@@ -146,7 +144,7 @@ export default function GalleryPage() {
                       </div>
                     </div>
                   </div>
-              ))}
+                ))}
               </>
             )}
           </div>

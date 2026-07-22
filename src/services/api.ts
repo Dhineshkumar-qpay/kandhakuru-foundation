@@ -7,6 +7,7 @@ import {
   BannerModel,
 } from "../models/image_video_model";
 import { TestimonialModel } from "../models/contact_model";
+import { VerifyOtpResponse } from "../models/user_model";
 
 export const IMAGEBASEURL = "http://localhost:3003";
 
@@ -25,9 +26,11 @@ const api = axios.create({
   },
 });
 
-export const getEvents = async (page: number = 1) => {
+export const getEvents = async (page: number = 1, deliverymode?: string) => {
   try {
-    const response = await api.post("/event/get", { page, status: "active" });
+    const payload: any = { page, status: "active" };
+    if (deliverymode) payload.deliverymode = deliverymode;
+    const response = await api.post("/event/get", payload);
     if (
       response.data.success &&
       response.data.data &&
@@ -179,6 +182,29 @@ export const getBanners = async () => {
     return response.data;
   } catch (error) {
     console.error("Error fetching banners:", error);
+    throw error;
+  }
+};
+
+export const requestLogin = async (data: { username: string; email: string }) => {
+  try {
+    const response = await api.post("/user/login", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error logging in:", error);
+    throw error;
+  }
+};
+
+export const verifyOtpApi = async (data: { email: string; otp: string }) => {
+  try {
+    const response = await api.post("/user/verify-otp", data);
+    if (response.data.success && response.data.data) {
+      response.data.data = new VerifyOtpResponse(response.data.data);
+    }
+    return response.data;
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
     throw error;
   }
 };

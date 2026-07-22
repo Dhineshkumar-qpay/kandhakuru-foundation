@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { requestLogin, verifyOtpApi } from "../services/api";
 import {
   X,
   User,
@@ -42,21 +43,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = () => setIsLoggedIn(true);
   const logout = () => setIsLoggedIn(false);
 
-  const handleRequestOtp = (e: React.FormEvent) => {
+  const handleRequestOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (username && email) {
-      setStep("otp");
+      try {
+        const response = await requestLogin({ username, email });
+        if (response.success) {
+          setStep("otp");
+        } else {
+          alert(response.message || "Login failed");
+        }
+      } catch (error) {
+        console.error("Login request error", error);
+        alert("An error occurred. Please try again.");
+      }
     }
   };
 
-  const handleVerifyOtp = (e: React.FormEvent) => {
+  const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (otp.join("").length === 6) {
-      setStep("success");
-      setTimeout(() => {
-        setIsLoggedIn(true);
-        closeLogin();
-      }, 1500);
+    const otpValue = otp.join("");
+    if (otpValue.length === 6) {
+      try {
+        const response = await verifyOtpApi({ email, otp: otpValue });
+        if (response.success && response.data) {
+          localStorage.setItem("userToken", response.data.token);
+          localStorage.setItem("userId", response.data.userid.toString());
+          
+          setStep("success");
+          setTimeout(() => {
+            setIsLoggedIn(true);
+            closeLogin();
+          }, 1500);
+        } else {
+          alert(response.message || "Invalid OTP");
+        }
+      } catch (error) {
+        console.error("Verify OTP error", error);
+        alert("An error occurred verifying OTP.");
+      }
     }
   };
 

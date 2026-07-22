@@ -28,22 +28,31 @@ export class EventDetailData {
   title: string;
   description: string;
   category: string;
-  eventdate: string;
-  starttime: string;
-  endtime: string;
-  partcipants: number;
+  programtype: string;
+  deliverymode: string;
+  eventdate: string | null;
+  starttime: string | null;
+  endtime: string | null;
+  duration: string | null;
+  benefits: string[] | null;
+  agenda: { starttime: string; endtime: string; title: string }[] | null;
+  instructions: string;
+  eligibility: string;
+  dresscode: string;
+  thingstobring: string[] | null;
+  participants: number | null;
+  partcipants?: number | null;
   registrationfee: string;
-  venuename: string;
-  address: string;
-  city: string;
-  state: string;
-  maplink: string;
+  registrationlastdate: string | null;
+  registrationactive: boolean;
+  venuename: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  maplink: string | null;
   eventtype: string;
   status: string;
   userid: number;
-  ajanta: any;
-  instructions: string;
-  registrationactive: boolean;
 
   constructor(data: any) {
     this.id = data.id;
@@ -51,11 +60,23 @@ export class EventDetailData {
     this.title = data.title;
     this.description = data.description;
     this.category = data.category;
+    this.programtype = data.programtype;
+    this.deliverymode = data.deliverymode;
     this.eventdate = data.eventdate;
     this.starttime = data.starttime;
     this.endtime = data.endtime;
+    this.duration = data.duration;
+    this.benefits = data.benefits;
+    this.agenda = data.agenda || data.ajanta?.schedule || data.ajanta;
+    this.instructions = data.instructions;
+    this.eligibility = data.eligibility;
+    this.dresscode = data.dresscode;
+    this.thingstobring = data.thingstobring;
+    this.participants = data.participants;
     this.partcipants = data.partcipants;
     this.registrationfee = data.registrationfee;
+    this.registrationlastdate = data.registrationlastdate;
+    this.registrationactive = data.registrationactive;
     this.venuename = data.venuename;
     this.address = data.address;
     this.city = data.city;
@@ -64,8 +85,5 @@ export class EventDetailData {
     this.eventtype = data.eventtype;
     this.status = data.status;
     this.userid = data.userid;
-    this.ajanta = data.ajanta;
-    this.instructions = data.instructions;
-    this.registrationactive = data.registrationactive;
   }
 }
