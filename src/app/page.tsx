@@ -12,7 +12,9 @@ import {
   getVideos,
   getTestimonials,
   getBanners,
+  getProducts,
 } from "../services/api";
+import { ProductModel } from "../models/product_model";
 import { EventModel } from "../models/event_model";
 import {
   GalleryModel,
@@ -546,7 +548,7 @@ function Programs() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await getEvents(1,"offline");
+        const response = await getEvents("offline");
         if (response.success && response.data?.events) {
           setEvents(response.data.events.slice(0, 6));
         }
@@ -1209,24 +1211,21 @@ function BookShopPreview() {
   const { isLoggedIn, openLogin } = useAuth();
   const router = useRouter();
 
-  const books = [
-    {
-      title: "ஸ்ரீ மகாவதார் பாபாஜியின் சிவ கிரியா யோகம்",
-      language: "Tamil",
-      price: "₹399",
-      image:
-        "https://rukminim2.flixcart.com/image/1280/1280/xif0q/book/o/m/5/shree-mahavatar-babaji-s-shiva-kriya-yogam-original-imahfgekkfqtpwyq.jpeg?q=90",
-      link: "/shop",
-    },
-    {
-      title: "SHREE MAHAVATAR BABAJI’S SHIVA KRIYA YOGAM",
-      language: "English",
-      price: "₹399",
-      image:
-        "https://rukminim2.flixcart.com/image/1280/1280/xif0q/book/d/3/z/shree-mahavatar-babaji-s-shiva-kriya-yogam-original-imahfgc8pyk2phjw.jpeg?q=90",
-      link: "/shop",
-    },
-  ];
+  const [books, setBooks] = useState<ProductModel[]>([]);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const response = await getProducts("book");
+        if (response.success && response.data) {
+          setBooks(response.data.slice(0, 2));
+        }
+      } catch (error) {
+        console.error("Failed to fetch books:", error);
+      }
+    };
+    fetchBooks();
+  }, []);
 
   return (
     <section className="py-20 bg-white border-t border-gray-200">
@@ -1260,35 +1259,46 @@ function BookShopPreview() {
               transition={{ duration: 0.5, delay: idx * 0.2 }}
               className="bg-white border border-gray-200 rounded-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col sm:flex-row group"
             >
-              <div className="w-full sm:w-2/5 bg-gray-50 relative border-b sm:border-b-0 sm:border-r border-gray-100 p-4 flex items-center justify-center">
+                <div className="w-full sm:w-2/5 bg-gray-50 relative border-b sm:border-b-0 sm:border-r border-gray-100 p-4 flex items-center justify-center">
                 <img
-                  src={book.image}
-                  alt={book.title}
+                  src={getImageVideoUrl(book.image)}
+                  alt={book.productname}
                   className="w-full max-h-64 object-contain transform group-hover:scale-105 transition-transform duration-500 shadow-sm"
                 />
               </div>
               <div className="p-6 flex flex-col flex-1 justify-between">
                 <div>
-                  <div className="inline-block bg-gray-100 text-gray-600 px-2.5 py-1 rounded-sm text-[10px] font-bold uppercase tracking-widest mb-4">
-                    {book.language} Edition
-                  </div>
-                  <h3
-                    className={`font-bold text-gray-900 leading-tight mb-4 ${book.language === "Tamil" ? "text-xl" : "text-lg"}`}
-                  >
-                    {book.title}
+                  <h3 className="font-bold text-gray-900 leading-tight mb-2 text-lg line-clamp-2">
+                    {book.productname}
                   </h3>
+                  <p className="text-sm text-gray-600 line-clamp-3">
+                    {book.description}
+                  </p>
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
-                  <span className="text-2xl font-extrabold text-brand-primary">
-                    {book.price}
-                  </span>
+                  <div className="flex flex-col">
+                    {book.sellingprice && book.sellingprice > 0 ? (
+                      <>
+                        <span className="text-sm text-gray-500 line-through">
+                          ₹{book.price}
+                        </span>
+                        <span className="text-2xl font-extrabold text-brand-primary">
+                          ₹{book.sellingprice}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-2xl font-extrabold text-brand-primary">
+                        ₹{book.price}
+                      </span>
+                    )}
+                  </div>
                   <button
                     onClick={() => {
                       if (!isLoggedIn) {
                         openLogin();
                       } else {
-                        router.push(book.link);
+                        router.push(`/shop/${book.id}`);
                       }
                     }}
                     className="flex items-center gap-2 bg-brand-primary text-white font-bold py-2 px-6 rounded-[0px] hover:bg-brand-primary transition-colors text-sm"

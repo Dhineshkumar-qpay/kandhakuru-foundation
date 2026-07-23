@@ -15,6 +15,7 @@
   --color-brand-primary: #E67E22;
   --color-brand-secondary: #2E7D32;
   --color-brand-accent: #D4AF37;
+  --color-blue: #4A90E2;
 }
 
 @media (prefers-color-scheme: dark) {

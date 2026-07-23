@@ -8,6 +8,8 @@ import {
 } from "../models/image_video_model";
 import { TestimonialModel } from "../models/contact_model";
 import { VerifyOtpResponse } from "../models/user_model";
+import { ProductModel } from "../models/product_model";
+import { json } from "zod";
 
 export const IMAGEBASEURL = "http://localhost:3003";
 
@@ -26,10 +28,14 @@ const api = axios.create({
   },
 });
 
-export const getEvents = async (page: number = 1, deliverymode?: string) => {
+export const getEvents = async (
+  deliverymode?: string,
+  leveltype?: string,
+) => {
   try {
-    const payload: any = { page, status: "active" };
+    const payload: any = { status: "active" };
     if (deliverymode) payload.deliverymode = deliverymode;
+    if (leveltype) payload.leveltype = leveltype;
     const response = await api.post("/event/get", payload);
     if (
       response.data.success &&
@@ -142,7 +148,7 @@ export const addTestimonial = async (data: {
 
 export const getTestimonials = async () => {
   try {
-    const response = await api.post("/testimonial/get",{status:"active"});
+    const response = await api.post("/testimonial/get", { status: "active" });
     if (response.data.success && response.data.data) {
       response.data.data = response.data.data.map(
         (t: any) => new TestimonialModel(t),
@@ -186,7 +192,10 @@ export const getBanners = async () => {
   }
 };
 
-export const requestLogin = async (data: { username: string; email: string }) => {
+export const requestLogin = async (data: {
+  username: string;
+  email: string;
+}) => {
   try {
     const response = await api.post("/user/login", data);
     return response.data;
@@ -205,6 +214,40 @@ export const verifyOtpApi = async (data: { email: string; otp: string }) => {
     return response.data;
   } catch (error) {
     console.error("Error verifying OTP:", error);
+    throw error;
+  }
+};
+
+export const getProducts = async (category: string = "") => {
+  try {
+    const response = await api.post("/product/get", { category });
+    if (response.data.success && response.data.data) {
+      response.data.data = response.data.data.map(
+        (p: any) => new ProductModel(p),
+      );
+    }
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
+};
+
+export const addBooking = async (data: any) => {
+  try {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("userToken") : "";
+    console.log(JSON.stringify(data));
+
+    const response = await api.post("/booking/add", data, {
+      headers: {
+        Authorization: token ? `${token}` : "",
+        token: token || "",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error booking event:", error);
     throw error;
   }
 };

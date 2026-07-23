@@ -9,68 +9,37 @@ import {
   Truck,
   Clock,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { getProducts, getImageVideoUrl } from "../../services/api";
+import { ProductModel } from "../../models/product_model";
+import { useRouter } from "next/navigation";
 
-// Mock products
-const products = [
-  {
-    id: 1,
-    category: "Accessories",
-    name: "Sacred Rudraksha Mala",
-    description:
-      "Authentic 108-bead mala sourced from the Himalayas for deep meditation.",
-    price: "₹1,250",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNWoUiegATGhSrgZnE1R-eL0WLZP6DZel61izeIJh5coDYYcQngyMml1gh&s=10",
-    rating: 5.0,
-    tag: "Bestseller",
-  },
-  {
-    id: 2,
-    category: "Education",
-    name: "Kriya Yoga Foundation Course",
-    description:
-      "Comprehensive guide to beginning your spiritual journey and mastering breath.",
-    price: "₹800",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkre000Yae7UTBpdgfjUtJX05f-L3FOrmZGIOG5XMXLX_t7me4ELWbnJE&s=10",
-    rating: 4.9,
-  },
-  {
-    id: 3,
-    category: "Wellness",
-    name: "Pure Sandalwood Incense",
-    description:
-      "Hand-rolled natural incense sticks to purify your meditation space.",
-    price: "₹450",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1CPRbrfFXv2shsD6s1TSeXnenSXa5DqqXfUzAYG9xW1vK-ZUdoy6lm-lR&s=10",
-    rating: 4.8,
-  },
-  {
-    id: 4,
-    category: "Accessories",
-    name: "Copper Meditation Vessel",
-    description: "Traditional copper water vessel etched with sacred geometry.",
-    price: "₹1,500",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjZpX2JEXvAxhvWBwgTvQtb8q2F6mrGaV0EogDNbI3w014VbRTd5X4VHw&s=10",
-    rating: 4.9,
-    tag: "New Arrival",
-  },
-];
-
-const categories = ["All Products", "Education", "Accessories", "Wellness"];
+const categories = ["All Products", "spiritual", "accessories", "book"];
 
 export default function ShopPage() {
   const { isLoggedIn, openLogin } = useAuth();
   const [activeCategory, setActiveCategory] = useState("All Products");
+  const [products, setProducts] = useState<ProductModel[]>([]);
+  const router = useRouter();
 
-  const filteredProducts =
-    activeCategory === "All Products"
-      ? products
-      : products.filter((p) => p.category === activeCategory);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const categoryParam =
+          activeCategory === "All Products" ? "" : activeCategory;
+        const response = await getProducts(categoryParam);
+        if (response.success && response.data) {
+          setProducts(response.data);
+        } else {
+          setProducts([]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      }
+    };
+    fetchProducts();
+  }, [activeCategory]);
 
   return (
     <div className="bg-gray-50 min-h-screen pt-0  text-[var(--foreground)]">
@@ -145,7 +114,7 @@ export default function ShopPage() {
                   <li key={category}>
                     <button
                       onClick={() => setActiveCategory(category)}
-                      className={`w-full text-left px-4 py-2.5 rounded-sm text-sm font-medium transition-colors ${
+                      className={`w-full text-left px-4 py-2.5 rounded-sm text-sm font-medium transition-colors capitalize ${
                         activeCategory === category
                           ? "bg-brand-primary/10 text-brand-primary border-l-2 border-brand-primary"
                           : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-l-2 border-transparent"
@@ -162,16 +131,16 @@ export default function ShopPage() {
           {/* Products Grid */}
           <div className="flex-1">
             <div className="flex justify-between items-center mb-8 pb-4 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold text-gray-900 capitalize">
                 {activeCategory}
               </h2>
               <span className="text-sm font-medium text-gray-500">
-                {filteredProducts.length} Results
+                {products.length} Results
               </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProducts.map((product, index) => (
+              {products.map((product, index) => (
                 <motion.div
                   key={product.id}
                   layout
@@ -181,14 +150,9 @@ export default function ShopPage() {
                   className="bg-white group border border-gray-200 rounded-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col"
                 >
                   <div className="relative h-64 bg-gray-100 overflow-hidden">
-                    {product.tag && (
-                      <div className="absolute top-3 right-3 z-10 bg-brand-secondary text-white text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-sm shadow-sm">
-                        {product.tag}
-                      </div>
-                    )}
                     <img
-                      src={product.image}
-                      alt={product.name}
+                      src={getImageVideoUrl(product.image)}
+                      alt={product.productname}
                       className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
@@ -198,33 +162,39 @@ export default function ShopPage() {
                       <span className="text-xs font-semibold text-brand-primary uppercase tracking-wider">
                         {product.category}
                       </span>
-                      <div className="flex items-center gap-1">
-                        <Star className="w-3.5 h-3.5 fill-brand-accent text-brand-accent" />
-                        <span className="text-xs font-bold text-gray-600">
-                          {product.rating}
-                        </span>
-                      </div>
                     </div>
 
-                    <h3 className="text-lg font-bold text-gray-900 mb-2 leading-tight">
-                      {product.name}
+                    <h3 className="text-lg font-bold text-gray-900 mb-2 leading-tight line-clamp-2">
+                      {product.productname}
                     </h3>
 
-                    <p className="text-sm text-gray-600 font-normal mb-6 flex-grow line-clamp-2">
+                    <p className="text-sm text-gray-600 font-normal mb-6 flex-grow line-clamp-3">
                       {product.description}
                     </p>
 
                     <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
-                      <span className="text-xl font-extrabold text-gray-900">
-                        {product.price}
-                      </span>
-                      <button 
+                      <div className="flex flex-col">
+                        {product.sellingprice && product.sellingprice > 0 ? (
+                          <>
+                            <span className="text-sm text-gray-500 line-through">
+                              ₹{product.price}
+                            </span>
+                            <span className="text-xl font-extrabold text-gray-900">
+                              ₹{product.sellingprice}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-xl font-extrabold text-gray-900">
+                            ₹{product.price}
+                          </span>
+                        )}
+                      </div>
+                      <button
                         onClick={() => {
                           if (!isLoggedIn) {
                             openLogin();
                           } else {
-                            // User is logged in, proceed to purchase
-                            alert("Proceeding to checkout...");
+                            router.push(`/shop/${product.id}`);
                           }
                         }}
                         className="flex items-center gap-2 text-sm font-bold text-brand-primary hover:text-brand-secondary transition-colors group-hover:gap-3"

@@ -26,6 +26,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  React.useEffect(() => {
+    const token = localStorage.getItem("userToken");
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   // Login form state
   const [step, setStep] = useState<"details" | "otp" | "success">("details");
   const [username, setUsername] = useState("");
@@ -41,7 +48,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
   const closeLogin = () => setIsSidebarOpen(false);
   const login = () => setIsLoggedIn(true);
-  const logout = () => setIsLoggedIn(false);
+  const logout = () => {
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("userId");
+    setIsLoggedIn(false);
+  };
 
   const handleRequestOtp = async (e: React.FormEvent) => {
     e.preventDefault();

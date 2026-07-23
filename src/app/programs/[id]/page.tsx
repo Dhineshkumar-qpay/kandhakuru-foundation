@@ -18,9 +18,14 @@ import {
   ClipboardList,
   Info,
 } from "lucide-react";
-import { getEventDetails, getImageVideoUrl } from "../../../services/api";
+import {
+  getEventDetails,
+  getImageVideoUrl,
+  addBooking,
+} from "../../../services/api";
 import { EventDetailData } from "../../../models/event_model";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
+import type { Resolver } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -33,6 +38,7 @@ const formSchema = z.object({
     .string()
     .min(10, { message: "Valid WhatsApp number is required" }),
   gender: z.string().optional(),
+  occupation: z.string().optional(),
   district: z.string().min(2, { message: "District is required" }),
   state: z.string().min(2, { message: "State is required" }),
   country: z.string().min(2, { message: "Country is required" }),
@@ -40,6 +46,17 @@ const formSchema = z.object({
   adultcount: z.string().min(1, { message: "Required" }),
   childrencount: z.string().min(1, { message: "Required" }),
   remarks: z.string().optional(),
+  ishealthissue: z.boolean().default(false),
+  healthissues: z
+    .array(
+      z.object({
+        name: z.string().optional(),
+        issue: z.string().optional(),
+      }),
+    )
+    .optional(),
+  bookingdate: z.string().optional(),
+  bookingtime: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -62,23 +79,46 @@ export default function ProgramDetailsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
     watch,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: { participants: "1", adultcount: "1", childrencount: "0" }
+    resolver: zodResolver(formSchema) as Resolver<FormValues>,
+    defaultValues: {
+      participants: "1",
+      adultcount: "1",
+      childrencount: "0",
+      ishealthissue: false,
+      healthissues: [{ name: "", issue: "" }],
+    },
   });
 
-  const participantsCount = watch("participants") || "1";
-  const amount = program ? Number(program.registrationfee) * Number(participantsCount) : 0;
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "healthissues",
+  });
+
+  const isHealthIssue = watch("ishealthissue");
+  const isOnline = program?.deliverymode?.toLowerCase() === "online";
+  const participantsCount = isOnline ? "1" : watch("participants") || "1";
+  const amount = program
+    ? Number(program.registrationfee) * Number(participantsCount)
+    : 0;
 
   const onSubmit = async (data: FormValues) => {
+    if (isOnline && (!data.bookingdate || !data.bookingtime)) {
+      setToastMessage(
+        "Booking date and time are required for online programs.",
+      );
+      setTimeout(() => setToastMessage(null), 3000);
+      return;
+    }
     setIsSubmitting(true);
     try {
       const payload = {
@@ -87,26 +127,27 @@ export default function ProgramDetailsPage() {
         phone: data.phone,
         whatsapp: data.whatsapp,
         email: data.email,
+        occupation: data.occupation || "",
         gender: data.gender || "Male",
         age: Number(data.age),
         city: data.district,
         state: data.state,
-        participants: Number(data.participants),
-        adultcount: Number(data.adultcount),
-        childrencount: Number(data.childrencount),
-        amount: amount,
-        remarks: data.remarks || ""
+        country: data.country,
+        ishealthissue: data.ishealthissue,
+        healthissues: data.ishealthissue ? data.healthissues : null,
+        deliverymode: program?.deliverymode || "offline",
+        participants: isOnline ? 1 : Number(data.participants),
+        adultcount: isOnline ? 1 : Number(data.adultcount),
+        childrencount: isOnline ? 0 : Number(data.childrencount),
+        totalamount: amount,
+        remarks: data.remarks || "",
+        bookingdate: isOnline ? data.bookingdate : null,
+        bookingtime: isOnline ? data.bookingtime : null,
       };
 
-      const response = await fetch("http://localhost:3003/api/booking/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const response = await addBooking(payload);
 
-      if (response.ok) {
+      if (response.success) {
         setIsSuccess(true);
         reset();
         setTimeout(() => {
@@ -114,7 +155,9 @@ export default function ProgramDetailsPage() {
           setIsDialogOpen(false);
         }, 3000);
       } else {
-        console.error("Booking failed");
+        console.error("Booking failed:", response.message);
+        setToastMessage(response.message || "Booking failed");
+        setTimeout(() => setToastMessage(null), 3000);
       }
     } catch (error) {
       console.error(error);
@@ -236,7 +279,7 @@ export default function ProgramDetailsPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative overflow-hidden"
+              className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative overflow-hidden"
             >
               <div className="absolute top-0 right-0 w-32 h-32 bg-amber-100/50 rounded-bl-full -z-10 blur-2xl"></div>
 
@@ -256,7 +299,7 @@ export default function ProgramDetailsPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white"
+              className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white"
             >
               <div className="flex items-center gap-4 mb-8">
                 <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
@@ -286,7 +329,8 @@ export default function ProgramDetailsPage() {
                   </p>
                 </div>
 
-                {program.participants !== null && program.participants !== undefined ? (
+                {program.participants !== null &&
+                program.participants !== undefined ? (
                   <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
                     <Users className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
                     <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
@@ -315,7 +359,7 @@ export default function ProgramDetailsPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.52 }}
-                className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white mt-8"
+                className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white mt-8"
               >
                 <div className="flex items-center gap-4 mb-8">
                   <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
@@ -327,14 +371,21 @@ export default function ProgramDetailsPage() {
 
                 <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-amber-200 before:to-transparent">
                   {program.agenda.map((item: any, idx: number) => (
-                    <div key={idx} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div
+                      key={idx}
+                      className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active"
+                    >
                       <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-amber-100 text-amber-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300">
                         <Clock size={16} />
                       </div>
                       <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white p-4 rounded-xl border border-gray-100 shadow-sm group-hover:shadow-md group-hover:-translate-y-1 transition-all duration-300">
                         <div className="flex flex-col gap-1">
-                          <span className="text-sm font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded w-fit">{item.starttime} - {item.endtime}</span>
-                          <h4 className="font-semibold text-gray-900">{item.title}</h4>
+                          <span className="text-sm font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded w-fit">
+                            {item.starttime} - {item.endtime}
+                          </span>
+                          <h4 className="font-semibold text-gray-900">
+                            {item.title}
+                          </h4>
                         </div>
                       </div>
                     </div>
@@ -348,7 +399,7 @@ export default function ProgramDetailsPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.54 }}
-                className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white"
+                className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white"
               >
                 <div className="flex items-center gap-4 mb-6">
                   <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
@@ -370,7 +421,7 @@ export default function ProgramDetailsPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.53 }}
-                className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white mt-8"
+                className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white mt-8"
               >
                 <div className="flex items-center gap-4 mb-6">
                   <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
@@ -391,7 +442,7 @@ export default function ProgramDetailsPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.54 }}
-                className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white mt-8"
+                className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white mt-8"
               >
                 <div className="flex items-center gap-4 mb-6">
                   <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
@@ -412,7 +463,7 @@ export default function ProgramDetailsPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.55 }}
-                className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white mt-8"
+                className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white mt-8"
               >
                 <div className="flex items-center gap-4 mb-8">
                   <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
@@ -442,13 +493,13 @@ export default function ProgramDetailsPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="bg-white p-1 rounded-3xl shadow-2xl sticky top-28 bg-gradient-to-b from-amber-400 to-orange-500"
+              className="bg-white p-1 rounded-xl shadow-2xl sticky top-28 bg-gradient-to-b from-amber-400 to-orange-500"
             >
-              <div className="bg-white rounded-[22px] p-8 h-full">
+              <div className="bg-white rounded-[10px] p-8 h-full">
                 {program.status === "active" &&
-                  program.eventtype?.toLowerCase() !== "completed" &&
-                  program.eventtype?.toLowerCase() !== "cancelled" &&
-                  program.registrationactive ? (
+                program.eventtype?.toLowerCase() !== "completed" &&
+                program.eventtype?.toLowerCase() !== "cancelled" &&
+                program.registrationactive ? (
                   <div className="flex justify-center mb-8">
                     <div className="bg-green-100 text-green-700 text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider text-center border border-green-200 shadow-sm">
                       Registration is Active
@@ -463,31 +514,50 @@ export default function ProgramDetailsPage() {
                 )}
 
                 <div className="space-y-8 mb-10">
-                  {program.eventdate && (
-                    <div className="flex gap-5 group">
-                      <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
-                        <Calendar size={22} />
-                      </div>
+                  <div className="flex gap-5 group">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
+                      <Calendar size={22} />
+                    </div>
+
+                    <div>
+                      <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+                        {program.leveltype === "level2" ? "From Date" : "Date"}
+                      </h5>
+                      <p className="font-semibold text-gray-900">
+                        {new Date(program.eventdate ?? "").toLocaleDateString(
+                          undefined,
+                          {
+                            weekday: "short",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          },
+                        )}
+                      </p>
+                    </div>
+
+                    {program.leveltype === "level2" && (
                       <div>
                         <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
-                          Date
+                          To Date
                         </h5>
                         <p className="font-semibold text-gray-900">
-                          {new Date(program.eventdate).toLocaleDateString(
-                            undefined,
-                            {
-                              weekday: "short",
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            },
-                          )}
+                          {new Date(
+                            program.eventtodate ?? "",
+                          ).toLocaleDateString(undefined, {
+                            weekday: "short",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
                         </p>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
 
-                  {(program.starttime || program.endtime || program.duration) && (
+                  {(program.starttime ||
+                    program.endtime ||
+                    program.duration) && (
                     <div className="flex gap-5 group">
                       <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
                         <Clock size={22} />
@@ -503,7 +573,9 @@ export default function ProgramDetailsPage() {
                         )}
                         {program.duration && (
                           <p className="font-medium text-gray-600 text-sm mt-0.5">
-                            {program.starttime ? `Duration: ${program.duration}` : program.duration}
+                            {program.starttime
+                              ? `Duration: ${program.duration}`
+                              : program.duration}
                           </p>
                         )}
                       </div>
@@ -525,8 +597,16 @@ export default function ProgramDetailsPage() {
                               {program.venuename}
                             </span>
                           )}
-                          {program.address && <>{program.address},<br /></>}
-                          {program.city && <>{program.city}, {program.state}</>}
+                          {program.address && (
+                            <>
+                              {program.address},<br />
+                            </>
+                          )}
+                          {program.city && (
+                            <>
+                              {program.city}, {program.state}
+                            </>
+                          )}
                         </p>
                       </div>
                     </div>
@@ -581,9 +661,9 @@ export default function ProgramDetailsPage() {
 
                 <div className="pt-8 border-t border-gray-100">
                   {program.status === "active" &&
-                    program.eventtype?.toLowerCase() !== "completed" &&
-                    program.eventtype?.toLowerCase() !== "cancelled" &&
-                    program.registrationactive ? (
+                  program.eventtype?.toLowerCase() !== "completed" &&
+                  program.eventtype?.toLowerCase() !== "cancelled" &&
+                  program.registrationactive ? (
                     <button
                       onClick={() => {
                         if (!isLoggedIn) {
@@ -657,8 +737,12 @@ export default function ProgramDetailsPage() {
                 </div>
                 {!isSuccess && (
                   <div className="text-right mr-8">
-                    <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">Amount</p>
-                    <p className="text-2xl font-bold text-amber-500">₹{amount}</p>
+                    <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">
+                      Amount
+                    </p>
+                    <p className="text-2xl font-bold text-amber-500">
+                      ₹{amount}
+                    </p>
                   </div>
                 )}
               </div>
@@ -672,8 +756,8 @@ export default function ProgramDetailsPage() {
                     Registration Submitted
                   </h5>
                   <p className="text-gray-600 font-light max-w-md">
-                    Your registration has been securely logged in our system.
-                    A foundation representative will contact you shortly.
+                    Your registration has been securely logged in our system. A
+                    foundation representative will contact you shortly.
                   </p>
                 </div>
               ) : (
@@ -689,7 +773,11 @@ export default function ProgramDetailsPage() {
                         className={`w-full px-4 py-3 rounded-xl border ${errors.name ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
                         placeholder="Enter your full name"
                       />
-                      {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>}
+                      {errors.name && (
+                        <p className="mt-1 text-xs text-red-500">
+                          {errors.name.message}
+                        </p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
@@ -701,14 +789,19 @@ export default function ProgramDetailsPage() {
                         className={`w-full px-4 py-3 rounded-xl border ${errors.age ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
                         placeholder="Enter your age"
                       />
-                      {errors.age && <p className="mt-1 text-xs text-red-500">{errors.age.message}</p>}
+                      {errors.age && (
+                        <p className="mt-1 text-xs text-red-500">
+                          {errors.age.message}
+                        </p>
+                      )}
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                        Phone Number <span className="text-brand-primary">*</span>
+                        Phone Number{" "}
+                        <span className="text-brand-primary">*</span>
                       </label>
                       <input
                         {...register("phone")}
@@ -716,11 +809,16 @@ export default function ProgramDetailsPage() {
                         className={`w-full px-4 py-3 rounded-xl border ${errors.phone ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
                         placeholder="Enter phone number"
                       />
-                      {errors.phone && <p className="mt-1 text-xs text-red-500">{errors.phone.message}</p>}
+                      {errors.phone && (
+                        <p className="mt-1 text-xs text-red-500">
+                          {errors.phone.message}
+                        </p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                        WhatsApp Number <span className="text-brand-primary">*</span>
+                        WhatsApp Number{" "}
+                        <span className="text-brand-primary">*</span>
                       </label>
                       <input
                         {...register("whatsapp")}
@@ -728,14 +826,46 @@ export default function ProgramDetailsPage() {
                         className={`w-full px-4 py-3 rounded-xl border ${errors.whatsapp ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
                         placeholder="Enter WhatsApp number"
                       />
-                      {errors.whatsapp && <p className="mt-1 text-xs text-red-500">{errors.whatsapp.message}</p>}
+                      {errors.whatsapp && (
+                        <p className="mt-1 text-xs text-red-500">
+                          {errors.whatsapp.message}
+                        </p>
+                      )}
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                        Email Address <span className="text-brand-primary">*</span>
+                        Gender
+                      </label>
+                      <select
+                        {...register("gender")}
+                        className={`w-full px-4 py-3 rounded-xl border ${errors.gender ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                      >
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+                        Occupation
+                      </label>
+                      <input
+                        {...register("occupation")}
+                        type="text"
+                        className={`w-full px-4 py-3 rounded-xl border ${errors.occupation ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                        placeholder="Enter your occupation"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+                        Email Address{" "}
+                        <span className="text-brand-primary">*</span>
                       </label>
                       <input
                         {...register("email")}
@@ -743,7 +873,11 @@ export default function ProgramDetailsPage() {
                         className={`w-full px-4 py-3 rounded-xl border ${errors.email ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
                         placeholder="Enter email address"
                       />
-                      {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
+                      {errors.email && (
+                        <p className="mt-1 text-xs text-red-500">
+                          {errors.email.message}
+                        </p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
@@ -755,7 +889,11 @@ export default function ProgramDetailsPage() {
                         className={`w-full px-4 py-3 rounded-xl border ${errors.district ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
                         placeholder="Enter your district"
                       />
-                      {errors.district && <p className="mt-1 text-xs text-red-500">{errors.district.message}</p>}
+                      {errors.district && (
+                        <p className="mt-1 text-xs text-red-500">
+                          {errors.district.message}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -770,7 +908,11 @@ export default function ProgramDetailsPage() {
                         className={`w-full px-4 py-3 rounded-xl border ${errors.state ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
                         placeholder="Enter your state"
                       />
-                      {errors.state && <p className="mt-1 text-xs text-red-500">{errors.state.message}</p>}
+                      {errors.state && (
+                        <p className="mt-1 text-xs text-red-500">
+                          {errors.state.message}
+                        </p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
@@ -782,48 +924,162 @@ export default function ProgramDetailsPage() {
                         className={`w-full px-4 py-3 rounded-xl border ${errors.country ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
                         placeholder="Enter your country"
                       />
-                      {errors.country && <p className="mt-1 text-xs text-red-500">{errors.country.message}</p>}
+                      {errors.country && (
+                        <p className="mt-1 text-xs text-red-500">
+                          {errors.country.message}
+                        </p>
+                      )}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                        Participants <span className="text-brand-primary">*</span>
-                      </label>
-                      <input
-                        {...register("participants")}
-                        type="number"
-                        min="1"
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.participants ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
-                      />
-                      {errors.participants && <p className="mt-1 text-xs text-red-500">{errors.participants.message}</p>}
+                  {!isOnline && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+                          Participants{" "}
+                          <span className="text-brand-primary">*</span>
+                        </label>
+                        <input
+                          {...register("participants")}
+                          type="number"
+                          min="1"
+                          className={`w-full px-4 py-3 rounded-xl border ${errors.participants ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                        />
+                        {errors.participants && (
+                          <p className="mt-1 text-xs text-red-500">
+                            {errors.participants.message}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+                          Adults <span className="text-brand-primary">*</span>
+                        </label>
+                        <input
+                          {...register("adultcount")}
+                          type="number"
+                          min="0"
+                          className={`w-full px-4 py-3 rounded-xl border ${errors.adultcount ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                        />
+                        {errors.adultcount && (
+                          <p className="mt-1 text-xs text-red-500">
+                            {errors.adultcount.message}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+                          Children <span className="text-brand-primary">*</span>
+                        </label>
+                        <input
+                          {...register("childrencount")}
+                          type="number"
+                          min="0"
+                          className={`w-full px-4 py-3 rounded-xl border ${errors.childrencount ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                        />
+                        {errors.childrencount && (
+                          <p className="mt-1 text-xs text-red-500">
+                            {errors.childrencount.message}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                        Adults <span className="text-brand-primary">*</span>
-                      </label>
-                      <input
-                        {...register("adultcount")}
-                        type="number"
-                        min="0"
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.adultcount ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
-                      />
-                      {errors.adultcount && <p className="mt-1 text-xs text-red-500">{errors.adultcount.message}</p>}
+                  )}
+
+                  {isOnline && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+                          Booking Date{" "}
+                          <span className="text-brand-primary">*</span>
+                        </label>
+                        <input
+                          {...register("bookingdate")}
+                          type="date"
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+                          Booking Time{" "}
+                          <span className="text-brand-primary">*</span>
+                        </label>
+                        <input
+                          {...register("bookingtime")}
+                          type="time"
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm"
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                        Children <span className="text-brand-primary">*</span>
-                      </label>
+                  )}
+
+                  <div className="mt-4">
+                    <label className="flex items-center gap-3 text-sm font-bold text-gray-700 uppercase tracking-wide">
                       <input
-                        {...register("childrencount")}
-                        type="number"
-                        min="0"
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.childrencount ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                        type="checkbox"
+                        {...register("ishealthissue")}
+                        className="w-4 h-4 accent-brand-primary"
                       />
-                      {errors.childrencount && <p className="mt-1 text-xs text-red-500">{errors.childrencount.message}</p>}
-                    </div>
+                      Is anyone having health issues?
+                    </label>
                   </div>
+
+                  {isHealthIssue && (
+                    <div className="mt-4 p-4 border border-gray-200 rounded-xl bg-gray-50/30">
+                      <h5 className="text-sm font-bold text-gray-900 mb-4">
+                        Health Issues Detail
+                      </h5>
+                      {fields.map((field, index) => (
+                        <div
+                          key={field.id}
+                          className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 relative"
+                        >
+                          <div>
+                            <input
+                              {...register(`healthissues.${index}.name`)}
+                              placeholder="Name"
+                              className="w-full px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm"
+                            />
+                            {errors.healthissues?.[index]?.name && (
+                              <p className="text-xs text-red-500 mt-1">
+                                {errors.healthissues[index]?.name?.message}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex gap-2 items-start">
+                            <div className="flex-1">
+                              <input
+                                {...register(`healthissues.${index}.issue`)}
+                                placeholder="Issue"
+                                className="w-full px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm"
+                              />
+                              {errors.healthissues?.[index]?.issue && (
+                                <p className="text-xs text-red-500 mt-1">
+                                  {errors.healthissues[index]?.issue?.message}
+                                </p>
+                              )}
+                            </div>
+                            {index > 0 && (
+                              <button
+                                type="button"
+                                onClick={() => remove(index)}
+                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
+                              >
+                                <X size={16} />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => append({ name: "", issue: "" })}
+                        className="text-xs font-bold text-brand-primary mt-2"
+                      >
+                        + Add Another
+                      </button>
+                    </div>
+                  )}
 
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
@@ -855,6 +1111,20 @@ export default function ProgramDetailsPage() {
                 </form>
               )}
             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Error Toast */}
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] bg-red-600 text-white px-6 py-3 rounded-full shadow-lg font-medium text-sm flex items-center gap-2"
+          >
+            {toastMessage}
           </motion.div>
         )}
       </AnimatePresence>

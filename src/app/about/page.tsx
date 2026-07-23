@@ -153,12 +153,15 @@ export default function AboutPage() {
                 </p>
                 <p>
                   Since its inception, the foundation has touched and
-                  transformed the lives of more than 50,000 people, guiding them
-                  toward spiritual awakening, inner balance, and enlightened
-                  living. Through the profound practice of Shiva Kriya Yogam,
-                  countless individuals have not only experienced deep spiritual
-                  growth but have also achieved self-development, mental
-                  clarity, and remarkable progress in their personal and
+                  transformed the lives of more than{" "}
+                  <strong className="text-black font-bold">
+                    50,000 people
+                  </strong>
+                  , guiding them toward spiritual awakening, inner balance, and
+                  enlightened living. Through the profound practice of Shiva
+                  Kriya Yogam, countless individuals have not only experienced
+                  deep spiritual growth but have also achieved self-development,
+                  mental clarity, and remarkable progress in their personal and
                   professional lives.
                 </p>
 

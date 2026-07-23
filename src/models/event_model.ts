@@ -3,7 +3,10 @@ export class EventModel {
   image: string;
   title: string;
   eventdate: string;
+  eventtodate: string;
+  description: string;
   address: string;
+  category: string;
   city: string;
   state: string;
   eventtype: string;
@@ -13,7 +16,10 @@ export class EventModel {
     this.id = data.id;
     this.image = data.image;
     this.title = data.title;
+    this.description = data.description;
     this.eventdate = data.eventdate;
+    this.eventtodate = data.eventtodate;
+    this.category = data.category;
     this.address = data.address;
     this.city = data.city;
     this.state = data.state;
@@ -31,6 +37,8 @@ export class EventDetailData {
   programtype: string;
   deliverymode: string;
   eventdate: string | null;
+  eventtodate: string | null;
+  leveltype: string | null;
   starttime: string | null;
   endtime: string | null;
   duration: string | null;
@@ -63,6 +71,8 @@ export class EventDetailData {
     this.programtype = data.programtype;
     this.deliverymode = data.deliverymode;
     this.eventdate = data.eventdate;
+    this.eventtodate = data.eventtodate;
+    this.leveltype = data.leveltype;
     this.starttime = data.starttime;
     this.endtime = data.endtime;
     this.duration = data.duration;

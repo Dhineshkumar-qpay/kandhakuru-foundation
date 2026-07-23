@@ -12,7 +12,7 @@ export default function Footer() {
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
-        const response = await getEvents(1);
+        const response = await getEvents();
         if (response.success && response.data?.events) {
           setPrograms(response.data.events.slice(0, 3));
         }
