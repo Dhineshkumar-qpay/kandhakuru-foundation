@@ -324,7 +324,8 @@ function SpiritualPhilosophy() {
       <div
         className="absolute inset-0 bg-cover bg-fixed bg-center opacity-70 z-0 pointer-events-none"
         style={{
-          backgroundImage: "url('https://t3.ftcdn.net/jpg/07/16/46/44/360_F_716464441_DvxUkPchxMPozb2zAFof1DHEze2dxKHG.jpg')",
+          backgroundImage:
+            "url('https://t3.ftcdn.net/jpg/07/16/46/44/360_F_716464441_DvxUkPchxMPozb2zAFof1DHEze2dxKHG.jpg')",
         }}
       ></div>
 
@@ -545,7 +546,7 @@ function Programs() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await getEvents(1);
+        const response = await getEvents(1,"offline");
         if (response.success && response.data?.events) {
           setEvents(response.data.events.slice(0, 6));
         }
@@ -1207,7 +1208,7 @@ function Videos() {
 function BookShopPreview() {
   const { isLoggedIn, openLogin } = useAuth();
   const router = useRouter();
-  
+
   const books = [
     {
       title: "ஸ்ரீ மகாவதார் பாபாஜியின் சிவ கிரியா யோகம்",
