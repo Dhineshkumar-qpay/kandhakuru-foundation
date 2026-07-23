@@ -646,7 +646,7 @@ function Programs() {
                   </div>
 
                   {program.status === "active" ? (
-                    <span className="block w-full py-3 px-6 text-center bg-white border-2 border-brand-primary text-brand-primary font-bold rounded-xl group-hover:bg-brand-primary group-hover:text-white transition-colors duration-300">
+                    <span className="block w-full py-3 px-6 text-center bg-white border-2 border-brand-primary text-brand-primary font-bold rounded-[0px] group-hover:bg-brand-primary group-hover:text-white transition-colors duration-300">
                       View Details
                     </span>
                   ) : (

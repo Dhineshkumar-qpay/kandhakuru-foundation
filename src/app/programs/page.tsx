@@ -33,10 +33,11 @@ export default function ProgramsPage() {
 
   const fetchEvents = async (
     deliverymode: string = "offline",
+    leveltype: string = "level1",
   ) => {
     setLoading(true);
     try {
-      const response = await getEvents(deliverymode);
+      const response = await getEvents(deliverymode, leveltype);
       if (response.success && response.data?.events) {
         setEvents(response.data.events);
       }
@@ -73,7 +74,7 @@ export default function ProgramsPage() {
               <img
                 src={getImageVideoUrl(prog.image)}
                 alt="image"
-                className="w-full h-full object-contain"
+                className="w-full h-full object-cover"
               />
             </div>
             <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/60 to-transparent"></div>
@@ -84,7 +85,12 @@ export default function ProgramsPage() {
               <h4 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-brand-primary transition-colors">
                 {prog.title}
               </h4>
-              <p className="text-md text-gray-600 mb-4"><span className="text-sm font-semibold text-stone">Category : </span>{prog.category}</p>
+              <p className="text-md text-gray-600 mb-4">
+                <span className="text-sm font-semibold text-stone">
+                  Category :{" "}
+                </span>
+                {prog.category}
+              </p>
               <div className="flex items-center  text-gray-500">
                 <Calendar className="w-5 h-5 text-brand-primary" />
                 <span className="text-sm font-medium line-clamp-5">
@@ -129,10 +135,11 @@ export default function ProgramsPage() {
           >
             <button
               onClick={() => setActiveTab("domestic")}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-[0px] text-sm font-bold transition-all duration-300 ${activeTab === "domestic"
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-[0px] text-sm font-bold transition-all duration-300 ${
+                activeTab === "domestic"
                   ? "bg-brand-primary text-white shadow-md shadow-brand-primary/20 scale-105"
                   : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-                }`}
+              }`}
             >
               <img
                 src="https://cdn-icons-png.flaticon.com/128/10601/10601146.png"
@@ -143,10 +150,11 @@ export default function ProgramsPage() {
             </button>
             <button
               onClick={() => setActiveTab("international")}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-[0px] text-sm font-bold transition-all duration-300 ${activeTab === "international"
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-[0px] text-sm font-bold transition-all duration-300 ${
+                activeTab === "international"
                   ? "bg-brand-primary text-white shadow-md shadow-brand-primary/20 scale-105"
                   : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-                }`}
+              }`}
             >
               <img
                 src="https://cdn-icons-png.flaticon.com/128/3192/3192970.png"
@@ -223,7 +231,7 @@ export default function ProgramsPage() {
                         </div>
 
                         {program.status === "active" ? (
-                          <span className="block w-full py-2.5 px-4 text-center bg-white border border-brand-primary text-brand-primary text-sm font-bold rounded-xl group-hover:bg-brand-primary group-hover:text-white transition-colors duration-300">
+                          <span className="block w-full py-2.5 px-4 text-center bg-white border border-brand-primary text-brand-primary text-sm font-bold rounded-[0px] group-hover:bg-brand-primary group-hover:text-white transition-colors duration-300">
                             View Details
                           </span>
                         ) : (

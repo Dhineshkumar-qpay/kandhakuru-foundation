@@ -514,46 +514,50 @@ export default function ProgramDetailsPage() {
                 )}
 
                 <div className="space-y-8 mb-10">
-                  <div className="flex gap-5 group">
-                    <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
-                      <Calendar size={22} />
-                    </div>
+                  {program.deliverymode === "offline" && (
+                    <div className="flex gap-5 group">
+                      <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
+                        <Calendar size={22} />
+                      </div>
 
-                    <div>
-                      <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
-                        {program.leveltype === "level2" ? "From Date" : "Date"}
-                      </h5>
-                      <p className="font-semibold text-gray-900">
-                        {new Date(program.eventdate ?? "").toLocaleDateString(
-                          undefined,
-                          {
-                            weekday: "short",
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          },
-                        )}
-                      </p>
-                    </div>
-
-                    {program.leveltype === "level2" && (
                       <div>
                         <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
-                          To Date
+                          {program.leveltype === "level2"
+                            ? "From Date"
+                            : "Date"}
                         </h5>
                         <p className="font-semibold text-gray-900">
-                          {new Date(
-                            program.eventtodate ?? "",
-                          ).toLocaleDateString(undefined, {
-                            weekday: "short",
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })}
+                          {new Date(program.eventdate ?? "").toLocaleDateString(
+                            undefined,
+                            {
+                              weekday: "short",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            },
+                          )}
                         </p>
                       </div>
-                    )}
-                  </div>
+
+                      {program.leveltype === "level2" && (
+                        <div>
+                          <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+                            To Date
+                          </h5>
+                          <p className="font-semibold text-gray-900">
+                            {new Date(
+                              program.eventtodate ?? "",
+                            ).toLocaleDateString(undefined, {
+                              weekday: "short",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {(program.starttime ||
                     program.endtime ||
