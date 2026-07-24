@@ -13,7 +13,8 @@ export default function Footer() {
   const isShopSection =
     pathname?.startsWith("/shop") ||
     pathname?.startsWith("/my-account") ||
-    pathname?.startsWith("/checkout");
+    pathname?.startsWith("/checkout") ||
+    pathname?.startsWith("/order");
 
   // Dynamic theme colors
   const theme = isShopSection

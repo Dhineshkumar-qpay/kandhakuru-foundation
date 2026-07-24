@@ -331,7 +331,7 @@ export default function AboutPage() {
               className="bg-white p-10 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:-translate-y-2 transition-transform duration-300"
             >
               <h4 className="text-xl font-bold text-gray-900 mb-4">
-                Holistic Wellness & Ayurveda
+                Holistic Wellness 
               </h4>
               <p className="text-gray-600 leading-relaxed font-light text-justify">
                 Beyond spiritual teachings, we strongly emphasize the

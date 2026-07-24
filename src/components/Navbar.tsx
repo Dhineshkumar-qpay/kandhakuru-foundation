@@ -6,18 +6,21 @@ import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, ShoppingCart, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CartSidebar from "./CartSidebar";
+import { getCartCount } from "../services/api";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
   const pathname = usePathname();
   const router = useRouter();
   const isHomePage = pathname === "/";
   const isShopSection =
     pathname.startsWith("/shop") ||
     pathname.startsWith("/my-account") ||
-    pathname.startsWith("/checkout");
+    pathname.startsWith("/checkout") ||
+    pathname.startsWith("/order");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,6 +28,24 @@ export default function Navbar() {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const fetchCartCount = async () => {
+    try {
+      const res = await getCartCount();
+      if (res.success && res.data !== undefined) {
+        setCartCount(Number(res.data) || 0);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCartCount();
+    const handleCartUpdate = () => fetchCartCount();
+    window.addEventListener("cartUpdated", handleCartUpdate);
+    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
   }, []);
 
   const navLinks = [
@@ -117,11 +138,13 @@ export default function Navbar() {
                   className={`transition-colors relative cursor-pointer ${isShopSection ? "hover:text-white/80" : "hover:text-brand-primary"}`}
                 >
                   <ShoppingCart size={24} />
-                  <span
-                    className={`absolute -top-1 -right-1 w-4 h-4 text-[10px] font-bold rounded-full flex items-center justify-center ${isShopSection ? "bg-white text-[var(--color-deepgreen)]" : "bg-brand-primary text-white"}`}
-                  >
-                    2
-                  </span>
+                  {cartCount > 0 && (
+                    <span
+                      className={`absolute -top-1 -right-1 w-4 h-4 text-[10px] font-bold rounded-full flex items-center justify-center ${isShopSection ? "bg-white text-[var(--color-deepgreen)]" : "bg-brand-primary text-white"}`}
+                    >
+                      {cartCount}
+                    </span>
+                  )}
                 </button>
                 <button
                   onClick={() => router.push("/my-account")}
@@ -148,11 +171,13 @@ export default function Navbar() {
                   className={`transition-colors relative cursor-pointer ${isShopSection ? "hover:text-white/80" : "hover:text-brand-primary"}`}
                 >
                   <ShoppingCart size={20} />
-                  <span
-                    className={`absolute -top-1 -right-1 w-3.5 h-3.5 text-[8px] font-bold rounded-full flex items-center justify-center ${isShopSection ? "bg-white text-[var(--color-deepgreen)]" : "bg-brand-primary text-white"}`}
-                  >
-                    2
-                  </span>
+                  {cartCount > 0 && (
+                    <span
+                      className={`absolute -top-1 -right-1 w-3.5 h-3.5 text-[8px] font-bold rounded-full flex items-center justify-center ${isShopSection ? "bg-white text-[var(--color-deepgreen)]" : "bg-brand-primary text-white"}`}
+                    >
+                      {cartCount}
+                    </span>
+                  )}
                 </button>
                 <button
                   onClick={() => router.push("/my-account")}

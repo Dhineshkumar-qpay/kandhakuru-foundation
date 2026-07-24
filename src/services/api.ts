@@ -9,7 +9,8 @@ import {
 import { TestimonialModel } from "../models/contact_model";
 import { VerifyOtpResponse } from "../models/user_model";
 import { ProductModel } from "../models/product_model";
-import { json } from "zod";
+import { AddressModel, CartModel } from "../models/OrderModel";
+import { config, json } from "zod";
 
 export const IMAGEBASEURL = "http://localhost:3003";
 
@@ -28,10 +29,23 @@ const api = axios.create({
   },
 });
 
-export const getEvents = async (
-  deliverymode?: string,
-  leveltype?: string,
-) => {
+api.interceptors.request.use(
+  (config) => {
+    let token = null;
+    if (typeof window !== "undefined") {
+      token = localStorage.getItem("userToken");
+    }
+    if (token) {
+      config.headers.Authorization = `${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
+export const getEvents = async (deliverymode?: string, leveltype?: string) => {
   try {
     const payload: any = { status: "active" };
     if (deliverymode) payload.deliverymode = deliverymode;
@@ -192,6 +206,29 @@ export const getBanners = async () => {
   }
 };
 
+export const signUpApi = async (data: {
+  username: string;
+  email: string;
+}) => {
+  try {
+    const response = await api.post("/user/signup", data);
+    return response.data;
+  } catch (error) {
+    console.error("Signup error:", error);
+    throw error;
+  }
+};
+
+export const getUser = async () => {
+  try {
+    const response = await api.post("/user/get");
+    return response.data;
+  } catch (error) {
+    console.error("Error getting user details:", error);
+    throw error;
+  }
+};
+
 export const requestLogin = async (data: {
   username: string;
   email: string;
@@ -201,6 +238,165 @@ export const requestLogin = async (data: {
     return response.data;
   } catch (error) {
     console.error("Error logging in:", error);
+    throw error;
+  }
+};
+
+export const submitForm = async (payload: any) => {
+  try {
+    const response = await api.post("/form/submit", payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    throw error;
+  }
+};
+
+// Address APIs
+export const addAddress = async (payload: any) => {
+  try {
+    // Assuming backend extracts userid from auth token, if needed it can be appended here.
+    const response = await api.post("/address/add", payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding address:", error);
+    throw error;
+  }
+};
+
+export const editAddress = async (payload: any) => {
+  try {
+    const response = await api.post("/address/edit", payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error editing address:", error);
+    throw error;
+  }
+};
+
+export const deleteAddress = async (id: number) => {
+  try {
+    // We send id in the data body as requested
+    const response = await api.post("/address/delete", { id });
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting address:", error);
+    throw error;
+  }
+};
+
+export const getAddresses = async () => {
+  try {
+    const response = await api.post("/address/get");
+    if (response.data.success && response.data.data) {
+      response.data.data = response.data.data.map(
+        (addr: any) => new AddressModel(addr),
+      );
+    }
+    return response.data;
+  } catch (error) {
+    console.error("Error getting addresses:", error);
+    throw error;
+  }
+};
+
+// Cart APIs
+export const addToCart = async (payload: { productid: number }) => {
+  try {
+    const response = await api.post("/cart/add", payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+    throw error;
+  }
+};
+
+export const updateCartQuantity = async (payload: { productid: number; quantity: number }) => {
+  try {
+    const response = await api.post("/cart/quantity", payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating cart quantity:", error);
+    throw error;
+  }
+};
+
+export const removeFromCart = async (payload: { productid: number }) => {
+  try {
+    const response = await api.post("/cart/remove", payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error removing from cart:", error);
+    throw error;
+  }
+};
+
+export const placeOrder = async (payload: { addressid: number; screenshot: string }) => {
+  try {
+    const response = await api.post("/order/place-order", payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error placing order:", error);
+    throw error;
+  }
+};
+
+export const uploadPaymentScreenshot = async (imageFile: File) => {
+  try {
+    const formData = new FormData();
+    formData.append("image", imageFile);
+    const response = await api.post("/order/upload-payment-screenshot", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error uploading payment screenshot:", error);
+    throw error;
+  }
+};
+
+export const getOrderHistory = async () => {
+  try {
+    const response = await api.post("/order/get");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching order history:", error);
+    throw error;
+  }
+};
+
+export const getOrderDetail = async (payload: { orderid: number }) => {
+  try {
+    const response = await api.post("/order/details", payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching order detail:", error);
+    throw error;
+  }
+};
+
+export const getCart = async () => {
+  try {
+    // The user specified "both api's are post method", so we use POST for all.
+    const response = await api.post("/cart/get");
+    if (response.data.success && response.data.data) {
+      response.data.data = new CartModel(response.data.data);
+    }
+    return response.data;
+  } catch (error) {
+    console.error("Error getting cart:", error);
+    throw error;
+  }
+};
+
+export const getCartCount = async () => {
+  try {
+    const response = await api.post("/cart/count");
+    return response.data;
+  } catch (error) {
+    console.error("Error getting cart count:", error);
     throw error;
   }
 };
@@ -235,16 +431,9 @@ export const getProducts = async (category: string = "") => {
 
 export const addBooking = async (data: any) => {
   try {
-    const token =
-      typeof window !== "undefined" ? localStorage.getItem("userToken") : "";
     console.log(JSON.stringify(data));
 
-    const response = await api.post("/booking/add", data, {
-      headers: {
-        Authorization: token ? `${token}` : "",
-        token: token || "",
-      },
-    });
+    const response = await api.post("/booking/add", data);
     return response.data;
   } catch (error) {
     console.error("Error booking event:", error);

@@ -10,27 +10,35 @@ import {
   Clock,
   Search,
   X,
+  CheckCircle2,
+  Loader2,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { getProducts, getImageVideoUrl } from "../../services/api";
+import { getProducts, getImageVideoUrl, addToCart } from "../../services/api";
 import { ProductModel } from "../../models/product_model";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const categories = ["All Products", "spiritual", "accessories", "book"];
 
 export default function ShopPage() {
   const { isLoggedIn, openLogin } = useAuth();
+  const router = useRouter();
+
   const [activeCategory, setActiveCategory] = useState("All Products");
   const [products, setProducts] = useState<ProductModel[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [addingToCartId, setAddingToCartId] = useState<number | null>(null);
+  const [buyingNowId, setBuyingNowId] = useState<number | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<ProductModel | null>(
     null,
   );
-  const router = useRouter();
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       try {
         const categoryParam =
           activeCategory === "All Products" ? "" : activeCategory;
@@ -42,6 +50,8 @@ export default function ShopPage() {
         }
       } catch (error) {
         console.error("Failed to fetch products:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchProducts();
@@ -88,16 +98,74 @@ export default function ShopPage() {
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex-1 w-full hidden md:block"
+              className="flex-1 w-full hidden md:flex justify-end relative"
             >
-              <div className="relative w-full h-[400px] bg-gray-100 rounded-lg overflow-hidden border border-gray-200 shadow-inner">
-                <img
-                  src="https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?q=80&w=800&auto=format&fit=crop"
-                  alt="Corporate Store Hero"
-                  className="w-full h-full object-cover opacity-90 mix-blend-multiply"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-white via-white/50 to-transparent w-2/3"></div>
-              </div>
+              {products.length > 0 ? (
+                <div
+                  className="relative w-150 h-[400px] rounded-3xl overflow-hidden cursor-pointer group shadow-2xl"
+                  onClick={() => setSelectedProduct(products[0])}
+                >
+                  {/* Background Image */}
+                  <img
+                    src={getImageVideoUrl(products[0].image)}
+                    alt={products[0].productname}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10" />
+
+                  {/* Category Badge */}
+                  <div className="absolute top-6 left-6">
+                    <span className="px-4 py-2 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-semibold uppercase tracking-widest border border-white/20">
+                      {products[0].category}
+                    </span>
+                  </div>
+
+                  {/* Content */}
+                  <div className="absolute inset-0 flex flex-col justify-end p-8 text-white">
+                    <h2 className="text-4xl font-bold leading-tight mb-3">
+                      {products[0].productname}
+                    </h2>
+
+                    <p className="text-white/80 text-sm leading-6 line-clamp-3 mb-6">
+                      {products[0].description}
+                    </p>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs uppercase tracking-widest text-white/60 mb-1">
+                          Starting From
+                        </p>
+
+                        <div className="flex items-center gap-3">
+                          {products[0].sellingprice &&
+                          products[0].sellingprice < products[0].price ? (
+                            <span className="text-white/60 line-through text-lg">
+                              ₹{products[0].price}
+                            </span>
+                          ) : (
+                            <></>
+                          )}
+                          <span className="text-3xl font-black text-[#FFD54A]">
+                            ₹{products[0].sellingprice || products[0].price}
+                          </span>
+                        </div>
+                      </div>
+
+                      <button className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-white group-hover:text-black group-hover:scale-110">
+                        <ArrowRight className="w-6 h-6" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="relative w-full h-[400px] bg-gray-100 rounded-lg overflow-hidden border border-gray-200 shadow-inner">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Loader2 className="w-8 h-8 text-[var(--color-deepgreen)] animate-spin" />
+                  </div>
+                </div>
+              )}
             </motion.div>
           </div>
         </div>
@@ -163,10 +231,12 @@ export default function ShopPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {products
-                .filter((product) =>
-                  product.productname
-                    .toLowerCase()
-                    .includes(searchQuery.toLowerCase()),
+                .filter(
+                  (product, idx) =>
+                    idx !== 0 &&
+                    product.productname
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase()),
                 )
                 .map((product, index) => (
                   <motion.div
@@ -225,32 +295,65 @@ export default function ShopPage() {
                         </div>
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={(e) => {
+                            disabled={addingToCartId === product.id}
+                            onClick={async (e) => {
                               e.stopPropagation();
                               if (!isLoggedIn) {
                                 openLogin();
                               } else {
-                                // Add to cart logic here
-                                alert("Added to cart!");
+                                try {
+                                  setAddingToCartId(product.id);
+                                  await addToCart({ productid: product.id });
+                                  window.dispatchEvent(
+                                    new Event("cartUpdated"),
+                                  );
+                                  // alert("Added to cart!");
+                                } catch (error) {
+                                  console.error(error);
+                                } finally {
+                                  setAddingToCartId(null);
+                                }
                               }
                             }}
-                            className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-[var(--color-deepgreen)] hover:bg-[var(--color-deepgreen)] hover:text-white hover:border-[var(--color-deepgreen)] transition-all shadow-sm cursor-pointer"
+                            className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-[var(--color-deepgreen)] hover:bg-[var(--color-deepgreen)] hover:text-white hover:border-[var(--color-deepgreen)] transition-all shadow-sm cursor-pointer disabled:opacity-50"
                             title="Add to Cart"
                           >
-                            <ShoppingCart size={18} />
+                            {addingToCartId === product.id ? (
+                              <Loader2 size={18} className="animate-spin" />
+                            ) : (
+                              <ShoppingCart size={18} />
+                            )}
                           </button>
                           <button
-                            onClick={(e) => {
+                            disabled={buyingNowId === product.id}
+                            onClick={async (e) => {
                               e.stopPropagation();
                               if (!isLoggedIn) {
                                 openLogin();
                               } else {
-                                router.push(`/checkout`);
+                                try {
+                                  setBuyingNowId(product.id);
+                                  await addToCart({ productid: product.id });
+                                  window.dispatchEvent(
+                                    new Event("cartUpdated"),
+                                  );
+                                  router.push(`/checkout`);
+                                } catch (error) {
+                                  console.error(error);
+                                  setBuyingNowId(null);
+                                }
                               }
                             }}
-                            className="hidden sm:flex items-center gap-2 text-sm font-bold bg-[var(--color-deepgreen)] text-white px-4 py-2 rounded-[0px] hover:bg-[var(--color-deepgreen)]/90 transition-colors shadow-md cursor-pointer"
+                            className="hidden sm:flex items-center gap-2 text-sm font-bold bg-[var(--color-deepgreen)] text-white px-4 py-2 rounded-[0px] hover:bg-[var(--color-deepgreen)]/90 transition-colors shadow-md cursor-pointer disabled:opacity-75"
                           >
-                            Buy Now
+                            {buyingNowId === product.id ? (
+                              <>
+                                <Loader2 size={16} className="animate-spin" />{" "}
+                                Processing...
+                              </>
+                            ) : (
+                              "Buy Now"
+                            )}
                           </button>
                         </div>
                       </div>
@@ -362,50 +465,118 @@ export default function ShopPage() {
                   )}
                 </div>
                 {selectedProduct.sellingprice &&
-                  selectedProduct.sellingprice > 0 &&
-                  selectedProduct.price > selectedProduct.sellingprice && (
-                    <span className="bg-red-50 text-red-600 font-bold px-2 py-1 rounded text-sm">
-                      {Math.round(
-                        ((selectedProduct.price -
-                          selectedProduct.sellingprice) /
-                          selectedProduct.price) *
-                          100,
-                      )}
-                      % OFF
-                    </span>
-                  )}
+                selectedProduct.sellingprice > 0 &&
+                selectedProduct.price > selectedProduct.sellingprice ? (
+                  <span className="bg-red-50 text-red-600 font-bold px-2 py-1 rounded text-sm">
+                    {Math.round(
+                      ((selectedProduct.price - selectedProduct.sellingprice) /
+                        selectedProduct.price) *
+                        100,
+                    )}
+                    % OFF
+                  </span>
+                ) : (
+                  <></>
+                )}
               </div>
+              {selectedProduct.size && (
+                <>
+                  <div className="mb-2">
+                    Size : <strong>{selectedProduct.size}</strong>
+                  </div>
+                </>
+              )}
 
               <div className="prose prose-sm text-gray-600 mb-8 flex-grow">
                 <p className="leading-relaxed">{selectedProduct.description}</p>
+                {selectedProduct.benefits &&
+                  selectedProduct.benefits.length > 0 && (
+                    <div className="mt-6">
+                      <h4 className="font-bold text-gray-900 mb-3">
+                        Benefits:
+                      </h4>
+                      <ul className="space-y-2">
+                        {selectedProduct.benefits.map((benefit, idx) => (
+                          <li key={idx} className="flex items-start gap-2">
+                            <CheckCircle2
+                              size={16}
+                              className="text-[var(--color-deepgreen)] shrink-0 mt-1"
+                            />
+                            <div>
+                              <span className="font-bold text-gray-800">
+                                {benefit.title}
+                              </span>
+                              {benefit.description && (
+                                <span className="text-gray-600 ml-1">
+                                  - {benefit.description}
+                                </span>
+                              )}
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 mt-auto">
                 <button
-                  onClick={() => {
+                  disabled={addingToCartId === selectedProduct.id}
+                  onClick={async () => {
                     if (!isLoggedIn) {
                       openLogin();
                     } else {
-                      alert("Added to cart!");
-                      setSelectedProduct(null);
+                      try {
+                        setAddingToCartId(selectedProduct.id);
+                        await addToCart({ productid: selectedProduct.id });
+                        window.dispatchEvent(new Event("cartUpdated"));
+                        setSelectedProduct(null);
+                      } catch (error) {
+                        console.error(error);
+                      } finally {
+                        setAddingToCartId(null);
+                      }
                     }
                   }}
-                  className="flex-1 flex items-center justify-center gap-2 border-2 border-[var(--color-deepgreen)] text-[var(--color-deepgreen)] font-bold py-4 rounded-[0px] hover:bg-[var(--color-deepgreen)]/5 transition-colors cursor-pointer"
+                  className="flex-1 flex items-center justify-center gap-2 border-2 border-[var(--color-deepgreen)] text-[var(--color-deepgreen)] font-bold py-4 rounded-[0px] hover:bg-[var(--color-deepgreen)]/5 transition-colors cursor-pointer disabled:opacity-50"
                 >
-                  <ShoppingCart size={20} />
-                  Add to Cart
+                  {addingToCartId === selectedProduct.id ? (
+                    <Loader2 size={20} className="animate-spin" />
+                  ) : (
+                    <ShoppingCart size={20} />
+                  )}
+                  {addingToCartId === selectedProduct.id
+                    ? "Adding..."
+                    : "Add to Cart"}
                 </button>
                 <button
-                  onClick={() => {
+                  disabled={buyingNowId === selectedProduct.id}
+                  onClick={async () => {
                     if (!isLoggedIn) {
                       openLogin();
                     } else {
-                      router.push(`/checkout`);
+                      try {
+                        setBuyingNowId(selectedProduct.id);
+                        await addToCart({ productid: selectedProduct.id });
+                        window.dispatchEvent(new Event("cartUpdated"));
+                        router.push(`/checkout`);
+                      } catch (error) {
+                        console.error(error);
+                        setBuyingNowId(null);
+                      }
                     }
                   }}
-                  className="flex-1 flex items-center justify-center gap-2 bg-[var(--color-deepgreen)] text-white font-bold py-4 rounded-[0px] hover:bg-[var(--color-deepgreen)]/90 transition-colors shadow-lg hover:shadow-xl hover:-translate-y-1 cursor-pointer"
+                  className="flex-1 flex items-center justify-center gap-2 bg-[var(--color-deepgreen)] text-white font-bold py-4 rounded-[0px] hover:bg-[var(--color-deepgreen)]/90 transition-colors shadow-lg hover:shadow-xl hover:-translate-y-1 cursor-pointer disabled:opacity-75"
                 >
-                  Buy Now <ArrowRight size={20} />
+                  {buyingNowId === selectedProduct.id ? (
+                    <Loader2 size={20} className="animate-spin" />
+                  ) : null}
+                  {buyingNowId === selectedProduct.id
+                    ? "Processing..."
+                    : "Buy Now"}
+                  {!buyingNowId || buyingNowId !== selectedProduct.id ? (
+                    <ArrowRight size={20} />
+                  ) : null}
                 </button>
               </div>
             </div>
