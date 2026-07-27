@@ -140,7 +140,7 @@ export default function ShopPage() {
 
                         <div className="flex items-center gap-3">
                           {products[0].sellingprice &&
-                          products[0].sellingprice < products[0].price ? (
+                            products[0].sellingprice < products[0].price ? (
                             <span className="text-white/60 line-through text-lg">
                               ₹{products[0].price}
                             </span>
@@ -185,11 +185,10 @@ export default function ShopPage() {
                   <li key={category}>
                     <button
                       onClick={() => setActiveCategory(category)}
-                      className={`w-full text-left px-4 py-2.5 rounded-sm text-sm font-medium transition-colors capitalize ${
-                        activeCategory === category
+                      className={`w-full text-left px-4 py-2.5 rounded-sm text-sm font-medium transition-colors capitalize ${activeCategory === category
                           ? "bg-[var(--color-deepgreen)]/10 text-[var(--color-deepgreen)] border-l-2 border-[var(--color-deepgreen)]"
                           : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-l-2 border-transparent"
-                      }`}
+                        }`}
                     >
                       {category}
                     </button>
@@ -307,6 +306,7 @@ export default function ShopPage() {
                                   window.dispatchEvent(
                                     new Event("cartUpdated"),
                                   );
+                                  window.dispatchEvent(new Event("openCart"));
                                   // alert("Added to cart!");
                                 } catch (error) {
                                   console.error(error);
@@ -449,7 +449,7 @@ export default function ShopPage() {
               <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
                 <div className="flex flex-col">
                   {selectedProduct.sellingprice &&
-                  selectedProduct.sellingprice > 0 ? (
+                    selectedProduct.sellingprice > 0 ? (
                     <div className="flex items-baseline gap-3">
                       <span className="text-3xl font-black text-gray-900">
                         ₹{selectedProduct.sellingprice}
@@ -465,13 +465,13 @@ export default function ShopPage() {
                   )}
                 </div>
                 {selectedProduct.sellingprice &&
-                selectedProduct.sellingprice > 0 &&
-                selectedProduct.price > selectedProduct.sellingprice ? (
+                  selectedProduct.sellingprice > 0 &&
+                  selectedProduct.price > selectedProduct.sellingprice ? (
                   <span className="bg-red-50 text-red-600 font-bold px-2 py-1 rounded text-sm">
                     {Math.round(
                       ((selectedProduct.price - selectedProduct.sellingprice) /
                         selectedProduct.price) *
-                        100,
+                      100,
                     )}
                     % OFF
                   </span>
@@ -530,6 +530,7 @@ export default function ShopPage() {
                         setAddingToCartId(selectedProduct.id);
                         await addToCart({ productid: selectedProduct.id });
                         window.dispatchEvent(new Event("cartUpdated"));
+                        window.dispatchEvent(new Event("openCart"));
                         setSelectedProduct(null);
                       } catch (error) {
                         console.error(error);

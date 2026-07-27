@@ -13,6 +13,9 @@ import {
   getTestimonials,
   getBanners,
   getProducts,
+  isYouTubeUrl,
+  getYouTubeEmbedUrl,
+  addToCart,
 } from "../services/api";
 import { ProductModel } from "../models/product_model";
 import { EventModel } from "../models/event_model";
@@ -23,6 +26,8 @@ import {
 } from "../models/image_video_model";
 import { TestimonialModel } from "../models/contact_model";
 import {
+  CheckCircle2,
+  Loader2,
   X,
   ZoomIn,
   ChevronLeft,
@@ -634,7 +639,7 @@ function Programs() {
                     <div className="flex items-start gap-3 text-gray-600">
                       <Calendar className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
                       <span className="font-medium">
-                        {new Date(program.eventdate).toLocaleDateString()}
+                        {new Date(program.eventdate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                       </span>
                     </div>
                     <div className="flex items-start gap-3 text-gray-600">
@@ -669,154 +674,138 @@ function Eligibility() {
   const requirements = [
     {
       text: "Minimum Age: 12+ Years",
-      icon: <UserCheck className="w-6 h-6" strokeWidth={1.5} />,
+      icon: <UserCheck className="w-5 h-5" strokeWidth={2.5} />,
     },
     {
       text: "Open to All Backgrounds",
-      icon: <Users className="w-6 h-6" strokeWidth={1.5} />,
+      icon: <Users className="w-5 h-5" strokeWidth={2.5} />,
     },
     {
       text: "No Prior Yoga Experience Required",
-      icon: <Sparkles className="w-6 h-6" strokeWidth={1.5} />,
+      icon: <Sparkles className="w-5 h-5" strokeWidth={2.5} />,
     },
   ];
 
   return (
-    <section className="py-32 relative overflow-hidden bg-[#FFFDF8]">
+    <section className="py-32 relative overflow-hidden bg-slate-50 font-sans">
       {/* Background Ambience */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-50">
-        <div className="absolute top-0 right-0 w-[50%] h-[50%] rounded-full bg-gradient-to-bl from-amber-100/60 to-orange-50/20 blur-[120px] animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-[50%] h-[50%] rounded-full bg-gradient-to-tr from-orange-100/40 to-amber-50/20 blur-[120px]"></div>
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] mix-blend-multiply"></div>
-      </div>
-
-      {/* Floating Particles (Hydration safe) */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        {[
-          { top: "15%", left: "10%", dur: "3.5s" },
-          { top: "45%", left: "85%", dur: "4.2s" },
-          { top: "75%", left: "20%", dur: "2.8s" },
-          { top: "80%", left: "70%", dur: "5s" },
-          { top: "25%", left: "50%", dur: "4.5s" },
-        ].map((particle, i) => (
-          <div
-            key={i}
-            className="absolute w-2 h-2 bg-amber-400/40 rounded-full animate-pulse shadow-[0_0_12px_rgba(251,191,36,0.6)]"
-            style={{
-              top: particle.top,
-              left: particle.left,
-              animationDuration: particle.dur,
-            }}
-          />
-        ))}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full bg-gradient-to-bl from-amber-400/20 to-orange-300/10 blur-[120px] animate-pulse"></div>
+        <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-amber-500/10 to-orange-400/10 blur-[120px]"></div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 items-center">
           {/* Left Column */}
-          <div className="flex flex-col justify-center">
-            <div className="inline-flex items-center gap-4 mb-8">
-              <span className="text-sm font-semibold tracking-widest text-amber-700 uppercase">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="flex flex-col justify-center"
+          >
+            <div className="inline-flex items-center gap-3 mb-6">
+              <span className="px-5 py-2 rounded-full bg-amber-50 border border-amber-200/60 text-xs font-black tracking-[0.2em] text-amber-700 uppercase shadow-sm">
                 Participation
               </span>
-              <div className="h-px w-20 bg-gradient-to-r from-amber-300 to-transparent"></div>
             </div>
 
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-8">
+            <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-6 leading-[1.15]">
               Who Can Attend <br />
-              <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600">
                 Our Program?
               </span>
             </h2>
 
-            <p className="text-xl text-slate-600 font-light leading-relaxed mb-12">
-              Our programs are open to everyone. Anyone above 12 years of age is
-              eligible to participate and learn Shiva Kriya Yogam.
+            <p className="text-lg md:text-xl text-slate-600 font-medium leading-relaxed mb-10 max-w-lg">
+              Our programs are designed for universal access. Anyone above 12 years of age is eligible to participate and learn the sacred science of Shiva Kriya Yogam.
             </p>
 
-            <div className="bg-white/90 backdrop-blur-xl border border-white p-10 rounded-3xl shadow-[0_8px_40px_rgb(0,0,0,0.06)] relative group overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-100/40 to-orange-50/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
-
-              <ul className="space-y-8 relative z-10">
+            <div className="bg-white/80 backdrop-blur-2xl border border-slate-200/60 p-8 md:p-10 rounded-[2rem] shadow-[0_8px_40px_rgb(0,0,0,0.04)] relative group overflow-hidden">
+              <ul className="space-y-5 relative z-10">
                 {requirements.map((req, i) => (
-                  <li key={i} className="flex items-center gap-6 group/item">
-                    <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 shadow-[inset_0_2px_10px_rgba(0,0,0,0.04)] group-hover/item:scale-110 group-hover/item:bg-amber-100 transition-all duration-300">
+                  <li key={i} className="flex items-center gap-5 group/item bg-slate-50/50 p-4 rounded-2xl border border-slate-100 hover:border-amber-200 hover:bg-amber-50/50 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                    <div className="w-12 h-12 shrink-0 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 shadow-sm group-hover/item:text-amber-600 group-hover/item:border-amber-300 group-hover/item:scale-110 transition-all duration-300">
                       {req.icon}
                     </div>
-                    <span className="text-xl font-medium text-slate-800 tracking-wide group-hover/item:text-amber-700 transition-colors">
+                    <span className="text-lg font-bold text-slate-700 group-hover/item:text-slate-900 transition-colors">
                       {req.text}
                     </span>
                   </li>
                 ))}
               </ul>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column (Dress Code) */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-amber-300/30 to-orange-300/20 rounded-[3rem] blur-3xl transform -rotate-3 scale-105 animate-[pulse_4s_ease-in-out_Infinity]"></div>
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="relative"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-400/20 to-orange-300/20 rounded-[3rem] blur-3xl transform -rotate-6 scale-105 pointer-events-none"></div>
 
-            <div className="relative bg-white/80 backdrop-blur-2xl border border-white p-10 md:p-14 rounded-[1rem] shadow-[0_20px_50px_-15px_rgba(217,119,6,0.15)] overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-amber-100/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+            <div className="relative bg-white/90 backdrop-blur-3xl border border-slate-200/60 p-10 md:p-12 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-4">
+                  <div className="p-3 bg-slate-900 rounded-2xl text-white shadow-xl shadow-slate-900/20">
+                    <Shirt className="w-7 h-7" strokeWidth={2} />
+                  </div>
+                  Dress Code
+                </h3>
+              </div>
 
-              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-6 flex items-center gap-4 relative z-10">
-                <div className="p-3 bg-amber-100 rounded-2xl text-amber-600">
-                  <Shirt className="w-8 h-8" strokeWidth={2} />
-                </div>
-                Dress Code
-              </h3>
-
-              <p className="text-slate-600 font-light text-xl mb-12 leading-relaxed relative z-10">
-                Traditional and comfortable clothing is recommended for ease of
-                practice and meditation.
+              <p className="text-slate-600 font-medium text-lg mb-10 leading-relaxed">
+                Traditional and comfortable clothing is strictly recommended to ensure ease of practice, meditation, and respect for the ashram environment.
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-10 relative z-10">
-                <div className="bg-white/95 border border-amber-100/60 p-8 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-amber-50 to-orange-50 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 border border-amber-200/50 shadow-[0_4px_20px_-5px_rgba(251,191,36,0.2)]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+                <div className="bg-slate-50 border border-slate-200 p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                  <div className="w-24 h-24 mx-auto bg-white rounded-3xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-500 border border-slate-200 shadow-sm">
                     <img
                       src="https://png.pngtree.com/png-vector/20221210/ourmid/pngtree-south-indian-man-wearing-veshti-dhoti-png-image_6482891.png"
                       alt="vesti"
-                      className="w-12 h-12 object-contain"
+                      className="w-16 h-16 object-contain drop-shadow-sm"
                     />
                   </div>
-                  <h4 className="text-center text-lg font-semibold text-slate-800">
+                  <h4 className="text-center text-base font-bold text-slate-900">
                     Vesti & Shirt
                   </h4>
-                  <p className="text-center text-sm text-slate-500 mt-2 font-light">
-                    Traditional wear
+                  <p className="text-center text-xs text-slate-500 font-semibold mt-1 uppercase tracking-wider">
+                    Traditional
                   </p>
                 </div>
 
-                <div className="bg-white/95 border border-amber-100/60 p-8 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-amber-50 to-orange-50 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 border border-amber-200/50 shadow-[0_4px_20px_-5px_rgba(251,191,36,0.2)]">
+                <div className="bg-slate-50 border border-slate-200 p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+                  <div className="w-24 h-24 mx-auto bg-white rounded-3xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-500 border border-slate-200 shadow-sm">
                     <img
                       src="https://e7.pngegg.com/pngimages/850/938/png-clipart-tracksuit-t-shirt-nike-pants-adidas-track-suit-sport-sneakers.png"
-                      alt="vesti"
-                      className="w-12 h-12 object-contain"
+                      alt="Tracksuit"
+                      className="w-16 h-16 object-contain drop-shadow-sm"
                     />
                   </div>
-                  <h4 className="text-center text-lg font-semibold text-slate-800">
-                    Track Pants & T-Shirt
+                  <h4 className="text-center text-base font-bold text-slate-900">
+                    Track Pants & Tee
                   </h4>
-                  <p className="text-center text-sm text-slate-500 mt-2 font-light">
-                    Comfortable fit
+                  <p className="text-center text-xs text-slate-500 font-semibold mt-1 uppercase tracking-wider">
+                    Comfortable
                   </p>
                 </div>
               </div>
 
-              <div className="bg-amber-50/80 border border-amber-200/50 p-6 rounded-2xl flex items-start gap-4 relative z-10 shadow-inner">
+              <div className="bg-amber-50 border border-amber-200 p-6 rounded-2xl flex items-start gap-4">
                 <Heart
-                  className="w-8 h-8 text-amber-500 shrink-0 mt-0.5"
-                  strokeWidth={2}
+                  className="w-6 h-6 text-amber-600 shrink-0 mt-0.5"
+                  strokeWidth={2.5}
                 />
-                <p className="text-base text-amber-900/90 font-medium leading-relaxed">
-                  Please wear clean, modest, and comfortable clothing suitable
-                  for meditation and yoga practice.
+                <p className="text-sm text-amber-900 font-bold leading-relaxed">
+                  Please wear clean, modest, and comfortable clothing. Tight or revealing outfits are not permitted during the sessions.
                 </p>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -1173,7 +1162,7 @@ function Videos() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-12"
+            className="fixed inset-0 z-[100] bg-slate-900/45 backdrop-blur-sm flex items-center justify-center p-4 md:p-12"
             onClick={() => setActiveVideo(null)}
           >
             <button
@@ -1187,17 +1176,30 @@ function Videos() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               transition={{ duration: 0.4, type: "spring", bounce: 0.3 }}
-              className="relative max-w-3xl w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10"
+              className="relative max-w-3xl w-full aspect-video bg-black rounded-[0px] overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10"
               onClick={(e) => e.stopPropagation()}
             >
-              <video
-                width="100%"
-                height="100%"
-                controls
-                autoPlay
-                src={activeVideo}
-                className="w-full h-full"
-              ></video>
+              {isYouTubeUrl(activeVideo) ? (
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={getYouTubeEmbedUrl(activeVideo)}
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                ></iframe>
+              ) : (
+                <video
+                  width="100%"
+                  height="100%"
+                  controls
+                  autoPlay
+                  src={activeVideo || ""}
+                  className="w-full h-full"
+                ></video>
+              )}
             </motion.div>
           </motion.div>
         )}
@@ -1212,6 +1214,9 @@ function BookShopPreview() {
   const router = useRouter();
 
   const [books, setBooks] = useState<ProductModel[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<ProductModel | null>(null);
+  const [addingToCartId, setAddingToCartId] = useState<number | null>(null);
+  const [buyingNowId, setBuyingNowId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -1244,7 +1249,7 @@ function BookShopPreview() {
               href="/shop"
               className="inline-flex items-center gap-2 text-sm font-bold text-brand-primary hover:text-brand-secondary transition-colors"
             >
-              View Full Store <ArrowRight size={16} />
+              View Shop <ArrowRight size={16} />
             </Link>
           </div>
         </div>
@@ -1257,7 +1262,8 @@ function BookShopPreview() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.2 }}
-              className="bg-white border border-gray-200 rounded-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col sm:flex-row group"
+              className="bg-white border border-gray-200 rounded-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col sm:flex-row group cursor-pointer"
+              onClick={() => setSelectedProduct(book)}
             >
                 <div className="w-full sm:w-2/5 bg-gray-50 relative border-b sm:border-b-0 sm:border-r border-gray-100 p-4 flex items-center justify-center">
                 <img
@@ -1294,16 +1300,30 @@ function BookShopPreview() {
                     )}
                   </div>
                   <button
-                    onClick={() => {
+                    disabled={addingToCartId === book.id}
+                    onClick={async (e) => {
+                      e.stopPropagation();
                       if (!isLoggedIn) {
                         openLogin();
                       } else {
-                        router.push(`/shop/${book.id}`);
+                        try {
+                          setAddingToCartId(book.id);
+                          await addToCart({ productid: book.id });
+                          window.dispatchEvent(
+                            new Event("cartUpdated"),
+                          );
+                          window.dispatchEvent(new Event("openCart"));
+                        } catch (error) {
+                          console.error(error);
+                        } finally {
+                          setAddingToCartId(null);
+                        }
                       }
                     }}
-                    className="flex items-center gap-2 bg-brand-primary text-white font-bold py-2 px-6 rounded-[0px] hover:bg-brand-primary transition-colors text-sm"
+                    className="flex items-center gap-2 bg-brand-primary text-white font-bold py-2 px-6 rounded-[0px] hover:bg-brand-primary/90 transition-colors text-sm disabled:opacity-50"
                   >
-                    <ShoppingCart size={16} /> Buy Now
+                    {addingToCartId === book.id ? <Loader2 size={16} className="animate-spin" /> : <ShoppingCart size={16} />} 
+                    Add to Cart
                   </button>
                 </div>
               </div>
@@ -1311,6 +1331,185 @@ function BookShopPreview() {
           ))}
         </div>
       </div>
+
+      {/* Product Detail Modal */}
+      <AnimatePresence>
+        {selectedProduct && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => setSelectedProduct(null)}
+            ></div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative bg-white w-full max-w-4xl rounded-[0px] shadow-2xl overflow-hidden z-10 flex flex-col md:flex-row max-h-[90vh]"
+            >
+              <button
+                onClick={() => setSelectedProduct(null)}
+                className="absolute top-4 right-4 z-20 w-10 h-10 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-all shadow-sm"
+              >
+                <X size={20} />
+              </button>
+
+              {/* Modal Image */}
+              <div className="w-full md:w-1/2 h-64 md:h-auto bg-gray-50 relative">
+                <img
+                  src={getImageVideoUrl(selectedProduct.image)}
+                  alt={selectedProduct.productname}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Modal Content */}
+              <div className="w-full md:w-1/2 p-8 md:p-10 flex flex-col overflow-y-auto">
+                <span className="text-xs font-bold text-brand-primary uppercase tracking-widest mb-2 inline-block bg-brand-primary/10 px-3 py-1 rounded-full w-fit">
+                  {selectedProduct.category}
+                </span>
+                <h2 className="text-3xl font-extrabold text-gray-900 mb-4 leading-tight">
+                  {selectedProduct.productname}
+                </h2>
+
+                <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
+                  <div className="flex flex-col">
+                    {selectedProduct.sellingprice &&
+                      selectedProduct.sellingprice > 0 ? (
+                      <div className="flex items-baseline gap-3">
+                        <span className="text-3xl font-black text-gray-900">
+                          ₹{selectedProduct.sellingprice}
+                        </span>
+                        <span className="text-lg text-gray-400 line-through font-medium">
+                          ₹{selectedProduct.price}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-3xl font-black text-gray-900">
+                        ₹{selectedProduct.price}
+                      </span>
+                    )}
+                  </div>
+                  {selectedProduct.sellingprice &&
+                    selectedProduct.sellingprice > 0 &&
+                    selectedProduct.price > selectedProduct.sellingprice ? (
+                    <span className="bg-red-50 text-red-600 font-bold px-2 py-1 rounded text-sm">
+                      {Math.round(
+                        ((selectedProduct.price - selectedProduct.sellingprice) /
+                          selectedProduct.price) *
+                        100,
+                      )}
+                      % OFF
+                    </span>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+                {selectedProduct.size && (
+                  <>
+                    <div className="mb-2">
+                      Size : <strong>{selectedProduct.size}</strong>
+                    </div>
+                  </>
+                )}
+
+                <div className="prose prose-sm text-gray-600 mb-8 flex-grow">
+                  <p className="leading-relaxed">{selectedProduct.description}</p>
+                  {selectedProduct.benefits &&
+                    selectedProduct.benefits.length > 0 && (
+                      <div className="mt-6">
+                        <h4 className="font-bold text-gray-900 mb-3">
+                          Benefits:
+                        </h4>
+                        <ul className="space-y-2">
+                          {selectedProduct.benefits.map((benefit, idx) => (
+                            <li key={idx} className="flex items-start gap-2">
+                              <CheckCircle2
+                                size={16}
+                                className="text-brand-primary shrink-0 mt-1"
+                              />
+                              <div>
+                                <span className="font-bold text-gray-800">
+                                  {benefit.title}
+                                </span>
+                                {benefit.description && (
+                                  <span className="text-gray-600 ml-1">
+                                    - {benefit.description}
+                                  </span>
+                                )}
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4 mt-auto">
+                  <button
+                    disabled={addingToCartId === selectedProduct.id}
+                    onClick={async () => {
+                      if (!isLoggedIn) {
+                        openLogin();
+                      } else {
+                        try {
+                          setAddingToCartId(selectedProduct.id);
+                          await addToCart({ productid: selectedProduct.id });
+                          window.dispatchEvent(new Event("cartUpdated"));
+                          window.dispatchEvent(new Event("openCart"));
+                          setSelectedProduct(null);
+                        } catch (error) {
+                          console.error(error);
+                        } finally {
+                          setAddingToCartId(null);
+                        }
+                      }
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 border-2 border-brand-primary text-brand-primary font-bold py-4 rounded-[0px] hover:bg-brand-primary/5 transition-colors cursor-pointer disabled:opacity-50"
+                  >
+                    {addingToCartId === selectedProduct.id ? (
+                      <Loader2 size={20} className="animate-spin" />
+                    ) : (
+                      <ShoppingCart size={20} />
+                    )}
+                    {addingToCartId === selectedProduct.id
+                      ? "Adding..."
+                      : "Add to Cart"}
+                  </button>
+                  <button
+                    disabled={buyingNowId === selectedProduct.id}
+                    onClick={async () => {
+                      if (!isLoggedIn) {
+                        openLogin();
+                      } else {
+                        try {
+                          setBuyingNowId(selectedProduct.id);
+                          await addToCart({ productid: selectedProduct.id });
+                          window.dispatchEvent(new Event("cartUpdated"));
+                          router.push(`/checkout`);
+                        } catch (error) {
+                          console.error(error);
+                          setBuyingNowId(null);
+                        }
+                      }
+                    }}
+                    className="flex-1 flex items-center justify-center gap-2 bg-brand-primary text-white font-bold py-4 rounded-[0px] hover:bg-brand-primary/90 transition-colors shadow-lg hover:shadow-xl hover:-translate-y-1 cursor-pointer disabled:opacity-75"
+                  >
+                    {buyingNowId === selectedProduct.id ? (
+                      <Loader2 size={20} className="animate-spin" />
+                    ) : null}
+                    {buyingNowId === selectedProduct.id
+                      ? "Processing..."
+                      : "Buy Now"}
+                    {!buyingNowId || buyingNowId !== selectedProduct.id ? (
+                      <ArrowRight size={20} />
+                    ) : null}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

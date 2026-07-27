@@ -126,6 +126,8 @@ export class OrderDetailModel {
   id: number;
   screenshot: string;
   totalamount: number;
+  subtotal: number;
+  shippingcost: number;
   paymentstatus: string;
   orderstatus: string;
   createdAt: string;
@@ -134,6 +136,8 @@ export class OrderDetailModel {
     this.id = data.id || 0;
     this.screenshot = data.screenshot || "";
     this.totalamount = data.totalamount || 0;
+    this.subtotal = data.subtotal || 0;
+    this.shippingcost = data.shippingcost || 0;
     this.paymentstatus = data.paymentstatus || "";
     this.orderstatus = data.orderstatus || "";
     this.createdAt = data.createdAt || "";

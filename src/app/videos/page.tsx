@@ -12,7 +12,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getCategories, getImageVideoUrl, getVideos } from "../../services/api";
+import { getCategories, getImageVideoUrl, getVideos, isYouTubeUrl, getYouTubeEmbedUrl } from "../../services/api";
 import { CategoryModel, VideoModel } from "../../models/image_video_model";
 
 export default function VideosPage() {
@@ -255,7 +255,7 @@ export default function VideosPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-sm flex items-center justify-center p-4 md:p-12"
+            className="fixed inset-0 z-[100] bg-slate-900/45 backdrop-blur-sm flex items-center justify-center p-4 md:p-12"
             onClick={() => setActiveVideo(null)}
           >
             <button
@@ -269,17 +269,30 @@ export default function VideosPage() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               transition={{ duration: 0.4, type: "spring", bounce: 0.3 }}
-              className="relative max-w-3xl w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10"
+              className="relative max-w-3xl w-full aspect-video bg-black rounded-[0px] overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/10"
               onClick={(e) => e.stopPropagation()}
             >
-              <video
-                width="100%"
-                height="100%"
-                controls
-                autoPlay
-                src={activeVideo}
-                className="w-full h-full"
-              ></video>
+              {isYouTubeUrl(activeVideo) ? (
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={getYouTubeEmbedUrl(activeVideo)}
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                ></iframe>
+              ) : (
+                <video
+                  width="100%"
+                  height="100%"
+                  controls
+                  autoPlay
+                  src={activeVideo || ""}
+                  className="w-full h-full"
+                ></video>
+              )}
             </motion.div>
           </motion.div>
         )}

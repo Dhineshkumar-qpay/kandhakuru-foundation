@@ -128,9 +128,8 @@ export default function EventsPage() {
                           </div>
 
                           <span className="font-medium">
-                            {new Date(event.eventdate).toLocaleDateString()}{" "}
-                            {event.eventtodate && "-"}{" "}
-                            {new Date(event.eventtodate).toLocaleDateString()}
+                            {new Date(event.eventdate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                            {event.eventtodate && ` - ${new Date(event.eventtodate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
                           </span>
                         </div>
 

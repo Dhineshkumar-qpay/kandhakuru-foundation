@@ -48,7 +48,7 @@ export default function Footer() {
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
-        const response = await getEvents();
+        const response = await getEvents("offline", "level1");
         if (response.success && response.data?.events) {
           setPrograms(response.data.events.slice(0, 3));
         }
@@ -76,7 +76,13 @@ export default function Footer() {
         <div className="bg-white/80 backdrop-blur-xl rounded-[1rem] p-8 md:p-12 border border-white/60 shadow-[0_8px_40px_rgb(0,0,0,0.04)] mb-12">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16">
             {/* Brand Column */}
-            <div className={isShopSection ? "md:col-span-12 lg:col-span-5 space-y-8" : "md:col-span-12 lg:col-span-4 space-y-8"}>
+            <div
+              className={
+                isShopSection
+                  ? "md:col-span-12 lg:col-span-5 space-y-8"
+                  : "md:col-span-12 lg:col-span-4 space-y-8"
+              }
+            >
               <Link href="/" className="flex items-center gap-4 group w-fit">
                 <div
                   className={`w-14 h-14 bg-white rounded-2xl shadow-sm border ${theme.borderLight} flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:shadow-md transition-all duration-300`}
@@ -106,7 +112,13 @@ export default function Footer() {
             </div>
 
             {/* Navigation Columns */}
-            <div className={isShopSection ? "md:col-span-6 lg:col-span-3 space-y-6" : "md:col-span-4 lg:col-span-2 space-y-6"}>
+            <div
+              className={
+                isShopSection
+                  ? "md:col-span-6 lg:col-span-3 space-y-6"
+                  : "md:col-span-4 lg:col-span-2 space-y-6"
+              }
+            >
               <h4 className="text-sm font-bold text-slate-800 uppercase tracking-widest flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${theme.bgDot}`}></div>
                 Quick Links
@@ -144,6 +156,14 @@ export default function Footer() {
                     Gallery
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    href="/siddhargal"
+                    className={`${theme.textHover} hover:translate-x-1 inline-block transition-all duration-300`}
+                  >
+                    Siddhargal
+                  </Link>
+                </li>
               </ul>
             </div>
 
@@ -160,7 +180,7 @@ export default function Footer() {
                         href={`/programs/${program.id}`}
                         className="hover:text-amber-600 hover:translate-x-1 inline-block transition-all duration-300 line-clamp-1"
                       >
-                        {program.title}
+                        {program.title} - {program.city}
                       </Link>
                     </li>
                   ))}
@@ -181,7 +201,13 @@ export default function Footer() {
             )}
 
             {/* Contact Details */}
-            <div className={isShopSection ? "md:col-span-6 lg:col-span-4 space-y-6" : "md:col-span-4 lg:col-span-3 space-y-6"}>
+            <div
+              className={
+                isShopSection
+                  ? "md:col-span-6 lg:col-span-4 space-y-6"
+                  : "md:col-span-4 lg:col-span-3 space-y-6"
+              }
+            >
               <h4 className="text-sm font-bold text-slate-800 uppercase tracking-widest flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${theme.bgDot}`}></div>
                 Contact Us
@@ -215,7 +241,9 @@ export default function Footer() {
                   >
                     <Mail size={18} />
                   </div>
-                  <span className="text-sm">info@srikandhaguru.org</span>
+                  <span className="text-sm">
+                    srikandhagurufoundation@gmail.com
+                  </span>
                 </li>
               </ul>
             </div>

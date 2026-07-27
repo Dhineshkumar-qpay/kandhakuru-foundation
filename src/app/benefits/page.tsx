@@ -145,41 +145,15 @@ export default function BenefitsPage() {
           <div className="absolute inset-0 bg-gray-900/70"></div>
         </div>
 
-        <div className="container mx-auto px-4 max-w-5xl relative z-10 flex flex-col items-center text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-md text-white border border-white/20 text-xs font-bold mb-6 uppercase tracking-[0.2em] rounded-full shadow-lg"
-          >
-            Transformation & Growth
-          </motion.div>
-
+        <div className="container mx-auto px-4 relative z-10 flex flex-col items-center justify-center h-full min-h-[150px]">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-6 tracking-tight drop-shadow-lg"
+            transition={{ duration: 0.6, ease: "easeOut" }}
+           className="text-3xl md:text-4xl lg:text-5xl font-normal text-white tracking-tight drop-shadow-xl text-center"
           >
-            The Power of
-            <span className="text-brand-primary  mt-2"> Kriya Yogam</span>
+            Benefits
           </motion.h1>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="w-24 h-1.5 bg-brand-primary mb-6 rounded-full shadow-sm"
-          ></motion.div>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-lg md:text-lg text-gray-100 leading-relaxed max-w-3xl mx-auto font-light drop-shadow-sm"
-          >
-            A holistic spiritual practice combining conscious breathing,
-            meditation, and inner awareness to unlock your highest potential.
-          </motion.p>
         </div>
       </section>
 

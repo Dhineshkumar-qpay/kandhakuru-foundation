@@ -130,25 +130,25 @@ export default function CheckoutPage() {
     try {
       setPlacingOrder(true);
       const uploadRes = await uploadPaymentScreenshot(paymentScreenshot);
-      
+
       if (!uploadRes.success || !uploadRes.data) {
         throw new Error("Failed to upload screenshot");
       }
-      
-      await placeOrder({ 
-        addressid: selectedAddress as number, 
-        screenshot: uploadRes.data 
+
+      await placeOrder({
+        addressid: selectedAddress as number,
+        screenshot: uploadRes.data,
+        shippingcost: shipping,
       });
-      
+
       window.dispatchEvent(new Event("cartUpdated"));
-      
+
       setIsPaymentSidebarOpen(false);
       setShowSuccessAnimation(true);
-      
+
       setTimeout(() => {
         router.push("/my-account");
       }, 2500);
-      
     } catch (error) {
       console.error(error);
       alert("Failed to place order. Please try again.");
@@ -159,7 +159,7 @@ export default function CheckoutPage() {
 
   const cartItems = cart?.cart || [];
   const subtotal = cart?.subtotal || 0;
-  const shipping: number = 70; // Fixed shipping amount
+  const shipping: number = subtotal >= 3000 ? 0 : 70;
   const total = subtotal + shipping;
 
   if (loadingCart) {
@@ -414,11 +414,10 @@ export default function CheckoutPage() {
                       <div
                         key={addr.id}
                         onClick={() => setSelectedAddress(addr.id)}
-                        className={`relative p-5 rounded-xl border-2 cursor-pointer transition-all ${
-                          selectedAddress === addr.id
+                        className={`relative p-5 rounded-xl border-2 cursor-pointer transition-all ${selectedAddress === addr.id
                             ? "border-[var(--color-deepgreen)] bg-[var(--color-deepgreen)]/5"
                             : "border-gray-100 hover:border-[var(--color-deepgreen)]/40 bg-gray-50"
-                        }`}
+                          }`}
                       >
                         {selectedAddress === addr.id && (
                           <div className="absolute top-4 right-4 text-[var(--color-deepgreen)]">
@@ -512,9 +511,22 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-500 font-medium">Shipping</span>
-                  <span className="font-bold text-gray-900">
+                  <span className="font-bold text-[var(--color-deepgreen)]">
                     {shipping === 0 ? "Free" : `₹${shipping}`}
                   </span>
+                </div>
+                
+                <div className="pt-2">
+                  {shipping === 0 ? (
+                    <p className="text-xs text-[var(--color-deepgreen)] font-bold bg-[var(--color-deepgreen)]/10 p-2.5 rounded-lg text-center flex items-center justify-center gap-2">
+                      <CheckCircle2 className="w-4 h-4" />
+                      You've unlocked Free Shipping!
+                    </p>
+                  ) : (
+                    <p className="text-xs text-gray-500 font-medium bg-gray-50 p-2.5 rounded-lg text-center border border-gray-100">
+                      Add <span className="font-bold text-gray-800">₹{(3000 - subtotal).toLocaleString()}</span> more to get <span className="text-[var(--color-deepgreen)] font-bold">Free Shipping</span>!
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -656,13 +668,16 @@ export default function CheckoutPage() {
               <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6">
                 <CheckCircle2 className="w-12 h-12 text-green-500" />
               </div>
-              <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Order Placed Successfully!</h2>
-              <p className="text-gray-500 font-medium">Thank you for your contribution.</p>
+              <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
+                Order Placed Successfully!
+              </h2>
+              <p className="text-gray-500 font-medium">
+                Thank you for your contribution.
+              </p>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-
     </main>
   );
 }

@@ -72,40 +72,15 @@ export default function Contact() {
           <div className="absolute inset-0 bg-gray-900/70"></div>
         </div>
 
-        <div className="container mx-auto px-4 max-w-7xl relative z-10 flex flex-col items-center text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-sm text-white border border-white/20 text-xs font-bold mb-6 uppercase tracking-[0.2em] rounded-full shadow-lg"
-          >
-            Contact & Registration
-          </motion.div>
-
+        <div className="container mx-auto px-4 relative z-10 flex flex-col items-center justify-center h-full min-h-[150px]">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-6 tracking-tight drop-shadow-md"
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="text-3xl md:text-4xl lg:text-5xl font-normal text-white tracking-tight drop-shadow-xl text-center"
           >
-            Get in Touch <span className="text-brand-primary"> With Us</span>
+            Contact Us
           </motion.h1>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="w-20 h-1.5 bg-brand-primary mb-6 rounded-full shadow-sm"
-          ></motion.div>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-lg md:text-lg text-gray-200 leading-relaxed max-w-2xl mx-auto font-light drop-shadow-sm"
-          >
-            Reach out to our administrative team for inquiries or register
-            directly for our upcoming foundation programs.
-          </motion.p>
         </div>
       </section>
 
@@ -170,7 +145,7 @@ export default function Contact() {
                         Email
                       </h5>
                       <p className="text-gray-600 font-light text-sm">
-                        info@srikandhaguru.org
+                        srikandhagurufoundation@gmail.com
                       </p>
                     </div>
                   </div>

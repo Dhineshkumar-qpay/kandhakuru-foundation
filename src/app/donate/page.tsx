@@ -19,7 +19,11 @@ import {
   Quote,
   Users,
   BookOpen,
+  X,
+  Upload,
+  Loader2,
 } from "lucide-react";
+import { addDonor } from "../../services/api";
 
 const fadeUp: any = {
   hidden: { opacity: 0, y: 30 },
@@ -60,7 +64,23 @@ export default function DonatePage() {
   const [selectedCause, setSelectedCause] = useState("kovil");
   const [amount, setAmount] = useState<number | "">("");
   const [customAmount, setCustomAmount] = useState<string>("");
-  const [paymentMethod, setPaymentMethod] = useState("upi");
+
+  const [fullname, setFullname] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [country, setCountry] = useState("India");
+  const [pannumber, setPannumber] = useState("");
+  const [aadhaarnumber, setAadhaarnumber] = useState("");
+  const [passportnumber, setPassportnumber] = useState("");
+  const [donortype, setDonortype] = useState("domestic");
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
+  const [error, setError] = useState("");
+
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -108,7 +128,7 @@ export default function DonatePage() {
             </motion.div>
             <motion.h1
               variants={fadeUp}
-              className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 tracking-tight leading-tight"
+              className="text-3xl md:text-4xl lg:text-5xl font-normal text-gray-900 mb-6 tracking-tight leading-tight "
             >
               Support Sacred Services Through Your{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">
@@ -126,7 +146,7 @@ export default function DonatePage() {
             <motion.div variants={fadeUp}>
               <button
                 onClick={() => scrollToForm("kovil")}
-                className="px-10 py-4 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-lg hover:shadow-lg hover:shadow-orange-500/30 transition-all hover:-translate-y-1 inline-flex items-center gap-2"
+                className="px-10 py-4 rounded-[0px] bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-lg hover:shadow-lg hover:shadow-orange-500/30 transition-all hover:-translate-y-1 inline-flex items-center gap-2 cursor-pointer"
               >
                 Donate Now <ArrowRight size={20} />
               </button>
@@ -269,103 +289,171 @@ export default function DonatePage() {
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeUp}
-            className="bg-white rounded-[2rem] p-8 md:p-12 shadow-2xl shadow-gray-200/50 border border-gray-100 relative overflow-hidden"
+            className="bg-white/90 backdrop-blur-xl rounded-[1.5rem] p-8 md:p-14 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.2)] border border-white/50 relative overflow-hidden"
           >
-            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-500 via-orange-400 to-green-500"></div>
+            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-brand-primary/20 via-brand-primary to-brand-primary/20"></div>
 
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-extrabold text-gray-900 mb-3">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
                 Make a Secure Donation
               </h2>
-              <p className="text-gray-500 font-medium">
-                Please fill out the details below to complete your sacred
-                offering.
+              <p className="text-gray-500 font-medium max-w-lg mx-auto">
+                Your generous contribution helps us continue our sacred mission
+                and serve the community.
               </p>
             </div>
 
             <div className="space-y-10">
               {/* Cause Selection */}
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">
+                <label className="block text-xs font-black text-gray-400 mb-4 uppercase tracking-widest">
                   1. Select Cause
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <label
-                    className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${selectedCause === "kovil" ? "border-amber-500 bg-amber-50/50" : "border-gray-100 hover:border-amber-200 bg-gray-50"}`}
+                  <div
+                    onClick={() => setSelectedCause("kovil")}
+                    className={`flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${selectedCause === "kovil"
+                      ? "border-brand-primary bg-brand-primary/5 shadow-sm shadow-brand-primary/10"
+                      : "border-gray-100 hover:border-gray-200 bg-gray-50/50"
+                      }`}
                   >
                     <div
-                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedCause === "kovil" ? "border-amber-500" : "border-gray-300"}`}
+                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${selectedCause === "kovil"
+                        ? "border-brand-primary"
+                        : "border-gray-300"
+                        }`}
                     >
                       {selectedCause === "kovil" && (
-                        <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
+                        <motion.div
+                          layoutId="cause-dot"
+                          className="w-2.5 h-2.5 bg-brand-primary rounded-full"
+                        ></motion.div>
                       )}
                     </div>
-                    <span className="font-bold text-gray-800">
+                    <span
+                      className={`font-bold text-lg ${selectedCause === "kovil" ? "text-brand-primary" : "text-gray-700"}`}
+                    >
                       Kovil Kattada Thiruppani
                     </span>
-                  </label>
-                  <label
-                    className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${selectedCause === "annadhanam" ? "border-green-500 bg-green-50/50" : "border-gray-100 hover:border-green-200 bg-gray-50"}`}
+                  </div>
+                  <div
+                    onClick={() => setSelectedCause("annadhanam")}
+                    className={`flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${selectedCause === "annadhanam"
+                      ? "border-brand-primary bg-brand-primary/5 shadow-sm shadow-brand-primary/10"
+                      : "border-gray-100 hover:border-gray-200 bg-gray-50/50"
+                      }`}
                   >
                     <div
-                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedCause === "annadhanam" ? "border-green-500" : "border-gray-300"}`}
+                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${selectedCause === "annadhanam"
+                        ? "border-brand-primary"
+                        : "border-gray-300"
+                        }`}
                     >
                       {selectedCause === "annadhanam" && (
-                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                        <motion.div
+                          layoutId="cause-dot"
+                          className="w-2.5 h-2.5 bg-brand-primary rounded-full"
+                        ></motion.div>
                       )}
                     </div>
-                    <span className="font-bold text-gray-800">
+                    <span
+                      className={`font-bold text-lg ${selectedCause === "annadhanam" ? "text-brand-primary" : "text-gray-700"}`}
+                    >
                       Annadhanam Contribution
                     </span>
-                  </label>
+                  </div>
                 </div>
               </div>
 
               {/* Donor Information */}
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wide">
-                  2. Donor Details
-                </label>
+                <div className="flex justify-between items-center mb-4">
+                  <label className="block text-xs font-black text-gray-400 uppercase tracking-widest">
+                    2. Donor Details
+                  </label>
+                  <select
+                    value={donortype}
+                    onChange={(e) => setDonortype(e.target.value)}
+                    className="bg-gray-50 border border-gray-200 py-2 px-4 rounded-xl focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all font-bold text-sm text-gray-700"
+                  >
+                    <option value="domestic">Domestic (Indian Citizen)</option>
+                    <option value="international">
+                      International (Foreign Citizen)
+                    </option>
+                  </select>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <input
                     type="text"
                     placeholder="Full Name *"
                     required
-                    className="w-full bg-white border-2 border-gray-100 py-3.5 px-5 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 outline-none transition-all font-medium"
+                    value={fullname}
+                    onChange={(e) => setFullname(e.target.value)}
+                    className="w-full bg-gray-50/50 border border-gray-200 py-4 px-5 rounded-2xl focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary outline-none transition-all font-medium text-gray-800 placeholder:text-gray-400"
                   />
                   <input
                     type="tel"
                     placeholder="Mobile Number *"
                     required
-                    className="w-full bg-white border-2 border-gray-100 py-3.5 px-5 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 outline-none transition-all font-medium"
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value)}
+                    className="w-full bg-gray-50/50 border border-gray-200 py-4 px-5 rounded-2xl focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary outline-none transition-all font-medium text-gray-800 placeholder:text-gray-400"
                   />
                   <input
                     type="email"
                     placeholder="Email Address *"
                     required
-                    className="w-full bg-white border-2 border-gray-100 py-3.5 px-5 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 outline-none transition-all font-medium md:col-span-2"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-gray-50/50 border border-gray-200 py-4 px-5 rounded-2xl focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary outline-none transition-all font-medium text-gray-800 placeholder:text-gray-400 md:col-span-2"
                   />
                   <input
                     type="text"
-                    placeholder="PAN Number (Optional for 80G)"
-                    className="w-full bg-white border-2 border-gray-100 py-3.5 px-5 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 outline-none transition-all font-medium uppercase"
+                    placeholder="Country *"
+                    required
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                    className="w-full bg-gray-50/50 border border-gray-200 py-4 px-5 rounded-2xl focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary outline-none transition-all font-medium text-gray-800 placeholder:text-gray-400"
                   />
-                  <input
-                    type="text"
-                    placeholder="Full Address (Optional)"
-                    className="w-full bg-white border-2 border-gray-100 py-3.5 px-5 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 outline-none transition-all font-medium"
-                  />
+                  {donortype === "domestic" ? (
+                    <div className="flex gap-3 w-full">
+                      <input
+                        type="text"
+                        placeholder="PAN Number"
+                        value={pannumber}
+                        onChange={(e) => setPannumber(e.target.value)}
+                        className="w-1/2 bg-gray-50/50 border border-gray-200 py-4 px-5 rounded-2xl focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary outline-none transition-all font-medium uppercase text-gray-800 placeholder:text-gray-400 placeholder:normal-case"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Aadhaar Number"
+                        value={aadhaarnumber}
+                        onChange={(e) => setAadhaarnumber(e.target.value)}
+                        className="w-1/2 bg-gray-50/50 border border-gray-200 py-4 px-5 rounded-2xl focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary outline-none transition-all font-medium uppercase text-gray-800 placeholder:text-gray-400 placeholder:normal-case"
+                      />
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      placeholder="Passport Number *"
+                      value={passportnumber}
+                      onChange={(e) => setPassportnumber(e.target.value)}
+                      className="w-full bg-gray-50/50 border border-gray-200 py-4 px-5 rounded-2xl focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary outline-none transition-all font-medium uppercase text-gray-800 placeholder:text-gray-400 placeholder:normal-case"
+                    />
+                  )}
                   <textarea
-                    placeholder="Prayer / Dedication Message (Optional)"
+                    placeholder="Full Address (Optional)"
                     rows={3}
-                    className="w-full bg-white border-2 border-gray-100 py-3.5 px-5 rounded-xl focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 outline-none transition-all font-medium md:col-span-2 resize-none"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    className="w-full bg-gray-50/50 border border-gray-200 py-4 px-5 rounded-2xl focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary outline-none transition-all font-medium md:col-span-2 resize-none text-gray-800 placeholder:text-gray-400"
                   ></textarea>
                 </div>
               </div>
 
               {/* Amount Selection */}
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wide">
+                <label className="block text-xs font-black text-gray-400 mb-4 uppercase tracking-widest">
                   3. Donation Amount
                 </label>
                 <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-4">
@@ -373,20 +461,17 @@ export default function DonatePage() {
                     <button
                       key={amt}
                       onClick={() => handleAmountClick(amt)}
-                      className={`py-3 px-2 rounded-xl font-bold transition-all border-2 ${
-                        amount === amt
-                          ? selectedCause === "annadhanam"
-                            ? "bg-green-600 text-white border-green-600 shadow-md shadow-green-600/20"
-                            : "bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/20"
-                          : "bg-white text-gray-700 border-gray-100 hover:border-gray-300 hover:bg-gray-50"
-                      }`}
+                      className={`py-3 px-2 rounded-[0px] font-bold transition-all border-2 cursor-pointer ${amount === amt
+                        ? "bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/20 scale-[1.02]"
+                        : "bg-white text-gray-600 border-gray-100 hover:border-gray-300 hover:bg-gray-50"
+                        }`}
                     >
                       ₹{amt}
                     </button>
                   ))}
                 </div>
                 <div className="relative">
-                  <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 font-bold">
+                  <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg">
                     ₹
                   </span>
                   <input
@@ -394,19 +479,60 @@ export default function DonatePage() {
                     placeholder="Enter Custom Amount"
                     value={customAmount}
                     onChange={handleCustomAmountChange}
-                    className="w-full bg-white border-2 border-gray-100 text-gray-900 py-4 pl-10 pr-5 rounded-xl font-bold focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 outline-none transition-all text-lg"
+                    className="w-full bg-gray-50/50 border border-gray-200 text-gray-900 py-4 pl-12 pr-6 rounded-2xl font-bold focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary outline-none transition-all text-lg placeholder:text-gray-400"
                   />
                 </div>
               </div>
 
-              <button className="w-full py-5 rounded-[0px] bg-brand-primary text-white font-bold text-lg hover:bg-brand-primary transition-all shadow-xl hover:shadow-2xl flex justify-center items-center gap-3 group cursor-pointer">
-                <ShieldCheck
-                  size={24}
-                  className="text-white-400 group-hover:scale-110 transition-transform"
-                />
-                Donate Securely{" "}
-                {amount || customAmount ? `( ₹${amount || customAmount} )` : ""}
-              </button>
+              <div className="pt-6 mt-4 border-t border-gray-100">
+                {error && (
+                  <div className="mb-4 p-3 bg-red-50 border border-red-100 text-red-600 rounded-xl text-center font-bold text-sm">
+                    {error}
+                  </div>
+                )}
+                <button
+                  onClick={() => {
+                    setError("");
+                    if (
+                      !fullname ||
+                      !mobile ||
+                      !email ||
+                      !country ||
+                      (!amount && !customAmount)
+                    ) {
+                      setError(
+                        "Please fill all required fields and select an amount.",
+                      );
+                      return;
+                    }
+                    if (
+                      donortype === "domestic" &&
+                      !pannumber &&
+                      !aadhaarnumber
+                    ) {
+                      setError(
+                        "Please provide either PAN or Aadhaar number for domestic donation.",
+                      );
+                      return;
+                    }
+                    if (donortype === "international" && !passportnumber) {
+                      setError(
+                        "Please provide Passport number for international donation.",
+                      );
+                      return;
+                    }
+                    setIsSidebarOpen(true);
+                  }}
+                  className="w-full py-4 rounded-[0px] bg-brand-primary text-white font-bold text-lg hover:bg-brand-primary/95 transition-all shadow-[0_8px_20px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_25px_rgb(0,0,0,0.2)] hover:-translate-y-0.5 flex justify-center items-center gap-3 group cursor-pointer"
+                >
+                  <ShieldCheck
+                    size={22}
+                    className="text-white/80 group-hover:text-white transition-colors"
+                  />
+                  Donate Securely{" "}
+                  {amount || customAmount ? `| ₹${amount || customAmount}` : ""}
+                </button>
+              </div>
             </div>
           </motion.div>
         </div>
@@ -578,7 +704,7 @@ export default function DonatePage() {
         </div>
       </section>
 
-      {/* 6. FAQ Section */}
+      {/* FAQ Section */}
       <section className="py-24 bg-[#FFFDF7]">
         <div className="container mx-auto px-4 max-w-3xl">
           <motion.div
@@ -610,9 +736,8 @@ export default function DonatePage() {
                     {faq.question}
                   </span>
                   <ChevronDown
-                    className={`text-gray-400 transition-transform duration-300 ${
-                      openFaq === idx ? "rotate-180" : ""
-                    }`}
+                    className={`text-gray-400 transition-transform duration-300 ${openFaq === idx ? "rotate-180" : ""
+                      }`}
                   />
                 </button>
                 <AnimatePresence>
@@ -632,6 +757,194 @@ export default function DonatePage() {
           </div>
         </div>
       </section>
+
+      {/* Payment Right Sidebar */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSidebarOpen(false)}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60]"
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed top-0 right-0 h-full w-full sm:w-[450px] bg-white shadow-2xl z-[70] flex flex-col overflow-y-auto"
+            >
+              <div className="flex items-center justify-between p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
+                <h2 className="text-xl font-bold text-gray-900">
+                  Complete Donation
+                </h2>
+                <button
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+
+              <div className="p-6 flex-grow flex flex-col gap-8">
+                <div className="text-center space-y-4">
+                  <p className="text-gray-600 font-medium">
+                    Scan the QR Code below to pay
+                  </p>
+                  <div className="bg-gray-50 rounded-xl border-2 border-gray-100 inline-block">
+                    <img
+                      src="/payment-qr.jpeg"
+                      alt="Payment QR"
+                      className="w-48 h-full object-contain rounded-xl shadow-sm"
+                    />
+                  </div>
+                  <p className="text-2xl font-black text-brand-primary">
+                    ₹{amount || customAmount}
+                  </p>
+                </div>
+
+                <div className="bg-blue-50/50 rounded-2xl p-6 border border-blue-100/50">
+                  <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <Upload className="w-5 h-5 text-blue-500" /> Upload
+                    Screenshot
+                  </h3>
+                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-blue-200 rounded-xl bg-white hover:bg-blue-50/50 transition-colors cursor-pointer relative overflow-hidden group">
+                    {paymentScreenshot ? (
+                      <div className="absolute inset-0 flex items-center justify-center bg-white">
+                        <img
+                          src={URL.createObjectURL(paymentScreenshot)}
+                          alt="Screenshot"
+                          className="w-full h-full object-contain p-2"
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold">
+                          Change
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6 text-blue-500">
+                        <Upload className="w-8 h-8 mb-2 opacity-50" />
+                        <p className="text-sm font-medium">
+                          Click to upload screenshot
+                        </p>
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setPaymentScreenshot(e.target.files[0]);
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="p-6 border-t border-gray-100 sticky bottom-0 bg-white">
+                <button
+                  onClick={async () => {
+                    if (!paymentScreenshot) {
+                      alert("Please upload your payment screenshot");
+                      return;
+                    }
+                    try {
+                      setIsSubmitting(true);
+                      const submitData = new FormData();
+                      submitData.append(
+                        "cause",
+                        selectedCause === "kovil" ? "temple" : "food",
+                      );
+                      submitData.append("fullname", fullname);
+                      submitData.append("mobile", mobile);
+                      submitData.append("email", email);
+                      submitData.append("address", address);
+                      submitData.append("country", country);
+                      submitData.append("donortype", donortype);
+                      submitData.append(
+                        "amount",
+                        (amount || customAmount).toString(),
+                      );
+
+                      if (donortype === "domestic") {
+                        submitData.append("pannumber", pannumber);
+                        submitData.append("aadhaarnumber", aadhaarnumber);
+                      } else {
+                        submitData.append("passportnumber", passportnumber);
+                      }
+
+                      submitData.append("image", paymentScreenshot);
+
+                      const result = await addDonor(submitData);
+
+                      if (result.success) {
+                        setIsSidebarOpen(false);
+                        setShowSuccessAnimation(true);
+                        setTimeout(() => {
+                          setShowSuccessAnimation(false);
+                          setFullname("");
+                          setMobile("");
+                          setEmail("");
+                          setAddress("");
+                          setPannumber("");
+                          setAadhaarnumber("");
+                          setPassportnumber("");
+                          setAmount("");
+                          setCustomAmount("");
+                          setPaymentScreenshot(null);
+                        }, 3000);
+                      } else {
+                        alert(result.message || "Submission failed");
+                      }
+                    } catch (error) {
+                      console.error(error);
+                      alert("Failed to submit donation. Please try again.");
+                    } finally {
+                      setIsSubmitting(false);
+                    }
+                  }}
+                  disabled={isSubmitting}
+                  className="w-full bg-brand-primary text-white font-bold py-4 rounded-[0px] hover:bg-brand-primary/90 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  {isSubmitting ? "Submitting..." : "Submit Donation"}
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Success Animation Overlay */}
+      <AnimatePresence>
+        {showSuccessAnimation && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center"
+          >
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", damping: 12, stiffness: 100 }}
+              className="flex flex-col items-center"
+            >
+              <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                <CheckCircle2 className="w-12 h-12 text-green-500" />
+              </div>
+              <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
+                Donation Successful!
+              </h2>
+              <p className="text-gray-500 font-medium">
+                Thank you for your generous contribution.
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

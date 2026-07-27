@@ -60,7 +60,7 @@ export default function TermsAndConditions() {
             <section className="space-y-4">
               <h2 className="text-2xl font-semibold text-foreground">5. Contact Us</h2>
               <p>
-                In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at: <strong>info@srikandhaguru.org</strong>.
+                In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at: <strong>srikandhagurufoundation@gmail.com</strong>.
               </p>
             </section>
           </div>

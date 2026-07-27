@@ -528,13 +528,12 @@ export default function ProgramDetailsPage() {
                         </h5>
                         <p className="font-semibold text-gray-900">
                           {new Date(program.eventdate ?? "").toLocaleDateString(
-                            undefined,
+                            "en-US",
                             {
-                              weekday: "short",
-                              year: "numeric",
-                              month: "long",
+                              month: "short",
                               day: "numeric",
-                            },
+                              year: "numeric",
+                            }
                           )}
                         </p>
                       </div>
@@ -547,11 +546,10 @@ export default function ProgramDetailsPage() {
                           <p className="font-semibold text-gray-900">
                             {new Date(
                               program.eventtodate ?? "",
-                            ).toLocaleDateString(undefined, {
-                              weekday: "short",
-                              year: "numeric",
-                              month: "long",
+                            ).toLocaleDateString("en-US", {
+                              month: "short",
                               day: "numeric",
+                              year: "numeric",
                             })}
                           </p>
                         </div>

@@ -22,6 +22,28 @@ export const getImageVideoUrl = (data: string) => {
   }
 };
 
+export const isYouTubeUrl = (url: string | null) => {
+  if (!url) return false;
+  return url.includes("youtube") || url.includes("youtu.be");
+};
+
+export const getYouTubeEmbedUrl = (url: string | null) => {
+  if (!url) return "";
+
+  const regExp =
+    /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|youtubecomwatchv=)([^#&?]*).*/;
+  const match = url.match(regExp);
+
+  if (match && match[2]) {
+    const videoId = match[2].substring(0, 11);
+    if (videoId.length === 11) {
+      return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    }
+  }
+
+  return url;
+};
+
 const api = axios.create({
   baseURL: "http://localhost:3003/api",
   headers: {
@@ -206,10 +228,7 @@ export const getBanners = async () => {
   }
 };
 
-export const signUpApi = async (data: {
-  username: string;
-  email: string;
-}) => {
+export const signUpApi = async (data: { username: string; email: string }) => {
   try {
     const response = await api.post("/user/signup", data);
     return response.data;
@@ -311,7 +330,10 @@ export const addToCart = async (payload: { productid: number }) => {
   }
 };
 
-export const updateCartQuantity = async (payload: { productid: number; quantity: number }) => {
+export const updateCartQuantity = async (payload: {
+  productid: number;
+  quantity: number;
+}) => {
   try {
     const response = await api.post("/cart/quantity", payload);
     return response.data;
@@ -331,7 +353,11 @@ export const removeFromCart = async (payload: { productid: number }) => {
   }
 };
 
-export const placeOrder = async (payload: { addressid: number; screenshot: string }) => {
+export const placeOrder = async (payload: {
+  addressid: number;
+  screenshot: string;
+  shippingcost: number;
+}) => {
   try {
     const response = await api.post("/order/place-order", payload);
     return response.data;
@@ -345,11 +371,15 @@ export const uploadPaymentScreenshot = async (imageFile: File) => {
   try {
     const formData = new FormData();
     formData.append("image", imageFile);
-    const response = await api.post("/order/upload-payment-screenshot", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
+    const response = await api.post(
+      "/order/upload-payment-screenshot",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       },
-    });
+    );
     return response.data;
   } catch (error) {
     console.error("Error uploading payment screenshot:", error);
@@ -425,6 +455,20 @@ export const getProducts = async (category: string = "") => {
     return response.data;
   } catch (error) {
     console.error("Error fetching products:", error);
+    throw error;
+  }
+};
+
+export const addDonor = async (formData: FormData) => {
+  try {
+    const response = await api.post("/donor/add", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error adding donor:", error);
     throw error;
   }
 };

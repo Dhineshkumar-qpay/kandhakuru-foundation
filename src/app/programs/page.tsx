@@ -135,11 +135,10 @@ export default function ProgramsPage() {
           >
             <button
               onClick={() => setActiveTab("domestic")}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-[0px] text-sm font-bold transition-all duration-300 ${
-                activeTab === "domestic"
-                  ? "bg-brand-primary text-white shadow-md shadow-brand-primary/20 scale-105"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-              }`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-[0px] text-sm font-bold transition-all duration-300 ${activeTab === "domestic"
+                ? "bg-brand-primary text-white shadow-md shadow-brand-primary/20 scale-105"
+                : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+                }`}
             >
               <img
                 src="https://cdn-icons-png.flaticon.com/128/10601/10601146.png"
@@ -150,11 +149,10 @@ export default function ProgramsPage() {
             </button>
             <button
               onClick={() => setActiveTab("international")}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-[0px] text-sm font-bold transition-all duration-300 ${
-                activeTab === "international"
-                  ? "bg-brand-primary text-white shadow-md shadow-brand-primary/20 scale-105"
-                  : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
-              }`}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-[0px] text-sm font-bold transition-all duration-300 ${activeTab === "international"
+                ? "bg-brand-primary text-white shadow-md shadow-brand-primary/20 scale-105"
+                : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+                }`}
             >
               <img
                 src="https://cdn-icons-png.flaticon.com/128/3192/3192970.png"
@@ -215,7 +213,7 @@ export default function ProgramsPage() {
                           <div className="flex items-start gap-3 text-gray-600">
                             <Calendar className="w-4 h-4 text-brand-primary shrink-0 mt-0.5" />
                             <span className="text-sm font-medium">
-                              {new Date(program.eventdate).toLocaleDateString()}
+                              {new Date(program.eventdate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                             </span>
                           </div>
                           <div className="flex items-start gap-3 text-gray-600">

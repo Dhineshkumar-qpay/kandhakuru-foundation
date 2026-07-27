@@ -44,8 +44,13 @@ export default function Navbar() {
   useEffect(() => {
     fetchCartCount();
     const handleCartUpdate = () => fetchCartCount();
+    const handleOpenCart = () => setIsCartOpen(true);
     window.addEventListener("cartUpdated", handleCartUpdate);
-    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
+    window.addEventListener("openCart", handleOpenCart);
+    return () => {
+      window.removeEventListener("cartUpdated", handleCartUpdate);
+      window.removeEventListener("openCart", handleOpenCart);
+    };
   }, []);
 
   const navLinks = [
@@ -110,13 +115,12 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`relative text-sm font-seminbold tracking-wider transition-colors ${
-                    isActive
+                  className={`relative text-sm font-seminbold tracking-wider transition-colors ${isActive
                       ? isShopSection
                         ? "text-white"
                         : "text-brand-primary"
                       : `${textColor} ${isShopSection ? "hover:text-white/80" : "hover:text-brand-primary"}`
-                  }`}
+                    }`}
                 >
                   {link.name}
                   {isActive && (

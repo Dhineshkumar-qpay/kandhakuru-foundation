@@ -12,6 +12,10 @@ import {
   Loader2,
   CheckCircle2,
   Clock,
+  ClipboardList,
+  Check,
+  Truck,
+  X,
 } from "lucide-react";
 import { getOrderDetail, IMAGEBASEURL } from "../../../services/api";
 import { OrderDetailResponseModel } from "../../../models/OrderModel";
@@ -105,14 +109,21 @@ export default function OrderDetailsPage() {
                   </p>
                 </div>
                 <div
-                  className={`px-4 py-2 font-bold text-sm rounded-[0px] uppercase tracking-widest text-center ${order.orderstatus.toLowerCase() === "pending" ? "bg-amber-100 text-amber-700 border border-amber-200" :
-                      order.orderstatus.toLowerCase() === "confirmed" ? "bg-sky-100 text-sky-700 border border-sky-200" :
-                        order.orderstatus.toLowerCase() === "packed" ? "bg-indigo-100 text-indigo-700 border border-indigo-200" :
-                          order.orderstatus.toLowerCase() === "shipped" ? "bg-blue-100 text-blue-700 border border-blue-200" :
-                            order.orderstatus.toLowerCase() === "delivered" ? "bg-emerald-100 text-emerald-700 border border-emerald-200" :
-                              order.orderstatus.toLowerCase() === "cancelled" ? "bg-red-100 text-red-700 border border-red-200" :
-                                "bg-gray-100 text-gray-700 border border-gray-200"
-                    }`}
+                  className={`px-4 py-2 font-bold text-sm rounded-[0px] uppercase tracking-widest text-center ${
+                    order.orderstatus.toLowerCase() === "pending"
+                      ? "bg-amber-100 text-amber-700 border border-amber-200"
+                      : order.orderstatus.toLowerCase() === "confirmed"
+                        ? "bg-sky-100 text-sky-700 border border-sky-200"
+                        : order.orderstatus.toLowerCase() === "packed"
+                          ? "bg-indigo-100 text-indigo-700 border border-indigo-200"
+                          : order.orderstatus.toLowerCase() === "shipped"
+                            ? "bg-blue-100 text-blue-700 border border-blue-200"
+                            : order.orderstatus.toLowerCase() === "delivered"
+                              ? "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                              : order.orderstatus.toLowerCase() === "cancelled"
+                                ? "bg-red-100 text-red-700 border border-red-200"
+                                : "bg-gray-100 text-gray-700 border border-gray-200"
+                  }`}
                 >
                   {order.orderstatus}
                 </div>
@@ -170,6 +181,101 @@ export default function OrderDetailsPage() {
                   ))}
                 </div>
               </div>
+              <div className="border-t border-gray-100 pt-8 mt-8">
+                <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-[var(--color-deepgreen)]" />
+                  Order Timeline
+                </h3>
+                <div className="px-2 md:px-8 py-2">
+                  {order.orderstatus.toLowerCase() === "cancelled" ? (
+                    <div className="flex items-center gap-3 text-red-600 font-bold bg-red-50 p-4 rounded-xl border border-red-200">
+                      <X className="w-6 h-6" />
+                      This order has been cancelled.
+                    </div>
+                  ) : (
+                    <div className="flex flex-col md:flex-row justify-between relative">
+                      {/* Connecting line (Desktop) */}
+                      <div className="hidden md:block absolute top-5 left-6 right-6 h-1 bg-gray-100 rounded-full z-0">
+                        <div
+                          className="h-full bg-[var(--color-deepgreen)] rounded-full transition-all duration-700"
+                          style={{
+                            width: `${Math.max(
+                              0,
+                              ([
+                                "pending",
+                                "confirmed",
+                                "packed",
+                                "shipped",
+                                "delivered",
+                              ].indexOf(order.orderstatus.toLowerCase()) /
+                                4) *
+                                100,
+                            )}%`,
+                          }}
+                        ></div>
+                      </div>
+
+                      {[
+                        "pending",
+                        "confirmed",
+                        "packed",
+                        "shipped",
+                        "delivered",
+                      ].map((step, index) => {
+                        const currentIdx = [
+                          "pending",
+                          "confirmed",
+                          "packed",
+                          "shipped",
+                          "delivered",
+                        ].indexOf(order.orderstatus.toLowerCase());
+                        const isCompleted = index <= currentIdx;
+                        const isCurrent = index === currentIdx;
+
+                        let Icon = Check;
+                        if (step === "pending") Icon = ClipboardList;
+                        if (step === "confirmed") Icon = CheckCircle2;
+                        if (step === "packed") Icon = Package;
+                        if (step === "shipped") Icon = Truck;
+                        if (step === "delivered") Icon = MapPin;
+
+                        return (
+                          <div
+                            key={step}
+                            className="flex flex-row md:flex-col items-center gap-4 md:gap-3 relative z-10 mb-8 md:mb-0"
+                          >
+                            {/* Mobile vertical line */}
+                            {index !== 4 && (
+                              <div className="md:hidden absolute left-5 top-10 bottom-[-32px] w-1 bg-gray-100 z-0">
+                                {isCompleted && index < currentIdx && (
+                                  <div className="w-full h-full bg-[var(--color-deepgreen)]"></div>
+                                )}
+                              </div>
+                            )}
+
+                            <div
+                              className={`w-10 h-10 rounded-full flex items-center justify-center border-4 ${
+                                isCompleted
+                                  ? "bg-[var(--color-deepgreen)] border-white shadow-[0_0_0_2px_var(--color-deepgreen)] text-white"
+                                  : "bg-white border-gray-200 text-gray-300"
+                              } transition-colors duration-300 z-10`}
+                            >
+                              <Icon className={`w-5 h-5`} />
+                            </div>
+                            <div className="md:text-center mt-0 md:mt-2">
+                              <p
+                                className={`text-sm font-bold capitalize ${isCurrent ? "text-[var(--color-deepgreen)]" : isCompleted ? "text-gray-800" : "text-gray-400"}`}
+                              >
+                                {step}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -210,12 +316,18 @@ export default function OrderDetailsPage() {
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <span>Subtotal</span>
                   <span className="font-medium text-gray-900">
-                    ₹{(order.totalamount).toLocaleString()}
+                    ₹{order.subtotal.toLocaleString()}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm text-gray-600">
                   <span>Shipping Fee</span>
-                  <span className="font-medium text-gray-900">₹70</span>
+                  {order.shippingcost !== 0 && order.shippingcost !== null ? (
+                    <span className="font-medium text-gray-900">
+                      ₹{order.shippingcost}
+                    </span>
+                  ) : (
+                    "Free"
+                  )}
                 </div>
                 <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
                   <span className="font-bold text-gray-900">Total</span>
