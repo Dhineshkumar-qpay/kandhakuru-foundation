@@ -3,6 +3,7 @@ import { Outfit } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import GlobalEventPopup from "@/components/GlobalEventPopup";
 import { AuthProvider } from "@/context/AuthContext";
 
 const outfit = Outfit({
@@ -37,6 +38,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <GlobalEventPopup />
         </AuthProvider>
       </body>
     </html>

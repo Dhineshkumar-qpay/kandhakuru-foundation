@@ -189,8 +189,8 @@ export default function MyAccountPage() {
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
                       className={`flex items-center justify-between w-full p-4 rounded-xl transition-all font-medium cursor-pointer ${isActive
-                          ? "bg-[var(--color-deepgreen)] text-white shadow-md shadow-[var(--color-deepgreen)]/20"
-                          : "text-gray-600 hover:bg-gray-50 hover:text-[var(--color-deepgreen)]"
+                        ? "bg-[var(--color-deepgreen)] text-white shadow-md shadow-[var(--color-deepgreen)]/20"
+                        : "text-gray-600 hover:bg-gray-50 hover:text-[var(--color-deepgreen)]"
                         }`}
                     >
                       <div className="flex items-center gap-3">
@@ -632,12 +632,12 @@ export default function MyAccountPage() {
                                 </div>
                                 <div
                                   className={`px-3 py-1 font-bold text-[10px] rounded-[0px] uppercase tracking-widest ${order.orderstatus.toLowerCase() === "pending" ? "bg-amber-100 text-amber-700 border border-amber-200" :
-                                      order.orderstatus.toLowerCase() === "confirmed" ? "bg-sky-100 text-sky-700 border border-sky-200" :
-                                        order.orderstatus.toLowerCase() === "packed" ? "bg-indigo-100 text-indigo-700 border border-indigo-200" :
-                                          order.orderstatus.toLowerCase() === "shipped" ? "bg-blue-100 text-blue-700 border border-blue-200" :
-                                            order.orderstatus.toLowerCase() === "delivered" ? "bg-emerald-100 text-emerald-700 border border-emerald-200" :
-                                              order.orderstatus.toLowerCase() === "cancelled" ? "bg-red-100 text-red-700 border border-red-200" :
-                                                "bg-gray-100 text-gray-700 border border-gray-200"
+                                    order.orderstatus.toLowerCase() === "confirmed" ? "bg-sky-100 text-sky-700 border border-sky-200" :
+                                      order.orderstatus.toLowerCase() === "packed" ? "bg-indigo-100 text-indigo-700 border border-indigo-200" :
+                                        order.orderstatus.toLowerCase() === "shipped" ? "bg-blue-100 text-blue-700 border border-blue-200" :
+                                          order.orderstatus.toLowerCase() === "delivered" ? "bg-emerald-100 text-emerald-700 border border-emerald-200" :
+                                            order.orderstatus.toLowerCase() === "cancelled" ? "bg-red-100 text-red-700 border border-red-200" :
+                                              "bg-gray-100 text-gray-700 border border-gray-200"
                                     }`}
                                 >
                                   {order.orderstatus}

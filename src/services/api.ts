@@ -511,4 +511,14 @@ export const getVideoTestimonials = async () => {
   }
 };
 
+export const getEventBookings = async () => {
+  try {
+    const response = await api.post("/booking/user-get");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching event bookings:", error);
+    throw error;
+  }
+};
+
 export default api;

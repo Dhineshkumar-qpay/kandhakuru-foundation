@@ -7,12 +7,14 @@ import { Menu, X, ShoppingCart, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CartSidebar from "./CartSidebar";
 import { getCartCount } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const { isLoggedIn, openLogin } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const isHomePage = pathname === "/";
@@ -116,10 +118,10 @@ export default function Navbar() {
                   key={link.name}
                   href={link.href}
                   className={`relative text-sm font-seminbold tracking-wider transition-colors ${isActive
-                      ? isShopSection
-                        ? "text-white"
-                        : "text-brand-primary"
-                      : `${textColor} ${isShopSection ? "hover:text-white/80" : "hover:text-brand-primary"}`
+                    ? isShopSection
+                      ? "text-white"
+                      : "text-brand-primary"
+                    : `${textColor} ${isShopSection ? "hover:text-white/80" : "hover:text-brand-primary"}`
                     }`}
                 >
                   {link.name}
@@ -158,6 +160,16 @@ export default function Navbar() {
                 </button>
               </div>
             )}
+            
+            {!isShopSection && (
+              <button
+                onClick={() => isLoggedIn ? router.push("/profile") : openLogin()}
+                className={`transition-colors cursor-pointer mr-2 hover:text-brand-primary ${textColor}`}
+              >
+                <User size={24} />
+              </button>
+            )}
+
             <Link
               href="/contact"
               className={`${isShopSection ? "bg-white text-[var(--color-deepgreen)] hover:bg-white/90" : "bg-brand-primary text-white hover:bg-brand-primary"} px-7 py-2.5 rounded-[0px] text-sm font-bold uppercase tracking-wider transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5`}
@@ -190,6 +202,15 @@ export default function Navbar() {
                   <User size={20} />
                 </button>
               </div>
+            )}
+
+            {!isShopSection && (
+              <button
+                onClick={() => isLoggedIn ? router.push("/profile") : openLogin()}
+                className={`transition-colors cursor-pointer mr-1 hover:text-brand-primary ${textColor}`}
+              >
+                <User size={20} />
+              </button>
             )}
 
             <button
