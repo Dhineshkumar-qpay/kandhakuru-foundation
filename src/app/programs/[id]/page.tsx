@@ -17,11 +17,13 @@ import {
   Send,
   ClipboardList,
   Info,
+  Upload,
 } from "lucide-react";
 import {
   getEventDetails,
   getImageVideoUrl,
   addBooking,
+  uploadBookingPaymentScreenshot,
 } from "../../../services/api";
 import { EventDetailData } from "../../../models/event_model";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -80,6 +82,9 @@ export default function ProgramDetailsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isPaymentSidebarOpen, setIsPaymentSidebarOpen] = useState(false);
+  const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
+  const [pendingPayload, setPendingPayload] = useState<any>(null);
 
   const {
     register,
@@ -119,36 +124,58 @@ export default function ProgramDetailsPage() {
       setTimeout(() => setToastMessage(null), 3000);
       return;
     }
+    const payload = {
+      eventid: Number(id),
+      fullname: data.name,
+      phone: data.phone,
+      whatsapp: data.whatsapp,
+      email: data.email,
+      occupation: data.occupation || "",
+      gender: data.gender || "Male",
+      age: Number(data.age),
+      city: data.district,
+      state: data.state,
+      country: data.country,
+      ishealthissue: data.ishealthissue,
+      healthissues: data.ishealthissue ? data.healthissues : null,
+      deliverymode: program?.deliverymode || "offline",
+      participants: isOnline ? 1 : Number(data.participants),
+      adultcount: isOnline ? 1 : Number(data.adultcount),
+      childrencount: isOnline ? 0 : Number(data.childrencount),
+      totalamount: amount,
+      remarks: data.remarks || "",
+      bookingdate: isOnline ? data.bookingdate : null,
+      bookingtime: isOnline ? data.bookingtime : null,
+    };
+
+    setPendingPayload(payload);
+    setIsPaymentSidebarOpen(true);
+  };
+
+  const handlePaymentSubmit = async () => {
+    if (!paymentScreenshot) {
+      alert("Please upload your payment screenshot");
+      return;
+    }
     setIsSubmitting(true);
     try {
-      const payload = {
-        eventid: Number(id),
-        fullname: data.name,
-        phone: data.phone,
-        whatsapp: data.whatsapp,
-        email: data.email,
-        occupation: data.occupation || "",
-        gender: data.gender || "Male",
-        age: Number(data.age),
-        city: data.district,
-        state: data.state,
-        country: data.country,
-        ishealthissue: data.ishealthissue,
-        healthissues: data.ishealthissue ? data.healthissues : null,
-        deliverymode: program?.deliverymode || "offline",
-        participants: isOnline ? 1 : Number(data.participants),
-        adultcount: isOnline ? 1 : Number(data.adultcount),
-        childrencount: isOnline ? 0 : Number(data.childrencount),
-        totalamount: amount,
-        remarks: data.remarks || "",
-        bookingdate: isOnline ? data.bookingdate : null,
-        bookingtime: isOnline ? data.bookingtime : null,
+      const uploadRes = await uploadBookingPaymentScreenshot(paymentScreenshot);
+
+      if (!uploadRes.success || !uploadRes.data) {
+        throw new Error("Failed to upload screenshot");
+      }
+
+      const finalPayload = {
+        ...pendingPayload,
+        screenshot: uploadRes.data,
       };
 
-      const response = await addBooking(payload);
+      const response = await addBooking(finalPayload);
 
       if (response.success) {
         setIsSuccess(true);
+        setIsPaymentSidebarOpen(false);
+        setPaymentScreenshot(null);
         reset();
         setTimeout(() => {
           setIsSuccess(false);
@@ -161,8 +188,10 @@ export default function ProgramDetailsPage() {
       }
     } catch (error) {
       console.error(error);
+      alert("Failed to submit booking. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   useEffect(() => {
@@ -236,19 +265,6 @@ export default function ProgramDetailsPage() {
 
         <div className="absolute inset-0 flex flex-col justify-end pb-24">
           <div className="container mx-auto px-4 max-w-6xl relative z-10">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <Link
-                href="/programs"
-                className="inline-flex items-center gap-2 text-white/80 hover:text-white hover:bg-white/10 px-4 py-2 rounded-[5px] backdrop-blur-sm transition-all mb-8 text-sm font-normal tracking-widest border border-white/20"
-              >
-                <ArrowLeft size={10} /> Back to Programs
-              </Link>
-            </motion.div>
-
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
@@ -772,7 +788,7 @@ export default function ProgramDetailsPage() {
                       <input
                         {...register("name")}
                         type="text"
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.name ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                        className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.name ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                         placeholder="Enter your full name"
                       />
                       {errors.name && (
@@ -788,7 +804,7 @@ export default function ProgramDetailsPage() {
                       <input
                         {...register("age")}
                         type="number"
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.age ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                        className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.age ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                         placeholder="Enter your age"
                       />
                       {errors.age && (
@@ -808,7 +824,7 @@ export default function ProgramDetailsPage() {
                       <input
                         {...register("phone")}
                         type="tel"
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.phone ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                        className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.phone ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                         placeholder="Enter phone number"
                       />
                       {errors.phone && (
@@ -825,7 +841,7 @@ export default function ProgramDetailsPage() {
                       <input
                         {...register("whatsapp")}
                         type="tel"
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.whatsapp ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                        className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.whatsapp ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                         placeholder="Enter WhatsApp number"
                       />
                       {errors.whatsapp && (
@@ -843,7 +859,7 @@ export default function ProgramDetailsPage() {
                       </label>
                       <select
                         {...register("gender")}
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.gender ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                        className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.gender ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                       >
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
@@ -857,7 +873,7 @@ export default function ProgramDetailsPage() {
                       <input
                         {...register("occupation")}
                         type="text"
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.occupation ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                        className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.occupation ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                         placeholder="Enter your occupation"
                       />
                     </div>
@@ -872,7 +888,7 @@ export default function ProgramDetailsPage() {
                       <input
                         {...register("email")}
                         type="email"
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.email ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                        className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.email ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                         placeholder="Enter email address"
                       />
                       {errors.email && (
@@ -888,7 +904,7 @@ export default function ProgramDetailsPage() {
                       <input
                         {...register("district")}
                         type="text"
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.district ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                        className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.district ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                         placeholder="Enter your district"
                       />
                       {errors.district && (
@@ -907,7 +923,7 @@ export default function ProgramDetailsPage() {
                       <input
                         {...register("state")}
                         type="text"
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.state ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                        className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.state ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                         placeholder="Enter your state"
                       />
                       {errors.state && (
@@ -923,7 +939,7 @@ export default function ProgramDetailsPage() {
                       <input
                         {...register("country")}
                         type="text"
-                        className={`w-full px-4 py-3 rounded-xl border ${errors.country ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                        className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.country ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                         placeholder="Enter your country"
                       />
                       {errors.country && (
@@ -945,7 +961,7 @@ export default function ProgramDetailsPage() {
                           {...register("participants")}
                           type="number"
                           min="1"
-                          className={`w-full px-4 py-3 rounded-xl border ${errors.participants ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                          className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.participants ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                         />
                         {errors.participants && (
                           <p className="mt-1 text-xs text-red-500">
@@ -961,7 +977,7 @@ export default function ProgramDetailsPage() {
                           {...register("adultcount")}
                           type="number"
                           min="0"
-                          className={`w-full px-4 py-3 rounded-xl border ${errors.adultcount ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                          className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.adultcount ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                         />
                         {errors.adultcount && (
                           <p className="mt-1 text-xs text-red-500">
@@ -977,7 +993,7 @@ export default function ProgramDetailsPage() {
                           {...register("childrencount")}
                           type="number"
                           min="0"
-                          className={`w-full px-4 py-3 rounded-xl border ${errors.childrencount ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm`}
+                          className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.childrencount ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                         />
                         {errors.childrencount && (
                           <p className="mt-1 text-xs text-red-500">
@@ -1114,6 +1130,106 @@ export default function ProgramDetailsPage() {
               )}
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Payment Right Sidebar */}
+      <AnimatePresence>
+        {isPaymentSidebarOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsPaymentSidebarOpen(false)}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60]"
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed top-0 right-0 h-full w-full sm:w-[450px] bg-white shadow-2xl z-[70] flex flex-col overflow-y-auto"
+            >
+              <div className="flex items-center justify-between p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
+                <h2 className="text-xl font-bold text-gray-900">
+                  Make Payment
+                </h2>
+                <button
+                  onClick={() => setIsPaymentSidebarOpen(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+
+              <div className="p-6 flex-grow flex flex-col gap-8">
+                <div className="text-center space-y-4">
+                  <p className="text-gray-600 font-medium">
+                    Scan the QR Code below to pay
+                  </p>
+                  <div className="bg-gray-50 rounded-xl border-2 border-gray-100 inline-block">
+                    <img
+                      src="/payment-qr.jpeg"
+                      alt="Payment QR"
+                      className="w-48 h-full object-contain rounded-xl shadow-sm"
+                    />
+                  </div>
+                  <p className="text-2xl font-black text-amber-500">
+                    ₹{amount.toLocaleString()}
+                  </p>
+                </div>
+
+                <div className="bg-blue-50/50 rounded-2xl p-6 border border-blue-100/50">
+                  <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <Upload className="w-5 h-5 text-blue-500" /> Upload
+                    Screenshot
+                  </h3>
+                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-blue-200 rounded-xl bg-white hover:bg-blue-50/50 transition-colors cursor-pointer relative overflow-hidden group">
+                    {paymentScreenshot ? (
+                      <div className="absolute inset-0 flex items-center justify-center bg-white">
+                        <img
+                          src={URL.createObjectURL(paymentScreenshot)}
+                          alt="Screenshot"
+                          className="w-full h-full object-contain p-2"
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold">
+                          Change
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6 text-blue-500">
+                        <Upload className="w-8 h-8 mb-2 opacity-50" />
+                        <p className="text-sm font-medium">
+                          Click to upload screenshot
+                        </p>
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setPaymentScreenshot(e.target.files[0]);
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <div className="p-6 border-t border-gray-100 sticky bottom-0 bg-white">
+                <button
+                  onClick={handlePaymentSubmit}
+                  disabled={isSubmitting}
+                  className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold py-4 rounded-[0px] hover:from-amber-600 hover:to-orange-600 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  {isSubmitting ? "Submitting..." : "Submit Order"}
+                </button>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 

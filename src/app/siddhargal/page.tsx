@@ -335,44 +335,74 @@ export default function SiddhargalPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="max-w-6xl mx-auto space-y-8">
             {siddhargalList.map((siddhar, index) => (
               <motion.div
                 key={siddhar.id}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.08 }}
                 onClick={() => setSelectedSiddhar(siddhar)}
-                className="bg-white rounded-[1rem] overflow-hidden shadow-xl shadow-slate-200/50 border border-slate-100 cursor-pointer group hover:-translate-y-2 hover:shadow-2xl hover:shadow-amber-500/10 hover:border-amber-200 transition-all duration-500 flex flex-col relative"
+                className="group cursor-pointer"
               >
-                <div className="h-64 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent z-10 transition-opacity duration-300 group-hover:opacity-90"></div>
-                  <img
-                    src={siddhar.image}
-                    alt={siddhar.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute bottom-5 left-5 z-20 pr-5">
-                    <h3 className="text-2xl font-extrabold text-white mb-1 leading-tight">
-                      {siddhar.name}
-                    </h3>
-                    <p className="text-amber-400 font-semibold text-sm tracking-wide">
-                      {siddhar.title}
-                    </p>
-                  </div>
-                  <div className="absolute top-5 right-5 z-20 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white font-black text-sm shadow-lg">
-                    {index + 1}
-                  </div>
-                </div>
-                <div className="p-6 md:p-8 flex-grow flex flex-col bg-white relative">
-                  <p className="text-slate-600 text-base leading-relaxed mb-6 flex-grow line-clamp-3 font-medium">
-                    {siddhar.shortDesc}
-                  </p>
-                  <div className="flex items-center justify-between mt-auto">
-                    <span className="text-amber-600 text-sm font-bold flex items-center gap-2 group-hover:gap-3 transition-all uppercase tracking-wider">
-                      Explore <ArrowRight size={16} />
-                    </span>
+                <div className="relative overflow-hidden rounded-[10px] border border-slate-200/80 bg-white/80 backdrop-blur-xl shadow-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-[var(--color-deepgreen)]/30">
+                  {/* Background Decoration */}
+                  <div className="absolute -top-28 -right-28 h-72 w-72 rounded-full bg-[var(--color-deepgreen)]/5 blur-3xl group-hover:bg-[var(--color-deepgreen)]/10 transition-all duration-700"></div>
+
+                  <div className="grid lg:grid-cols-[300px_1fr] gap-8 p-8 lg:p-10 relative z-10">
+                    {/* Image */}
+                    <div className="relative">
+                      <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[var(--color-deepgreen)]/20 to-amber-400/20 blur-xl scale-95 group-hover:scale-105 transition-all duration-700"></div>
+
+                      <div className="relative overflow-hidden rounded-3xl border border-white shadow-xl">
+                        <img
+                          src={siddhar.image}
+                          alt={siddhar.name}
+                          className="w-full h-[360px] object-cover transition duration-700 group-hover:scale-105"
+                        />
+                      </div>
+
+                      {/* Number */}
+                      <div className="absolute top-5 left-5">
+                        <div className="h-12 w-12 rounded-2xl bg-white/80 backdrop-blur-lg border border-white shadow flex items-center justify-center font-bold text-slate-700">
+                          {String(index + 1).padStart(2, "0")}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex flex-col justify-center">
+                      <span className="inline-flex w-fit rounded-[0px] border border-brand-primary/20 bg-brand-primary/5 px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-brand-primary">
+                        {siddhar.title}
+                      </span>
+
+                      <h2 className="mt-6 text-4xl font-bold text-slate-900 leading-tight group-hover:text-brand-primary transition-colors">
+                        {siddhar.name}
+                      </h2>
+
+                      <div className="mt-6 h-px w-24 bg-gradient-to-r from-[var(--color-deepgreen)] to-transparent"></div>
+
+                      <p className="mt-8 text-slate-600 leading-8 text-lg">
+                        {siddhar.shortDesc}
+                      </p>
+
+                      <div className="mt-10 flex items-center justify-between">
+                        <button className="inline-flex items-center gap-3 rounded-[0px] border border-slate-200 bg-white px-6 py-3 font-semibold text-slate-700 transition-all duration-300 hover:border-bg-brand-primary hover:bg-brand-primary hover:text-white cursor-pointer">
+                          Read Biography
+                          <ArrowRight
+                            size={18}
+                            className="transition-transform duration-300 group-hover:translate-x-1"
+                          />
+                        </button>
+
+                        <div className="hidden md:flex items-center gap-2">
+                          <div className="h-2 w-2 rounded-full bg-[var(--color-deepgreen)]"></div>
+                          <div className="h-2 w-2 rounded-full bg-slate-300"></div>
+                          <div className="h-2 w-2 rounded-full bg-slate-300"></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>

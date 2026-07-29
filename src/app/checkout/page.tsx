@@ -415,8 +415,8 @@ export default function CheckoutPage() {
                         key={addr.id}
                         onClick={() => setSelectedAddress(addr.id)}
                         className={`relative p-5 rounded-xl border-2 cursor-pointer transition-all ${selectedAddress === addr.id
-                            ? "border-[var(--color-deepgreen)] bg-[var(--color-deepgreen)]/5"
-                            : "border-gray-100 hover:border-[var(--color-deepgreen)]/40 bg-gray-50"
+                          ? "border-[var(--color-deepgreen)] bg-[var(--color-deepgreen)]/5"
+                          : "border-gray-100 hover:border-[var(--color-deepgreen)]/40 bg-gray-50"
                           }`}
                       >
                         {selectedAddress === addr.id && (
@@ -515,7 +515,7 @@ export default function CheckoutPage() {
                     {shipping === 0 ? "Free" : `₹${shipping}`}
                   </span>
                 </div>
-                
+
                 <div className="pt-2">
                   {shipping === 0 ? (
                     <p className="text-xs text-[var(--color-deepgreen)] font-bold bg-[var(--color-deepgreen)]/10 p-2.5 rounded-lg text-center flex items-center justify-center gap-2">
@@ -657,23 +657,82 @@ export default function CheckoutPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center"
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden"
           >
+            {/* Background Blur */}
+            <div className="absolute inset-0 bg-white/80 backdrop-blur-xl" />
+
             <motion.div
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: "spring", damping: 12, stiffness: 100 }}
-              className="flex flex-col items-center"
+              initial={{ scale: 0.8, opacity: 0, y: 50 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              transition={{
+                type: "spring",
+                damping: 20,
+                stiffness: 300,
+                duration: 0.6,
+              }}
+              className="relative z-10 flex flex-col items-center bg-white p-12 rounded-[3rem] shadow-[0_20px_60px_-15px_rgba(34,197,94,0.2)] border border-green-50 max-w-md w-full mx-4 text-center"
             >
-              <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6">
-                <CheckCircle2 className="w-12 h-12 text-green-500" />
+              <div className="relative mb-8">
+                {/* Outer Ring Pulse */}
+                <motion.div
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0.7, 0.3] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute inset-0 bg-green-200 rounded-full blur-xl"
+                />
+
+                {/* SVG Tick Container */}
+                <motion.div
+                  animate={{ 
+                    scale: [1, 1.08, 1],
+                    boxShadow: [
+                      "0px 10px 20px -5px rgba(34, 197, 94, 0.3)",
+                      "0px 20px 40px -5px rgba(34, 197, 94, 0.5)",
+                      "0px 10px 20px -5px rgba(34, 197, 94, 0.3)"
+                    ]
+                  }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                  className="relative w-32 h-32 rounded-full bg-gradient-to-tr from-green-500 to-emerald-400 flex items-center justify-center"
+                >
+                  <svg
+                    className="w-16 h-16 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <motion.path
+                      initial={{ pathLength: 0, opacity: 0 }}
+                      animate={{ pathLength: [0, 1, 1, 0], opacity: [0, 1, 1, 0] }}
+                      transition={{
+                        duration: 2.5,
+                        ease: "easeInOut",
+                        repeat: Infinity,
+                      }}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </motion.div>
               </div>
-              <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
+
+              <motion.h2
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7 }}
+                className="text-3xl font-black text-gray-900 mb-3 tracking-tight"
+              >
                 Order Placed Successfully!
-              </h2>
-              <p className="text-gray-500 font-medium">
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+                className="text-gray-500 font-medium text-lg"
+              >
                 Thank you for your contribution.
-              </p>
+              </motion.p>
             </motion.div>
           </motion.div>
         )}

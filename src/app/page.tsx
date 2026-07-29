@@ -331,8 +331,7 @@ function SpiritualPhilosophy() {
       <div
         className="absolute inset-0 bg-cover bg-fixed bg-center opacity-70 z-0 pointer-events-none"
         style={{
-          backgroundImage:
-            "url('https://t3.ftcdn.net/jpg/07/16/46/44/360_F_716464441_DvxUkPchxMPozb2zAFof1DHEze2dxKHG.jpg')",
+          backgroundImage: "url('about.jpeg')",
         }}
       ></div>
 
@@ -506,16 +505,16 @@ function RoleOfReligions() {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-brand-primary/5 rounded-full blur-3xl -z-10"></div>
 
             <div className="space-y-4 lg:translate-y-8">
-              <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-lg group">
+              <div className="aspect-[4/5] rounded-xl overflow-hidden shadow-lg group">
                 <img
-                  src="https://scontent.fmaa2-4.fna.fbcdn.net/v/t51.82787-15/732026674_18059112143778949_8418241914655641321_n.jpg?stp=dst-jpg_tt6&cstp=mx1080x1350&ctp=s1080x1350&_nc_cat=105&ccb=1-7&_nc_sid=127cfc&_nc_ohc=fNUe62sblx8Q7kNvwHto6RT&_nc_oc=AdorVC5vgCRIpcX7dK8okbbqX-gShmgL0CITRM3YboJcsSeEByBFPggXaO0qixZQl8hBuSdhiV1y8RkhDYq47ZET&_nc_zt=23&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=bWCk6oBXQFqtMSzW1K7tPA&_nc_ss=7b2a8&oh=00_AQCP6M20aMxBgTTpF0vVs0qXIjXydOAmp4OoyG0i3X4jNA&oe=6A5E70C5"
+                  src="drivine-1.jpg"
                   alt="Spiritual path"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
               </div>
-              <div className="aspect-square rounded-3xl overflow-hidden shadow-lg group">
+              <div className="aspect-square rounded-xl overflow-hidden shadow-lg group">
                 <img
-                  src="https://scontent.fmaa2-1.fna.fbcdn.net/v/t51.82787-15/703474180_18052060787778949_8457861926810728480_n.jpg?stp=dst-jpg_tt6&cstp=mx1079x721&ctp=s1079x721&_nc_cat=102&ccb=1-7&_nc_sid=127cfc&_nc_ohc=rr34U8XjS3AQ7kNvwGTUKJI&_nc_oc=AdoAHGg9fTHLPKnouseZtPVNhzTzKwPNvXJaC7G6dZmOSQsmGM56Id_sLoC95V2Ip29qTImMT222JTL6syz1q7c1&_nc_zt=23&_nc_ht=scontent.fmaa2-1.fna&_nc_gid=wRvhZKYCnSBd515i8y7-pA&_nc_ss=7b2a8&oh=00_AQDDiBEtDXIDsrXfRoMSBefL6h03fSb9tqmZiUa-Aq1qKA&oe=6A5E7966"
+                  src="drivine-2.jpg"
                   alt="Meditation"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
@@ -523,16 +522,16 @@ function RoleOfReligions() {
             </div>
 
             <div className="space-y-4 lg:-translate-y-8">
-              <div className="aspect-square rounded-3xl overflow-hidden shadow-lg group">
+              <div className="aspect-square rounded-xl overflow-hidden shadow-lg group">
                 <img
-                  src="https://scontent.fmaa2-3.fna.fbcdn.net/v/t51.82787-15/581966390_18028738976778949_2554845895955878752_n.jpg?stp=dst-jpegr_tt6&cstp=mx1440x1080&ctp=s1440x1080&_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=JDd93tpvO08Q7kNvwESuiZ7&_nc_oc=AdqZ5ughy3BkZiTPz-8QnYLzze4CoAEfhXXCixwGnpN5eRgKcVm4Iok_X7RKxnwV-LgxYF3ba5WOXTmY9hfb64cL&_nc_zt=23&se=-1&_nc_ht=scontent.fmaa2-3.fna&_nc_gid=K7RcVl4vfzumzuRVzG0Bcg&_nc_ss=7b2a8&oh=00_AQC-m1r9iXqvajnHAWgC7wl_m6hRUgFmjw-Xe-yzfp7bpQ&oe=6A5E903F"
+                  src="drivine-3.jpg"
                   alt="Divine connection"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
               </div>
-              <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-lg group">
+              <div className="aspect-[4/5] rounded-xl overflow-hidden shadow-lg group">
                 <img
-                  src="https://scontent.fmaa2-4.fna.fbcdn.net/v/t39.30808-6/487097612_122198317190129648_108626807348356310_n.jpg?stp=dst-jpg_tt6&cstp=mx1366x2048&ctp=s1366x2048&_nc_cat=104&ccb=1-7&_nc_sid=833d8c&_nc_ohc=qQ8am27LUQsQ7kNvwFWFT45&_nc_oc=AdquWX3wlSotAdhUOCFMvjnhCf2l3EKZR__0uAz1dJ0dlub31fns4W6I-bSmtPGV-gyoS0EVmmkZaFuAz8L-AnD7&_nc_zt=23&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=AIBK6FNmOcQQHnV5GN1Edg&_nc_ss=7b2a8&oh=00_AQCLzVov-if6lOq50isrlSfsQph8tQcMW23QfuelVoitRw&oe=6A5E8940"
+                  src="drivine-4.jpg"
                   alt="Yoga practice"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
@@ -553,7 +552,7 @@ function Programs() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await getEvents("offline");
+        const response = await getEvents("offline", "level1");
         if (response.success && response.data?.events) {
           setEvents(response.data.events.slice(0, 6));
         }
@@ -626,36 +625,43 @@ function Programs() {
                       backgroundImage: `url('${getImageVideoUrl(program.image)}')`,
                     }}
                   ></div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                  {/* Highlight City Badge */}
+                  <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md border border-white/50 px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 z-10 group-hover:-translate-y-1 transition-transform duration-300">
+                    <MapPin className="w-3.5 h-3.5 text-brand-primary" />
+                    <span className="text-[11px] font-black tracking-widest uppercase text-brand-primary">
+                      {program.city}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Content Section */}
-                <div className="p-8 flex-grow flex flex-col">
-                  <h4 className="text-2xl font-bold text-foreground mb-6 line-clamp-2 group-hover:text-brand-primary transition-colors">
+                <div className="p-6 md:p-8 flex-grow flex flex-col relative bg-white">
+                  {/* Floating Date Badge */}
+                  <div className="absolute -top-8 left-6 md:left-8 bg-brand-primary text-white p-2 rounded-2xl shadow-xl flex flex-col items-center justify-center min-w-[4rem] group-hover:-translate-y-1 transition-transform duration-300 border-2 border-white">
+                    <span className="text-lg font-black leading-none">{new Date(program.eventdate).getDate()}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest mt-1">{new Date(program.eventdate).toLocaleString('default', { month: 'short' })}</span>
+                  </div>
+
+                  <h4 className="text-xl font-black text-gray-900 mt-6 mb-4 line-clamp-2 group-hover:text-brand-primary transition-colors leading-snug">
                     {program.title}
                   </h4>
 
-                  <div className="space-y-4 mb-8 flex-grow">
+                  <div className="space-y-3 mb-6 flex-grow border-t border-gray-100 pt-4">
                     <div className="flex items-start gap-3 text-gray-600">
-                      <Calendar className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
-                      <span className="font-medium">
-                        {new Date(program.eventdate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                      </span>
-                    </div>
-                    <div className="flex items-start gap-3 text-gray-600">
-                      <MapPin className="w-5 h-5 text-brand-primary shrink-0 mt-0.5" />
-                      <span className="text-sm leading-relaxed">
-                        {program.address}, {program.city}, {program.state}
+                      <MapPin className="w-4 h-4 text-gray-400 shrink-0 mt-1 group-hover:text-brand-primary transition-colors" />
+                      <span className="text-sm font-medium leading-relaxed">
+                        {program.address}, <span className="text-gray-900 font-bold">{program.city}</span>, {program.state}
                       </span>
                     </div>
                   </div>
 
                   {program.status === "active" ? (
-                    <span className="block w-full py-3 px-6 text-center bg-white border-2 border-brand-primary text-brand-primary font-bold rounded-[0px] group-hover:bg-brand-primary group-hover:text-white transition-colors duration-300">
+                    <span className="block w-full py-3 px-6 text-center bg-gray-50 border border-gray-200 text-brand-primary font-bold rounded-xl group-hover:bg-brand-primary group-hover:border-brand-primary group-hover:text-white transition-all duration-300 shadow-sm uppercase tracking-wider text-xs">
                       View Details
                     </span>
                   ) : (
-                    <span className="block w-full py-3 px-6 text-center bg-gray-100 text-gray-400 font-bold rounded-xl">
+                    <span className="block w-full py-3 px-6 text-center bg-gray-100 text-gray-400 font-bold rounded-xl uppercase tracking-wider text-xs">
                       Coming Soon
                     </span>
                   )}
@@ -697,7 +703,7 @@ function Eligibility() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 items-center">
           {/* Left Column */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -718,13 +724,18 @@ function Eligibility() {
             </h2>
 
             <p className="text-lg md:text-xl text-slate-600 font-medium leading-relaxed mb-10 max-w-lg">
-              Our programs are designed for universal access. Anyone above 12 years of age is eligible to participate and learn the sacred science of Shiva Kriya Yogam.
+              Our programs are designed for universal access. Anyone above 12
+              years of age is eligible to participate and learn the sacred
+              science of Shiva Kriya Yogam.
             </p>
 
             <div className="bg-white/80 backdrop-blur-2xl border border-slate-200/60 p-8 md:p-10 rounded-[2rem] shadow-[0_8px_40px_rgb(0,0,0,0.04)] relative group overflow-hidden">
               <ul className="space-y-5 relative z-10">
                 {requirements.map((req, i) => (
-                  <li key={i} className="flex items-center gap-5 group/item bg-slate-50/50 p-4 rounded-2xl border border-slate-100 hover:border-amber-200 hover:bg-amber-50/50 hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                  <li
+                    key={i}
+                    className="flex items-center gap-5 group/item bg-slate-50/50 p-4 rounded-2xl border border-slate-100 hover:border-amber-200 hover:bg-amber-50/50 hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                  >
                     <div className="w-12 h-12 shrink-0 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 shadow-sm group-hover/item:text-amber-600 group-hover/item:border-amber-300 group-hover/item:scale-110 transition-all duration-300">
                       {req.icon}
                     </div>
@@ -738,7 +749,7 @@ function Eligibility() {
           </motion.div>
 
           {/* Right Column (Dress Code) */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -758,7 +769,9 @@ function Eligibility() {
               </div>
 
               <p className="text-slate-600 font-medium text-lg mb-10 leading-relaxed">
-                Traditional and comfortable clothing is strictly recommended to ensure ease of practice, meditation, and respect for the ashram environment.
+                Traditional and comfortable clothing is strictly recommended to
+                ensure ease of practice, meditation, and respect for the ashram
+                environment.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
@@ -801,7 +814,8 @@ function Eligibility() {
                   strokeWidth={2.5}
                 />
                 <p className="text-sm text-amber-900 font-bold leading-relaxed">
-                  Please wear clean, modest, and comfortable clothing. Tight or revealing outfits are not permitted during the sessions.
+                  Please wear clean, modest, and comfortable clothing. Tight or
+                  revealing outfits are not permitted during the sessions.
                 </p>
               </div>
             </div>
@@ -1140,7 +1154,7 @@ function Videos() {
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col">
                         <span className="text-[10px] text-slate-400">
-                          {new Date(video.createdAt).toLocaleDateString()}
+                          {new Date(video.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                         </span>
                       </div>
                     </div>
@@ -1214,7 +1228,9 @@ function BookShopPreview() {
   const router = useRouter();
 
   const [books, setBooks] = useState<ProductModel[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<ProductModel | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<ProductModel | null>(
+    null,
+  );
   const [addingToCartId, setAddingToCartId] = useState<number | null>(null);
   const [buyingNowId, setBuyingNowId] = useState<number | null>(null);
 
@@ -1265,7 +1281,7 @@ function BookShopPreview() {
               className="bg-white border border-gray-200 rounded-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col sm:flex-row group cursor-pointer"
               onClick={() => setSelectedProduct(book)}
             >
-                <div className="w-full sm:w-2/5 bg-gray-50 relative border-b sm:border-b-0 sm:border-r border-gray-100 p-4 flex items-center justify-center">
+              <div className="w-full sm:w-2/5 bg-gray-50 relative border-b sm:border-b-0 sm:border-r border-gray-100 p-4 flex items-center justify-center">
                 <img
                   src={getImageVideoUrl(book.image)}
                   alt={book.productname}
@@ -1309,9 +1325,7 @@ function BookShopPreview() {
                         try {
                           setAddingToCartId(book.id);
                           await addToCart({ productid: book.id });
-                          window.dispatchEvent(
-                            new Event("cartUpdated"),
-                          );
+                          window.dispatchEvent(new Event("cartUpdated"));
                           window.dispatchEvent(new Event("openCart"));
                         } catch (error) {
                           console.error(error);
@@ -1320,9 +1334,13 @@ function BookShopPreview() {
                         }
                       }
                     }}
-                    className="flex items-center gap-2 bg-brand-primary text-white font-bold py-2 px-6 rounded-[0px] hover:bg-brand-primary/90 transition-colors text-sm disabled:opacity-50"
+                    className="flex items-center gap-2 bg-brand-primary text-white font-bold py-2 px-6 rounded-[0px] hover:bg-brand-primary/90 transition-colors text-sm disabled:opacity-50 cursor-pointer"
                   >
-                    {addingToCartId === book.id ? <Loader2 size={16} className="animate-spin" /> : <ShoppingCart size={16} />} 
+                    {addingToCartId === book.id ? (
+                      <Loader2 size={16} className="animate-spin" />
+                    ) : (
+                      <ShoppingCart size={16} />
+                    )}
                     Add to Cart
                   </button>
                 </div>
@@ -1394,7 +1412,8 @@ function BookShopPreview() {
                     selectedProduct.price > selectedProduct.sellingprice ? (
                     <span className="bg-red-50 text-red-600 font-bold px-2 py-1 rounded text-sm">
                       {Math.round(
-                        ((selectedProduct.price - selectedProduct.sellingprice) /
+                        ((selectedProduct.price -
+                          selectedProduct.sellingprice) /
                           selectedProduct.price) *
                         100,
                       )}
@@ -1413,7 +1432,9 @@ function BookShopPreview() {
                 )}
 
                 <div className="prose prose-sm text-gray-600 mb-8 flex-grow">
-                  <p className="leading-relaxed">{selectedProduct.description}</p>
+                  <p className="leading-relaxed">
+                    {selectedProduct.description}
+                  </p>
                   {selectedProduct.benefits &&
                     selectedProduct.benefits.length > 0 && (
                       <div className="mt-6">

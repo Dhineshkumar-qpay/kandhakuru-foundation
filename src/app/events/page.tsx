@@ -29,8 +29,8 @@ export default function EventsPage() {
 
   return (
     <main className="pt-15 bg-[#FAFAF9] min-h-screen">
-      {/* Header Section */}
-      <section className="bg-white border-b border-gray-200 py-8 md:py-12 relative overflow-hidden">
+      {/* Premium Header Section */}
+      <section className="relative pt-32 pb-16 bg-[#FAFAF9] overflow-hidden border-b border-gray-100">
         <div className="absolute top-0 right-0 w-[40vw] h-[40vw] bg-amber-200/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-orange-200/20 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
 
@@ -38,22 +38,35 @@ export default function EventsPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
             className="max-w-3xl text-center mx-auto"
           >
-            <h2 className="text-sm font-bold tracking-widest text-amber-500 uppercase mb-2">
-              Join Our Gatherings
-            </h2>
+            <div className="inline-flex items-center gap-3 mb-6">
+              <span className="w-10 h-px bg-gradient-to-r from-transparent to-brand-primary"></span>
+              <span className="px-4 py-1.5 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-black tracking-[0.2em] uppercase border border-brand-primary/20 shadow-sm">
+                Join Our Gatherings
+              </span>
+              <span className="w-10 h-px bg-gradient-to-l from-transparent to-brand-primary"></span>
+            </div>
 
-            <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
-              Upcoming Events
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-normal font-black text-gray-900 tracking-tight mb-6">
+              Upcoming{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-orange-500">
+                Events
+              </span>
             </h1>
+
+            <p className="text-lg text-gray-600 max-w-4xl mx-auto font-light leading-relaxed">
+              Experience the power of collective consciousness. Be a part of our
+              sacred gatherings, satsangs, and spiritual celebrations.
+            </p>
           </motion.div>
         </div>
       </section>
 
       {/* Events Grid Section */}
       <section className="py-20">
-        <div className="container mx-auto px-4 max-w-4xl">
+        <div className="container mx-auto px-4 max-w-5xl">
           <div className="space-y-8">
             {loading ? (
               <div className="text-center py-10 text-gray-500">
@@ -116,7 +129,7 @@ export default function EventsPage() {
                       </h3>
 
                       {event.description && (
-                        <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed mb-5">
+                        <p className="text-sm text-gray-600 line-clamp-4 leading-relaxed mb-5">
                           {event.description}
                         </p>
                       )}
@@ -128,8 +141,16 @@ export default function EventsPage() {
                           </div>
 
                           <span className="font-medium">
-                            {new Date(event.eventdate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                            {event.eventtodate && ` - ${new Date(event.eventtodate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
+                            {new Date(event.eventdate).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              },
+                            )}
+                            {event.eventtodate &&
+                              ` - ${new Date(event.eventtodate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
                           </span>
                         </div>
 

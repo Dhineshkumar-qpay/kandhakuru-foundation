@@ -485,4 +485,20 @@ export const addBooking = async (data: any) => {
   }
 };
 
+export const uploadBookingPaymentScreenshot = async (imageFile: File) => {
+  try {
+    const formData = new FormData();
+    formData.append("image", imageFile);
+    const response = await api.post("/booking/upload-payment", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error uploading booking payment screenshot:", error);
+    throw error;
+  }
+};
+
 export default api;

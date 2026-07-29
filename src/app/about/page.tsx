@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Eye, Target, Users, Send, Star } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Eye, Target, Users, Send, Star, X, ArrowRight } from "lucide-react";
 import { addTestimonial } from "../../services/api";
 
 export default function AboutPage() {
@@ -13,6 +13,18 @@ export default function AboutPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const founderStory = [
+    '"My journey into the spiritual path began when I was just a boy of 12 years. It was my beloved grandfather, Sri Kandhaguru, who first introduced me to the ancient wisdom of Kriya Yogam. I was drawn to its depth even at that tender age, though I did not yet fully grasp its transformative power. Little did I know then that this introduction would lay the foundation for the journey of self-discovery and spiritual awakening that would define my life.',
+    "Years later, at the age of 32, I felt an unshakable calling within my heart—a yearning that could not be ignored. I left my village behind and embarked on a journey to the sacred Amarnath. Known for its divine energy and spiritual significance, this holy site drew seekers from all walks of life. There, amidst the serene mountains and the company of ascetics and monks, my destiny unfolded. It was there that I met my true Master—Sri Mouna Siddhar, a direct disciple of the great Mahavatar Babaji Maharaj himself.",
+    "Sri Mouna Siddhar saw within me a readiness to tread the sacred path of Kriya Yogam. With his infinite grace, he accepted me as his disciple. For 48 days, I remained under his close guidance, learning the profound techniques of Kriya Yogam. Those days were a blessing beyond measure, as they gave me not only the sacred knowledge but also the strength to walk the path of self-realization. It was during this time that I received the initiation into Kriya Yogam—a moment that forever changed the course of my life.",
+    "Upon my return, I immersed myself completely in the practice of Kriya Yogam. I applied its techniques diligently, navigating the ups and downs of life with newfound clarity and peace. Over the next eight years, my practice deepened, and I experienced a profound transformation. I began to understand how to free myself from the struggles, distractions, and burdens of the material world.",
+    "In 2019, after years of intense practice and spiritual growth, I was guided to establish the Sri Kandhaguru Foundation in Bhavani, Erode District, Tamil Nadu. The purpose of this Foundation was clear—to share the timeless teachings of Kriya Yogam with all who sought spiritual growth and inner peace. I wanted to create a space where seekers could learn and practice these techniques under direct guidance, as I once had.",
+    "Since then, the work of the Foundation has grown in ways I could not have imagined. Thousands of seekers from Tamil Nadu and beyond have come to learn Kriya Yogam. To date, I have been blessed to initiate over 15,342 students into this sacred practice. Watching them transform their lives through the teachings of Kriya Yogam brings me immense joy and fulfillment.",
+    'My mission is simple yet profound—to guide each seeker to discover the divinity within themselves. Through the Sri Kandhaguru Foundation, I continue to serve this purpose, offering a path to inner peace, transformation, and self-realization. This journey is not mine alone; it is a shared journey, and I walk it alongside all those who seek the light within."',
+    "With blessings and gratitude,\nKandhaguru Guruji",
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,26 +51,38 @@ export default function AboutPage() {
   return (
     <div className="pt-10 bg-white">
       {/* Corporate Foundation Header */}
-      <section className="pt-32 pb-20 relative overflow-hidden">
-        {/* Hero Background Image */}
-        <div className="absolute inset-0 z-0">
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: "url('about.jpeg')",
-            }}
-          ></div>
-          <div className="absolute inset-0 bg-gray-900/70"></div>
-        </div>
+      <section className="pt-25 pb-0 relative overflow-hidden bg-[#FAFAF9]">
+        {/* Luxurious Background Elements */}
+        {/* <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full bg-gradient-to-bl from-amber-200/50 to-orange-200/30 blur-[120px]"></div>
+          <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-amber-300/30 to-orange-300/30 blur-[120px]"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+        </div> */}
 
         <div className="container mx-auto px-4 relative z-10 flex flex-col items-center justify-center h-full min-h-[150px]">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center gap-3 mb-4"
+          >
+            <span className="w-12 h-[2px] bg-gradient-to-r from-transparent to-amber-500"></span>
+            <span className="inline-block py-1 px-3 rounded-full bg-amber-500/10 text-amber-700 text-xs font-normal tracking-[0.2em] uppercase border border-amber-200/50 shadow-sm">
+              Our Journey
+            </span>
+            <span className="w-12 h-[2px] bg-gradient-to-l from-transparent to-amber-500"></span>
+          </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-3xl md:text-4xl lg:text-5xl font-normal text-white tracking-tight drop-shadow-xl text-center"
+            transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
+            className="text-4xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight text-center font-normal"
           >
-            About Us
+            About{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600 font-normal">
+              Us
+            </span>
           </motion.h1>
         </div>
       </section>
@@ -77,8 +101,7 @@ export default function AboutPage() {
               <div
                 className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-1000"
                 style={{
-                  backgroundImage:
-                    "url('https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcR2xj-V--K9M8rbnjDBiONg42HzmlWGDqA901Poz0OETFvAUJxo')",
+                  backgroundImage: "url('founder.jpeg')",
                 }}
               ></div>
               <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-gray-900/10"></div>
@@ -171,6 +194,74 @@ export default function AboutPage() {
               </div>
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Founder Section */}
+      <section className="py-24 bg-white relative overflow-hidden border-t border-slate-100">
+        {/* Subtle background decoration */}
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-slate-50/50 rounded-l-[100px] z-0 hidden lg:block"></div>
+
+        <div className="container mx-auto px-4 max-w-7xl relative z-10">
+          <div className="flex flex-col lg:flex-row gap-16 items-center">
+            {/* Image */}
+            <div className="w-full lg:w-5/12 relative">
+              <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200 border-8 border-white bg-slate-100">
+                <img
+                  src="kandhaguru.jpg"
+                  alt="Shree Khandhaguru Guruji"
+                  className="w-full h-[500px] md:h-[600px] object-cover hover:scale-105 transition-transform duration-1000"
+                  onError={(e) => {
+                    e.currentTarget.src =
+                      "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=1000&auto=format&fit=crop";
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent pointer-events-none"></div>
+              </div>
+              {/* Decorative elements */}
+              <div className="absolute -bottom-8 -right-8 w-40 h-40 bg-amber-400/20 rounded-full filter blur-3xl"></div>
+              <div className="absolute -top-8 -left-8 w-40 h-40 bg-blue-400/10 rounded-full filter blur-3xl"></div>
+            </div>
+
+            {/* Text Content */}
+            <div className="w-full lg:w-7/12 flex flex-col justify-center">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-px w-12 bg-amber-500"></div>
+                <span className="text-amber-600 font-bold text-xs tracking-[0.25em] uppercase">
+                  Founder's Message
+                </span>
+              </div>
+
+              <h2 className="text-3xl md:text-4xl lg:text-4xl font-black font-normal text-slate-900 mb-8 leading-[1.15] tracking-tight">
+                Shree Khandhaguru Guruji's <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">
+                  Life Journey
+                </span>
+              </h2>
+
+              <div className="relative mb-10">
+                <span className="absolute -top-6 -left-2 text-7xl text-slate-200 font-serif leading-none opacity-60">"</span>
+                <p className="text-xl text-slate-600 font-light leading-relaxed italic pl-8 relative z-10 text-justify">
+                  My journey into the spiritual path began when I was just a boy
+                  of 12 years. It was my beloved grandfather, Sri Kandhaguru, who
+                  first introduced me to the ancient wisdom of Kriya Yogam...
+                </p>
+              </div>
+
+              <div className="flex items-center gap-6">
+                <button
+                  onClick={() => setIsSidebarOpen(true)}
+                  className="px-8 py-4 bg-brand-primary text-white font-bold text-sm tracking-widest uppercase rounded-[0px] hover:bg-brand-primary transition-all duration-300 shadow-xl shadow-slate-900/10 hover:shadow-brand-primary/20 flex items-center gap-3 group cursor-pointer"
+                >
+                  Read Full Story
+                  <ArrowRight
+                    size={18}
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -304,7 +395,7 @@ export default function AboutPage() {
               className="bg-white p-10 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:-translate-y-2 transition-transform duration-300"
             >
               <h4 className="text-xl font-bold text-gray-900 mb-4">
-                Holistic Wellness 
+                Holistic Wellness
               </h4>
               <p className="text-gray-600 leading-relaxed font-light text-justify">
                 Beyond spiritual teachings, we strongly emphasize the
@@ -380,11 +471,10 @@ export default function AboutPage() {
                       className="transition-transform hover:scale-110 focus:outline-none"
                     >
                       <Star
-                        className={`w-8 h-8 transition-colors ${
-                          star <= (hoveredRating || rating)
+                        className={`w-8 h-8 transition-colors ${star <= (hoveredRating || rating)
                             ? "fill-yellow-400 text-yellow-400"
                             : "fill-transparent text-gray-300"
-                        }`}
+                          }`}
                       />
                     </button>
                   ))}
@@ -446,6 +536,82 @@ export default function AboutPage() {
           </motion.div>
         </div>
       </section>
+      {/* Sidebar for Founder Story */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSidebarOpen(false)}
+              className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[80]"
+            />
+            <motion.div
+              initial={{ x: "100%", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: "100%", opacity: 0 }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              className="fixed top-0 right-0 h-full w-full sm:w-[550px] bg-white shadow-2xl z-[90] flex flex-col overflow-y-auto"
+            >
+              <div className="relative h-64 shrink-0 bg-gray-200 overflow-hidden">
+                <img
+                  src="kandhaguru.jpg"
+                  alt="Shree Khandhaguru Guruji"
+                  className="w-full h-full object-cover "
+                  onError={(e) => {
+                    e.currentTarget.src =
+                      "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=1000&auto=format&fit=crop";
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent pointer-events-none"></div>
+                <button
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="absolute top-6 right-6 w-10 h-10 bg-white/10 hover:bg-white/30 border border-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-all z-20 group"
+                >
+                  <X
+                    size={20}
+                    className="group-hover:rotate-90 transition-transform duration-300"
+                  />
+                </button>
+                <div className="absolute bottom-8 left-8 right-8 pointer-events-none">
+                  <h2 className="text-2xl font-black text-white mb-2 font-semibold tracking-tight leading-tight">
+                    Shree Khandhaguru Guruji's Life Journey
+                  </h2>
+                </div>
+              </div>
+
+              <div className="p-8 md:p-12 flex-grow bg-white">
+                <div className="prose prose-slate max-w-none space-y-6">
+                  {founderStory.map((paragraph, idx) => (
+                    <p
+                      key={idx}
+                      className="text-gray-700 text-lg leading-relaxed font-medium text-justify whitespace-pre-wrap"
+                    >
+                      {idx === 0 ? (
+                        <span className="first-letter:text-7xl first-letter:font-black first-letter:text-brand-primary first-letter:mr-2 first-letter:float-left first-letter:leading-none">
+                          {paragraph}
+                        </span>
+                      ) : (
+                        paragraph
+                      )}
+                    </p>
+                  ))}
+                </div>
+              </div>
+
+              <div className="p-6 border-t border-gray-100 bg-gray-50 shrink-0">
+                <button
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="w-full py-4 rounded-[0px] bg-brand-primary text-white font-bold tracking-widest uppercase hover:bg-brand-primary transition-colors shadow-lg cursor-pointer text-sm"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

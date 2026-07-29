@@ -60,26 +60,35 @@ export default function Contact() {
   return (
     <div className="pt-10 bg-white">
       {/* Corporate Foundation Header */}
-      <section className="pt-32 pb-20 relative overflow-hidden">
-        {/* Hero Background Image */}
-        <div className="absolute inset-0 z-0">
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: "url('contact.jpeg')",
-            }}
-          ></div>
-          <div className="absolute inset-0 bg-gray-900/70"></div>
-        </div>
+      <section className="pt-25 pb-0 relative overflow-hidden bg-[#FAFAF9]">
+        {/* Luxurious Background Elements */}
+        {/* <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full bg-gradient-to-bl from-amber-200/50 to-orange-200/30 blur-[120px]"></div>
+          <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-amber-300/30 to-orange-300/30 blur-[120px]"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+        </div> */}
 
         <div className="container mx-auto px-4 relative z-10 flex flex-col items-center justify-center h-full min-h-[150px]">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center gap-3 mb-4"
+          >
+            <span className="w-12 h-[2px] bg-gradient-to-r from-transparent to-amber-500"></span>
+            <span className="inline-block py-1 px-3 rounded-full bg-amber-500/10 text-amber-700 text-xs font-normal tracking-[0.2em] uppercase border border-amber-200/50 shadow-sm">
+              Get In Touch
+            </span>
+            <span className="w-12 h-[2px] bg-gradient-to-l from-transparent to-amber-500"></span>
+          </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-3xl md:text-4xl lg:text-5xl font-normal text-white tracking-tight drop-shadow-xl text-center"
+            transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
+            className="text-4xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight text-center font-normal"
           >
-            Contact Us
+            Contact <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600 font-normal">Us</span>
           </motion.h1>
         </div>
       </section>
@@ -217,7 +226,7 @@ export default function Contact() {
                         <input
                           {...register("firstName")}
                           type="text"
-                          className={`w-full px-5 py-3.5 rounded-xl border ${errors.firstName ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 text-gray-900 shadow-sm hover:border-gray-300`}
+                          className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.firstName ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                           placeholder="First Name"
                         />
                         {errors.firstName && (
@@ -234,7 +243,7 @@ export default function Contact() {
                         <input
                           {...register("lastName")}
                           type="text"
-                          className={`w-full px-5 py-3.5 rounded-xl border ${errors.lastName ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 text-gray-900 shadow-sm hover:border-gray-300`}
+                          className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.lastName ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                           placeholder="Last Name"
                         />
                         {errors.lastName && (
@@ -254,7 +263,7 @@ export default function Contact() {
                         <input
                           {...register("email")}
                           type="email"
-                          className={`w-full px-5 py-3.5 rounded-xl border ${errors.email ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 text-gray-900 shadow-sm hover:border-gray-300`}
+                          className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.email ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                           placeholder="Email Address"
                         />
                         {errors.email && (
@@ -271,7 +280,7 @@ export default function Contact() {
                         <input
                           {...register("mobile")}
                           type="tel"
-                          className={`w-full px-5 py-3.5 rounded-xl border ${errors.mobile ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 text-gray-900 shadow-sm hover:border-gray-300`}
+                          className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.mobile ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                           placeholder="Mobile Number"
                         />
                         {errors.mobile && (
@@ -289,7 +298,7 @@ export default function Contact() {
                       <textarea
                         {...register("message")}
                         rows={5}
-                        className={`w-full px-5 py-3.5 rounded-xl border ${errors.message ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50/50"} focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all duration-300 text-gray-900 shadow-sm hover:border-gray-300 resize-none`}
+                        className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm resize-none ${errors.message ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                         placeholder="Your Message..."
                       />
                       {errors.message && (
@@ -307,7 +316,7 @@ export default function Contact() {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full md:w-auto bg-brand-primary text-white font-bold text-sm tracking-widest uppercase px-10 py-4 rounded-[0rem] shadow-lg hover:shadow-xl hover:-translate-y-1 hover:bg-brand-primary transition-all duration-300 disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:bg-gray-900 flex items-center justify-center gap-3 cursor-pointer"
+                        className="w-full md:w-auto bg-brand-primary text-white font-black text-sm tracking-widest uppercase px-10 py-4 rounded-[0px] shadow-lg hover:shadow-xl hover:-translate-y-1 hover:bg-brand-primary transition-all duration-300 disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:bg-gray-900 flex items-center justify-center gap-3 cursor-pointer"
                       >
                         {isSubmitting ? (
                           <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>

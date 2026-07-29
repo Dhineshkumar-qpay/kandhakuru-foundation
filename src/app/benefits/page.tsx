@@ -133,26 +133,39 @@ export default function BenefitsPage() {
   return (
     <div className="bg-white">
       {/* Hero Header */}
-      <section className="pt-38 pb-24 relative overflow-hidden">
-        {/* Hero Background Image */}
-        <div className="absolute inset-0 z-0">
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: "url('benefit.jpeg')",
-            }}
-          ></div>
-          <div className="absolute inset-0 bg-gray-900/70"></div>
-        </div>
+      <section className="pt-25 pb-0 relative overflow-hidden bg-[#FAFAF9]">
+        {/* Luxurious Background Elements */}
+        {/* <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full bg-gradient-to-bl from-amber-200/50 to-orange-200/30 blur-[120px]"></div>
+          <div className="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-amber-300/30 to-orange-300/30 blur-[120px]"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+        </div> */}
 
         <div className="container mx-auto px-4 relative z-10 flex flex-col items-center justify-center h-full min-h-[150px]">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center gap-3 mb-4"
+          >
+            <span className="w-12 h-[2px] bg-gradient-to-r from-transparent to-amber-500"></span>
+            <span className="inline-block py-1 px-3 rounded-full bg-amber-500/10 text-amber-700 text-xs font-normal tracking-[0.2em] uppercase border border-amber-200/50 shadow-sm">
+              Benefits
+            </span>
+            <span className="w-12 h-[2px] bg-gradient-to-l from-transparent to-amber-500"></span>
+          </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-           className="text-3xl md:text-4xl lg:text-5xl font-normal text-white tracking-tight drop-shadow-xl text-center"
+            transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
+            className="text-4xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight text-center font-normal"
           >
-            Benefits
+            Kriya{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600 font-normal">
+              {" "}
+              Yogam
+            </span>
           </motion.h1>
         </div>
       </section>
