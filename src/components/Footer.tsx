@@ -241,7 +241,7 @@ export default function Footer() {
                   >
                     <Mail size={18} />
                   </div>
-                  <span className="text-sm">
+                  <span className="text-sm break-all">
                     srikandhagurufoundation@gmail.com
                   </span>
                 </li>

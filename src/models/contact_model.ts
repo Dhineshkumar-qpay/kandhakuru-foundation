@@ -18,4 +18,17 @@ export class TestimonialModel {
   }
 }
 
+export class VideoTestimonialModel {
+  id: number;
+  title: string;
+  description: string;
+  videourl: string;
+
+  constructor(data: any) {
+    this.id = data.id;
+    this.title = data.title;
+    this.description = data.description;
+    this.videourl = data.videourl;
+  }
+}
 

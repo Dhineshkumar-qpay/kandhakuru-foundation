@@ -154,7 +154,8 @@ export default function ProgramDetailsPage() {
 
   const handlePaymentSubmit = async () => {
     if (!paymentScreenshot) {
-      alert("Please upload your payment screenshot");
+      setToastMessage("Please upload your payment screenshot");
+      setTimeout(() => setToastMessage(null), 3000);
       return;
     }
     setIsSubmitting(true);
@@ -162,7 +163,7 @@ export default function ProgramDetailsPage() {
       const uploadRes = await uploadBookingPaymentScreenshot(paymentScreenshot);
 
       if (!uploadRes.success || !uploadRes.data) {
-        throw new Error("Failed to upload screenshot");
+        throw new Error(uploadRes.message || "Failed to upload screenshot");
       }
 
       const finalPayload = {
@@ -186,9 +187,10 @@ export default function ProgramDetailsPage() {
         setToastMessage(response.message || "Booking failed");
         setTimeout(() => setToastMessage(null), 3000);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert("Failed to submit booking. Please try again.");
+      setToastMessage("This date is already booked. Please choose another date.");
+      setTimeout(() => setToastMessage(null), 3000);
     } finally {
       setIsSubmitting(false);
     }
@@ -549,7 +551,7 @@ export default function ProgramDetailsPage() {
                               month: "short",
                               day: "numeric",
                               year: "numeric",
-                            }
+                            },
                           )}
                         </p>
                       </div>

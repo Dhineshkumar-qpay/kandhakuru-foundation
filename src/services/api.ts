@@ -27,17 +27,17 @@ export const isYouTubeUrl = (url: string | null) => {
   return url.includes("youtube") || url.includes("youtu.be");
 };
 
-export const getYouTubeEmbedUrl = (url: string | null) => {
+export const getYouTubeEmbedUrl = (url: string | null, autoplay: boolean = true) => {
   if (!url) return "";
 
   const regExp =
-    /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|youtubecomwatchv=)([^#&?]*).*/;
+    /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|youtubecomwatchv=|shorts\/)([^#&?]*).*/;
   const match = url.match(regExp);
 
   if (match && match[2]) {
     const videoId = match[2].substring(0, 11);
     if (videoId.length === 11) {
-      return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+      return `https://www.youtube.com/embed/${videoId}${autoplay ? "?autoplay=1" : ""}`;
     }
   }
 
@@ -497,6 +497,16 @@ export const uploadBookingPaymentScreenshot = async (imageFile: File) => {
     return response.data;
   } catch (error) {
     console.error("Error uploading booking payment screenshot:", error);
+    throw error;
+  }
+};
+
+export const getVideoTestimonials = async () => {
+  try {
+    const response = await api.post("/video-testimonial/get");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching video testimonials:", error);
     throw error;
   }
 };

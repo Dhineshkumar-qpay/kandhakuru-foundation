@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -16,6 +16,7 @@ import {
   isYouTubeUrl,
   getYouTubeEmbedUrl,
   addToCart,
+  getVideoTestimonials,
 } from "../services/api";
 import { ProductModel } from "../models/product_model";
 import { EventModel } from "../models/event_model";
@@ -24,7 +25,7 @@ import {
   VideoModel,
   BannerModel,
 } from "../models/image_video_model";
-import { TestimonialModel } from "../models/contact_model";
+import { TestimonialModel, VideoTestimonialModel } from "../models/contact_model";
 import {
   CheckCircle2,
   Loader2,
@@ -66,6 +67,7 @@ export default function Home() {
       <Gallery />
       <Videos />
       <Testimonials />
+      <VideoTestimonials />
     </>
   );
 }
@@ -1534,3 +1536,139 @@ function BookShopPreview() {
     </section>
   );
 }
+
+// Video Testimonials
+function VideoTestimonials() {
+  const [videoTestimonials, setVideoTestimonials] = useState<VideoTestimonialModel[]>([]);
+  const [activeVideoId, setActiveVideoId] = useState<number | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const fetchVideoTestimonials = async () => {
+      try {
+        const response = await getVideoTestimonials();
+        if (response.success && response.data) {
+          setVideoTestimonials(response.data);
+        }
+      } catch (error) {
+        console.error("Failed to load video testimonials", error);
+      }
+    };
+    fetchVideoTestimonials();
+  }, []);
+
+  if (videoTestimonials.length === 0) return null;
+
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -320, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 320, behavior: "smooth" });
+    }
+  };
+
+  const getYouTubeId = (url: string) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|youtubecomwatchv=|shorts\/)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
+  return (
+    <section className="pb-20 bg-[#FAFAF9]">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
+        <div className="flex justify-between items-center mb-8">
+          <h4 className="text-xl font-bold text-gray-900 flex items-center gap-3">
+            <Video className="text-brand-primary" size={24} />
+            Video Experiences
+          </h4>
+          
+          {videoTestimonials.length > 4 && (
+            <div className="flex gap-3">
+              <button 
+                onClick={scrollLeft}
+                className="w-10 h-10 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-600 hover:bg-amber-500 hover:text-white transition-colors shadow-sm"
+                aria-label="Scroll left"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button 
+                onClick={scrollRight}
+                className="w-10 h-10 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-600 hover:bg-amber-500 hover:text-white transition-colors shadow-sm"
+                aria-label="Scroll right"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          )}
+        </div>
+        
+        <div 
+          ref={scrollRef}
+          className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory hide-scrollbar"
+        >
+          {videoTestimonials.map((testimonial, index) => {
+            const videoId = getYouTubeId(testimonial.videourl);
+            const isPlaying = activeVideoId === testimonial.id;
+            
+            return (
+              <motion.div
+                key={testimonial.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="flex-none w-72 md:w-80 snap-center bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-xl transition-all duration-300 flex flex-col"
+              >
+                <div className="aspect-video w-full bg-gray-100 relative cursor-pointer flex-shrink-0" onClick={() => setActiveVideoId(testimonial.id)}>
+                  {isPlaying ? (
+                    <iframe
+                      src={getYouTubeEmbedUrl(testimonial.videourl, true)}
+                      title={testimonial.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full absolute inset-0 border-0"
+                    ></iframe>
+                  ) : (
+                    <>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:opacity-90 transition-opacity duration-300 z-10"></div>
+                      {videoId ? (
+                        <img
+                          src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+                          alt={testimonial.title}
+                          className="w-full h-full object-cover absolute inset-0 z-0"
+                        />
+                      ) : null}
+                      <div className="absolute inset-0 flex items-center justify-center z-20">
+                        <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center group-hover:bg-amber-500 group-hover:border-amber-500 group-hover:scale-110 transition-all duration-500 shadow-[0_0_30px_rgba(251,191,36,0.3)]">
+                          <Play className="w-4 h-4 text-white ml-1 fill-white" />
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+                <div className="p-5 flex-1 flex flex-col justify-center">
+                  <h5 className="font-bold text-gray-900 mb-2 line-clamp-1">{testimonial.title}</h5>
+                  <p className="text-sm text-gray-600 line-clamp-2">{testimonial.description}</p>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+      <style jsx>{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
+    </section>
+  );
+}
+
