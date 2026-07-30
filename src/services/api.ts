@@ -44,6 +44,19 @@ export const getYouTubeEmbedUrl = (url: string | null, autoplay: boolean = true)
   return url;
 };
 
+export const getYouTubeThumbnailUrl = (url: string | null) => {
+  if (!url) return "";
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|youtubecomwatchv=|shorts\/)([^#&?]*).*/;
+  const match = url.match(regExp);
+  if (match && match[2]) {
+    const videoId = match[2].substring(0, 11);
+    if (videoId.length === 11) {
+      return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    }
+  }
+  return "";
+};
+
 const api = axios.create({
   baseURL: "http://localhost:3003/api",
   headers: {
@@ -355,7 +368,6 @@ export const removeFromCart = async (payload: { productid: number }) => {
 
 export const placeOrder = async (payload: {
   addressid: number;
-  screenshot: string;
   shippingcost: number;
 }) => {
   try {
@@ -372,7 +384,7 @@ export const uploadPaymentScreenshot = async (imageFile: File) => {
     const formData = new FormData();
     formData.append("image", imageFile);
     const response = await api.post(
-      "/order/upload-payment-screenshot",
+      "/screenshot/upload-payment",
       formData,
       {
         headers: {
@@ -383,6 +395,16 @@ export const uploadPaymentScreenshot = async (imageFile: File) => {
     return response.data;
   } catch (error) {
     console.error("Error uploading payment screenshot:", error);
+    throw error;
+  }
+};
+
+export const updatePaymentScreenshot = async (data: { id: number; screenshot: string }) => {
+  try {
+    const response = await api.post("/order/update-payment-screenshot", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating payment screenshot:", error);
     throw error;
   }
 };
@@ -489,7 +511,7 @@ export const uploadBookingPaymentScreenshot = async (imageFile: File) => {
   try {
     const formData = new FormData();
     formData.append("image", imageFile);
-    const response = await api.post("/booking/upload-payment", formData, {
+    const response = await api.post("/screenshot/upload-payment", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -497,6 +519,16 @@ export const uploadBookingPaymentScreenshot = async (imageFile: File) => {
     return response.data;
   } catch (error) {
     console.error("Error uploading booking payment screenshot:", error);
+    throw error;
+  }
+};
+
+export const updateBookingPaymentScreenshot = async (data: { id: number; screenshot: string }) => {
+  try {
+    const response = await api.post("/booking/update-payment-screenshot", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating booking payment screenshot:", error);
     throw error;
   }
 };
@@ -517,6 +549,16 @@ export const getEventBookings = async () => {
     return response.data;
   } catch (error) {
     console.error("Error fetching event bookings:", error);
+    throw error;
+  }
+};
+
+export const checkBookingAvailability = async (bookingdate: string) => {
+  try {
+    const response = await api.post("/booking/avalability", { bookingdate });
+    return response.data;
+  } catch (error) {
+    console.error("Error checking booking availability:", error);
     throw error;
   }
 };

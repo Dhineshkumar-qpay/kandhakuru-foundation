@@ -12,7 +12,14 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getCategories, getImageVideoUrl, getVideos, isYouTubeUrl, getYouTubeEmbedUrl } from "../../services/api";
+import {
+  getCategories,
+  getVideos,
+  isYouTubeUrl,
+  getYouTubeEmbedUrl,
+  getImageVideoUrl,
+  getYouTubeThumbnailUrl,
+} from "../../services/api";
 import { CategoryModel, VideoModel } from "../../models/image_video_model";
 
 export default function VideosPage() {
@@ -185,7 +192,11 @@ export default function VideosPage() {
               <div className="relative aspect-[16/9] overflow-hidden bg-gray-200">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent  group-hover:opacity-90 transition-opacity duration-300">
                   <img
-                    src={getImageVideoUrl(video.thumbnail)}
+                    src={
+                      isYouTubeUrl(video.video)
+                        ? getYouTubeThumbnailUrl(video.video)
+                        : ""
+                    }
                     alt={video.title}
                     className="w-full h-full object-cover"
                   />
@@ -193,8 +204,8 @@ export default function VideosPage() {
 
                 {/* Play Button Overlay */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center group-hover:bg-amber-500 group-hover:border-amber-500 group-hover:scale-110 transition-all duration-500 shadow-[0_0_30px_rgba(251,191,36,0.3)]">
-                    <Play className="w-6 h-6 text-white ml-1 fill-white" />
+                  <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center group-hover:bg-amber-500 group-hover:border-amber-500 group-hover:scale-110 transition-all duration-500 shadow-[0_0_30px_rgba(251,191,36,0.3)]">
+                    <Play className="w-5 h-5 text-white ml-1 fill-white" />
                   </div>
                 </div>
 

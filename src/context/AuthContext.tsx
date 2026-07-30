@@ -14,6 +14,7 @@ import {
 
 interface AuthContextType {
   isLoggedIn: boolean;
+  isLoading: boolean;
   openLogin: () => void;
   closeLogin: () => void;
   login: () => void;
@@ -24,6 +25,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   React.useEffect(() => {
@@ -31,6 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (token) {
       setIsLoggedIn(true);
     }
+    setIsLoading(false);
   }, []);
 
   // Login form state
@@ -111,7 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, openLogin, closeLogin, login, logout }}
+      value={{ isLoggedIn, isLoading, openLogin, closeLogin, login, logout }}
     >
       {children}
 

@@ -282,11 +282,14 @@ export default function DonatePage() {
       </section>
 
       {/* 3. Main Form Section */}
-      <section ref={formRef} className="py-24 relative overflow-hidden bg-[#FAFAF9]">
+      <section
+        ref={formRef}
+        className="py-24 relative overflow-hidden bg-[#FAFAF9]"
+      >
         {/* Background Ambient Glows */}
         <div className="absolute top-1/2 left-0 w-96 h-96 bg-brand-primary/10 rounded-full blur-[100px] -translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
         <div className="absolute top-1/2 right-0 w-96 h-96 bg-orange-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-        
+
         <div className="container mx-auto px-4 max-w-3xl relative z-10">
           <motion.div
             initial="hidden"
@@ -303,7 +306,10 @@ export default function DonatePage() {
                 <Heart size={28} className="fill-white/20" />
               </div>
               <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
-                Make a <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-orange-500">Secure Donation</span>
+                Make a{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-orange-500">
+                  Secure Donation
+                </span>
               </h2>
               <p className="text-gray-600 font-medium text-base max-w-md mx-auto leading-relaxed">
                 Your generous contribution helps us continue our sacred mission
@@ -315,7 +321,9 @@ export default function DonatePage() {
               {/* Cause Selection */}
               <div className="bg-gray-50/50 p-5 rounded-3xl border border-gray-100/50">
                 <label className="flex items-center gap-3 text-sm font-black text-gray-900 mb-5 uppercase tracking-widest">
-                  <span className="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center">1</span>
+                  <span className="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center">
+                    1
+                  </span>
                   Select Cause
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -382,7 +390,9 @@ export default function DonatePage() {
               <div className="bg-gray-50/50 p-5 rounded-3xl border border-gray-100/50">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-5 gap-3">
                   <label className="flex items-center gap-3 text-sm font-black text-gray-900 uppercase tracking-widest">
-                    <span className="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center">2</span>
+                    <span className="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center">
+                      2
+                    </span>
                     Donor Details
                   </label>
                   <select
@@ -435,14 +445,26 @@ export default function DonatePage() {
                         type="text"
                         placeholder="PAN Number"
                         value={pannumber}
-                        onChange={(e) => setPannumber(e.target.value)}
+                        maxLength={10}
+                        onChange={(e) =>
+                          setPannumber(
+                            e.target.value
+                              .toUpperCase()
+                              .replace(/[^A-Z0-9]/g, ""),
+                          )
+                        }
                         className="w-1/2 px-5 py-3.5 rounded-xl border-2 border-transparent bg-white shadow-sm hover:shadow-md focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary transition-all font-semibold text-gray-900 uppercase placeholder:text-gray-400 placeholder:normal-case text-sm"
                       />
                       <input
                         type="text"
                         placeholder="Aadhaar Number"
                         value={aadhaarnumber}
-                        onChange={(e) => setAadhaarnumber(e.target.value)}
+                        maxLength={12}
+                        onChange={(e) =>
+                          setAadhaarnumber(
+                            e.target.value.replace(/[^0-9]/g, ""),
+                          )
+                        }
                         className="w-1/2 px-5 py-3.5 rounded-xl border-2 border-transparent bg-white shadow-sm hover:shadow-md focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary transition-all font-semibold text-gray-900 uppercase placeholder:text-gray-400 placeholder:normal-case text-sm"
                       />
                     </div>
@@ -468,7 +490,9 @@ export default function DonatePage() {
               {/* Amount Selection */}
               <div className="bg-gray-50/50 p-5 rounded-3xl border border-gray-100/50">
                 <label className="flex items-center gap-3 text-sm font-black text-gray-900 mb-5 uppercase tracking-widest">
-                  <span className="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center">3</span>
+                  <span className="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center">
+                    3
+                  </span>
                   Donation Amount
                 </label>
                 <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-5">
@@ -555,7 +579,9 @@ export default function DonatePage() {
                   />
                   <span>
                     Donate Securely{" "}
-                    {amount || customAmount ? `| ₹${amount || customAmount}` : ""}
+                    {amount || customAmount
+                      ? `| ₹${amount || customAmount}`
+                      : ""}
                   </span>
                 </button>
               </div>

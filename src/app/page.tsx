@@ -15,6 +15,7 @@ import {
   getProducts,
   isYouTubeUrl,
   getYouTubeEmbedUrl,
+  getYouTubeThumbnailUrl,
   addToCart,
   getVideoTestimonials,
 } from "../services/api";
@@ -25,7 +26,10 @@ import {
   VideoModel,
   BannerModel,
 } from "../models/image_video_model";
-import { TestimonialModel, VideoTestimonialModel } from "../models/contact_model";
+import {
+  TestimonialModel,
+  VideoTestimonialModel,
+} from "../models/contact_model";
 import {
   CheckCircle2,
   Loader2,
@@ -641,8 +645,14 @@ function Programs() {
                 <div className="p-6 md:p-8 flex-grow flex flex-col relative bg-white">
                   {/* Floating Date Badge */}
                   <div className="absolute -top-8 left-6 md:left-8 bg-brand-primary text-white p-2 rounded-2xl shadow-xl flex flex-col items-center justify-center min-w-[4rem] group-hover:-translate-y-1 transition-transform duration-300 border-2 border-white">
-                    <span className="text-lg font-black leading-none">{new Date(program.eventdate).getDate()}</span>
-                    <span className="text-[10px] font-bold uppercase tracking-widest mt-1">{new Date(program.eventdate).toLocaleString('default', { month: 'short' })}</span>
+                    <span className="text-lg font-black leading-none">
+                      {new Date(program.eventdate).getDate()}
+                    </span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest mt-1">
+                      {new Date(program.eventdate).toLocaleString("default", {
+                        month: "short",
+                      })}
+                    </span>
                   </div>
 
                   <h4 className="text-xl font-black text-gray-900 mt-6 mb-4 line-clamp-2 group-hover:text-brand-primary transition-colors leading-snug">
@@ -653,7 +663,11 @@ function Programs() {
                     <div className="flex items-start gap-3 text-gray-600">
                       <MapPin className="w-4 h-4 text-gray-400 shrink-0 mt-1 group-hover:text-brand-primary transition-colors" />
                       <span className="text-sm font-medium leading-relaxed">
-                        {program.address}, <span className="text-gray-900 font-bold">{program.city}</span>, {program.state}
+                        {program.address},{" "}
+                        <span className="text-gray-900 font-bold">
+                          {program.city}
+                        </span>
+                        , {program.state}
                       </span>
                     </div>
                   </div>
@@ -1119,7 +1133,11 @@ function Videos() {
               <div className="relative aspect-[16/9] overflow-hidden bg-gray-200">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:opacity-90 transition-opacity duration-300">
                   <img
-                    src={getImageVideoUrl(video.thumbnail)}
+                    src={
+                      isYouTubeUrl(video.video)
+                        ? getYouTubeThumbnailUrl(video.video)
+                        : ""
+                    }
                     alt={video.title}
                     className="w-full h-full object-cover"
                   />
@@ -1127,8 +1145,8 @@ function Videos() {
 
                 {/* Play Button Overlay */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center group-hover:bg-amber-500 group-hover:border-amber-500 group-hover:scale-110 transition-all duration-500 shadow-[0_0_30px_rgba(251,191,36,0.3)]">
-                    <Play className="w-6 h-6 text-white ml-1 fill-white" />
+                  <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center group-hover:bg-amber-500 group-hover:border-amber-500 group-hover:scale-110 transition-all duration-500 shadow-[0_0_30px_rgba(251,191,36,0.3)]">
+                    <Play className="w-5 h-5 text-white ml-1 fill-white" />
                   </div>
                 </div>
 
@@ -1156,7 +1174,10 @@ function Videos() {
                     <div className="flex items-center gap-3">
                       <div className="flex flex-col">
                         <span className="text-[10px] text-slate-400">
-                          {new Date(video.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                          {new Date(video.createdAt).toLocaleDateString(
+                            "en-US",
+                            { month: "short", day: "numeric", year: "numeric" },
+                          )}
                         </span>
                       </div>
                     </div>
@@ -1394,7 +1415,7 @@ function BookShopPreview() {
                 <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
                   <div className="flex flex-col">
                     {selectedProduct.sellingprice &&
-                      selectedProduct.sellingprice > 0 ? (
+                    selectedProduct.sellingprice > 0 ? (
                       <div className="flex items-baseline gap-3">
                         <span className="text-3xl font-black text-gray-900">
                           ₹{selectedProduct.sellingprice}
@@ -1410,14 +1431,14 @@ function BookShopPreview() {
                     )}
                   </div>
                   {selectedProduct.sellingprice &&
-                    selectedProduct.sellingprice > 0 &&
-                    selectedProduct.price > selectedProduct.sellingprice ? (
+                  selectedProduct.sellingprice > 0 &&
+                  selectedProduct.price > selectedProduct.sellingprice ? (
                     <span className="bg-red-50 text-red-600 font-bold px-2 py-1 rounded text-sm">
                       {Math.round(
                         ((selectedProduct.price -
                           selectedProduct.sellingprice) /
                           selectedProduct.price) *
-                        100,
+                          100,
                       )}
                       % OFF
                     </span>
@@ -1539,7 +1560,9 @@ function BookShopPreview() {
 
 // Video Testimonials
 function VideoTestimonials() {
-  const [videoTestimonials, setVideoTestimonials] = useState<VideoTestimonialModel[]>([]);
+  const [videoTestimonials, setVideoTestimonials] = useState<
+    VideoTestimonialModel[]
+  >([]);
   const [activeVideoId, setActiveVideoId] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -1561,69 +1584,81 @@ function VideoTestimonials() {
 
   const scrollLeft = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -320, behavior: "smooth" });
+      scrollRef.current.scrollBy({ left: -350, behavior: "smooth" });
     }
   };
 
   const scrollRight = () => {
     if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 320, behavior: "smooth" });
+      scrollRef.current.scrollBy({ left: 350, behavior: "smooth" });
     }
   };
 
   const getYouTubeId = (url: string) => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|youtubecomwatchv=|shorts\/)([^#&?]*).*/;
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|youtubecomwatchv=|shorts\/)([^#&?]*).*/;
     const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
+    return match && match[2].length === 11 ? match[2] : null;
   };
 
   return (
-    <section className="pb-20 bg-[#FAFAF9]">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-        <div className="flex justify-between items-center mb-8">
-          <h4 className="text-xl font-bold text-gray-900 flex items-center gap-3">
-            <Video className="text-brand-primary" size={24} />
-            Video Experiences
-          </h4>
-          
-          {videoTestimonials.length > 4 && (
+    <section className="py-24 bg-[#FAFAF9] relative overflow-hidden border-t border-gray-100">
+      {/* Decorative Background */}
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-amber-100/40 to-transparent rounded-full blur-[100px] -z-10 translate-x-1/3 -translate-y-1/4 pointer-events-none"></div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+          <div className="max-w-2xl">
+            <h2 className="text-sm font-bold tracking-widest text-amber-600 uppercase mb-3 flex items-center gap-2">
+              <span className="w-8 h-px bg-amber-600"></span>
+              Real Stories
+            </h2>
+            <h3 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
+              Video Experiences
+            </h3>
+          </div>
+
+          {videoTestimonials.length > 3 && (
             <div className="flex gap-3">
-              <button 
+              <button
                 onClick={scrollLeft}
-                className="w-10 h-10 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-600 hover:bg-amber-500 hover:text-white transition-colors shadow-sm"
+                className="w-12 h-12 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-amber-500 hover:text-white hover:border-amber-500 transition-all shadow-sm hover:shadow-md"
                 aria-label="Scroll left"
               >
-                <ChevronLeft size={20} />
+                <ChevronLeft size={22} strokeWidth={2.5} />
               </button>
-              <button 
+              <button
                 onClick={scrollRight}
-                className="w-10 h-10 rounded-full bg-amber-100 border border-amber-200 flex items-center justify-center text-amber-600 hover:bg-amber-500 hover:text-white transition-colors shadow-sm"
+                className="w-12 h-12 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-amber-500 hover:text-white hover:border-amber-500 transition-all shadow-sm hover:shadow-md"
                 aria-label="Scroll right"
               >
-                <ChevronRight size={20} />
+                <ChevronRight size={22} strokeWidth={2.5} />
               </button>
             </div>
           )}
         </div>
-        
-        <div 
+
+        <div
           ref={scrollRef}
-          className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory hide-scrollbar"
+          className="flex overflow-x-auto gap-8 pb-12 snap-x snap-mandatory hide-scrollbar -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
         >
           {videoTestimonials.map((testimonial, index) => {
             const videoId = getYouTubeId(testimonial.videourl);
             const isPlaying = activeVideoId === testimonial.id;
-            
+
             return (
               <motion.div
                 key={testimonial.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="flex-none w-72 md:w-80 snap-center bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group hover:shadow-xl transition-all duration-300 flex flex-col"
+                transition={{ delay: index * 0.1, duration: 0.6 }}
+                className="flex-none w-[85vw] sm:w-[20rem] md:w-[22rem] snap-center bg-white rounded-[1rem] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_-15px_rgba(217,119,6,0.15)] overflow-hidden group transition-all duration-500 flex flex-col"
               >
-                <div className="aspect-video w-full bg-gray-100 relative cursor-pointer flex-shrink-0" onClick={() => setActiveVideoId(testimonial.id)}>
+                <div
+                  className="aspect-[16/10] w-full bg-slate-900 relative cursor-pointer overflow-hidden flex-shrink-0"
+                  onClick={() => setActiveVideoId(testimonial.id)}
+                >
                   {isPlaying ? (
                     <iframe
                       src={getYouTubeEmbedUrl(testimonial.videourl, true)}
@@ -1634,25 +1669,40 @@ function VideoTestimonials() {
                     ></iframe>
                   ) : (
                     <>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:opacity-90 transition-opacity duration-300 z-10"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500 z-10 pointer-events-none"></div>
                       {videoId ? (
                         <img
                           src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
                           alt={testimonial.title}
-                          className="w-full h-full object-cover absolute inset-0 z-0"
+                          className="w-full h-full object-cover absolute inset-0 z-0 transform group-hover:scale-105 transition-transform duration-700"
                         />
                       ) : null}
-                      <div className="absolute inset-0 flex items-center justify-center z-20">
-                        <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center group-hover:bg-amber-500 group-hover:border-amber-500 group-hover:scale-110 transition-all duration-500 shadow-[0_0_30px_rgba(251,191,36,0.3)]">
-                          <Play className="w-4 h-4 text-white ml-1 fill-white" />
+
+                      <div className="absolute top-5 left-5 z-20 pointer-events-none">
+                        <div className="bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/30 flex items-center gap-1.5 shadow-sm">
+                          <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                          <span className="text-[10px] font-bold text-white tracking-widest uppercase">
+                            Experience
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                        <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center group-hover:bg-amber-500 group-hover:border-amber-500 group-hover:scale-110 transition-all duration-500 shadow-[0_0_30px_rgba(251,191,36,0.3)]">
+                          <Play className="w-5 h-5 text-white ml-1 fill-white" />
                         </div>
                       </div>
                     </>
                   )}
                 </div>
-                <div className="p-5 flex-1 flex flex-col justify-center">
-                  <h5 className="font-bold text-gray-900 mb-2 line-clamp-1">{testimonial.title}</h5>
-                  <p className="text-sm text-gray-600 line-clamp-2">{testimonial.description}</p>
+                <div className="p-6 md:p-8 flex-1 flex flex-col justify-start relative bg-white">
+                  <Quote className="absolute top-6 right-6 w-10 h-10 text-amber-500/10 group-hover:text-amber-500/20 transition-colors duration-300" />
+                  <h5 className="font-bold text-slate-900 text-lg md:text-xl mb-4 line-clamp-2 pr-8 leading-tight group-hover:text-amber-600 transition-colors">
+                    {testimonial.title}
+                  </h5>
+                  <p className="text-slate-500 leading-relaxed font-light text-sm line-clamp-3 italic">
+                    "{testimonial.description}"
+                  </p>
                 </div>
               </motion.div>
             );
@@ -1671,4 +1721,3 @@ function VideoTestimonials() {
     </section>
   );
 }
-

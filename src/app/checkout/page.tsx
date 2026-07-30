@@ -19,6 +19,7 @@ import {
   getCart,
   placeOrder,
   uploadPaymentScreenshot,
+  updatePaymentScreenshot,
   IMAGEBASEURL,
 } from "../../services/api";
 import { AddressModel, CartModel } from "../../models/OrderModel";
@@ -37,6 +38,7 @@ export default function CheckoutPage() {
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
   const [placingOrder, setPlacingOrder] = useState(false);
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
+  const [orderId, setOrderId] = useState<number | null>(null);
 
   const [isAddressFormOpen, setIsAddressFormOpen] = useState(false);
   const [addressForm, setAddressForm] = useState({
@@ -114,17 +116,40 @@ export default function CheckoutPage() {
     }
   };
 
-  const handlePlaceOrderClick = () => {
+  const handlePlaceOrderClick = async () => {
     if (!selectedAddress) {
       alert("Please select a delivery address");
       return;
     }
-    setIsPaymentSidebarOpen(true);
+    const subtotal = cart?.subtotal || 0;
+    const currentShipping = subtotal >= 3000 ? 0 : 70;
+    try {
+      setPlacingOrder(true);
+      const response = await placeOrder({
+        addressid: selectedAddress as number,
+        shippingcost: currentShipping,
+      });
+      if (response.success && response.data?.orderid) {
+        setOrderId(response.data.orderid);
+        setIsPaymentSidebarOpen(true);
+      } else {
+        alert("Failed to place order.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to place order. Please try again.");
+    } finally {
+      setPlacingOrder(false);
+    }
   };
 
   const handlePaymentSubmit = async () => {
     if (!paymentScreenshot) {
       alert("Please upload your payment screenshot");
+      return;
+    }
+    if (!orderId) {
+      alert("Order ID missing. Please place order again.");
       return;
     }
     try {
@@ -135,15 +160,15 @@ export default function CheckoutPage() {
         throw new Error("Failed to upload screenshot");
       }
 
-      await placeOrder({
-        addressid: selectedAddress as number,
+      await updatePaymentScreenshot({
+        id: orderId,
         screenshot: uploadRes.data,
-        shippingcost: shipping,
       });
 
       window.dispatchEvent(new Event("cartUpdated"));
 
       setIsPaymentSidebarOpen(false);
+      setOrderId(null);
       setShowSuccessAnimation(true);
 
       setTimeout(() => {
@@ -151,7 +176,7 @@ export default function CheckoutPage() {
       }, 2500);
     } catch (error) {
       console.error(error);
-      alert("Failed to place order. Please try again.");
+      alert("Failed to process payment. Please try again.");
     } finally {
       setPlacingOrder(false);
     }
@@ -541,9 +566,18 @@ export default function CheckoutPage() {
 
                 <button
                   onClick={handlePlaceOrderClick}
-                  className="w-full bg-[var(--color-deepgreen)] text-white font-bold py-4 rounded-[0px] flex justify-center items-center gap-2 hover:bg-[var(--color-deepgreen)]/90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
+                  disabled={placingOrder}
+                  className="w-full bg-[var(--color-deepgreen)] text-white font-bold py-4 rounded-[0px] flex justify-center items-center gap-2 hover:bg-[var(--color-deepgreen)]/90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  Place Order <ChevronRight className="w-5 h-5" />
+                  {placingOrder ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" /> Processing...
+                    </>
+                  ) : (
+                    <>
+                      Place Order <ChevronRight className="w-5 h-5" />
+                    </>
+                  )}
                 </button>
               </div>
             </div>

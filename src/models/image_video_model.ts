@@ -37,7 +37,6 @@ export class VideoModel {
   title: string;
   description: string;
   video: string;
-  thumbnail: string;
   categoryid: number;
   categoryname: string;
   userid: number;
@@ -49,7 +48,6 @@ export class VideoModel {
     this.title = data.title;
     this.description = data.description;
     this.video = data.video;
-    this.thumbnail = data.thumbnail;
     this.categoryid = data.categoryid;
     this.categoryname = data.categoryname;
     this.userid = data.userid;
