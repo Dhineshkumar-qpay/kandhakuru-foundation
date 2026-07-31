@@ -81,7 +81,6 @@ export default function Home() {
 
 function Hero() {
   const [heroImages, setHeroImages] = useState<string[]>([]);
-
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
@@ -111,77 +110,102 @@ function Hero() {
   return (
     <section
       id="home"
-      className="relative h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-slate-900"
     >
-      {/* Background with overlay */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <video autoPlay muted loop playsInline width="100%" height="auto">
+      {/* Background Video & Overlays */}
+      <div className="absolute inset-0 z-0">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-60"
+        >
           <source src="banner/home.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/10 backdrop-blur-[2px]"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40"></div>
       </div>
 
-      <div className="container mx-auto px-4 lg:px-8 z-10 text-white pt-20 h-full flex items-center">
-        <div className="flex flex-col lg:flex-row items-center justify-between w-full gap-12">
+      <div className="container mx-auto px-4 lg:px-12 z-10 text-white pt-24 h-full flex items-center">
+        <div className="flex flex-col lg:flex-row items-center justify-between w-full gap-16 lg:gap-8">
           {/* Left Content */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="w-full lg:w-1/2 text-center lg:text-left"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="w-full lg:w-3/5 text-center lg:text-left pt-10 lg:pt-0"
           >
-            <h1 className="text-3xl md:text-4xl lg:text-4xl font-extrabold text-white tracking-tight mb-6 drop-shadow-lg">
-              The Way of{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black font-semibold text-white tracking-tight mb-6 leading-[1.1] drop-shadow-xl">
+              The Way of <br className="hidden md:block" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-orange-500">
                 Kriya Yogam
               </span>
             </h1>
 
-            <p className="text-lg md:text-lg text-white/90 mb-10 leading-relaxed drop-shadow-md max-w-2xl mx-auto lg:mx-0">
-              Guide visitors toward inner peace, self-realization, and holistic
-              well-being through the timeless wisdom of Shiva Kriya Yogam.
+            <p className="text-lg md:text-xl text-white/80 mb-10 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-medium border-l-2 border-amber-400/50 pl-6">
+              Guide your soul toward inner peace and holistic well-being through
+              the timeless, transformative wisdom of Shiva Kriya Yogam.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-5">
               <Link
                 href="/contact"
-                className="bg-brand-primary text-white px-8 py-4 rounded-[0rem] font-medium hover:bg-brand-primary/90 transition-all hover:scale-105 shadow-xl shadow-brand-primary/30 flex items-center gap-2 w-full sm:w-auto justify-center"
+                className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-4 rounded-[0px] font-bold hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] transition-all hover:-translate-y-1 flex items-center gap-2 w-full sm:w-auto justify-center"
               >
-                Join Us <ArrowRight size={18} />
+                Begin Journey <ArrowRight size={20} />
               </Link>
               <Link
                 href="/about"
-                className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-8 py-4 rounded-[0rem] font-medium hover:bg-white/20 transition-all hover:scale-105 shadow-xl w-full sm:w-auto justify-center flex"
+                className="bg-white/5 backdrop-blur-lg border border-white/20 text-white px-8 py-4 rounded-[0px] font-bold hover:bg-white/10 hover:border-white/40 transition-all hover:-translate-y-1 flex items-center w-full sm:w-auto justify-center"
               >
-                Learn More
+                Discover More
               </Link>
             </div>
           </motion.div>
 
           {/* Right Image Slider */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="w-full lg:w-1/2 flex justify-center lg:justify-end hidden md:flex"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+            className="w-full lg:w-2/5 flex justify-center lg:justify-end hidden md:flex"
           >
-            <div className="relative w-48 h-48 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-full overflow-hidden border-4 border-white/20 shadow-[0_0_50px_rgba(251,191,36,0.3)] backdrop-blur-md group">
-              <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/20 to-transparent z-20 mix-blend-overlay pointer-events-none"></div>
-              {heroImages.length > 0 && (
+            <div className="relative w-64 h-[300px] md:w-80 md:h-[380px] lg:w-[350px] lg:h-[450px] rounded-[3rem] overflow-hidden border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.15)] group">
+              {/* Glass reflection */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent z-20 pointer-events-none"></div>
+
+              {heroImages.length > 0 ? (
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={currentImageIndex}
                     src={heroImages[currentImageIndex]}
                     alt="Spiritual Journey"
-                    initial={{ x: "100%", opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    exit={{ x: "-100%", opacity: 0 }}
-                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                    initial={{ opacity: 0, scale: 1.1 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 1.2, ease: "easeInOut" }}
                     className="absolute inset-0 w-full h-full object-cover object-center z-10"
                   />
                 </AnimatePresence>
+              ) : (
+                <div className="absolute inset-0 bg-white/5 backdrop-blur-md z-10 flex items-center justify-center">
+                  <Loader2 className="w-8 h-8 text-amber-500 animate-spin" />
+                </div>
               )}
+
+              {/* Floating Element */}
+              <div className="absolute -bottom-6 -left-6 z-30 bg-white/10 backdrop-blur-xl border border-white/20 p-4 rounded-2xl shadow-xl transform rotate-[-5deg]">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center text-white">
+                    <Sparkles size={24} />
+                  </div>
+                  <div>
+                    <p className="text-white font-bold text-sm">Divine Peace</p>
+                    <p className="text-white/70 text-xs">Join our community</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </motion.div>
         </div>
@@ -189,16 +213,18 @@ function Hero() {
 
       {/* Scroll indicator */}
       <motion.div
-        animate={{ y: [0, 10, 0] }}
-        transition={{ repeat: Infinity, duration: 2 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 text-white"
+        animate={{ y: [0, 15, 0] }}
+        transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 text-white"
       >
         <Link
-          href="#about"
-          className="flex flex-col items-center opacity-70 hover:opacity-100 transition-opacity"
+          href="#kriya-yogam"
+          className="flex flex-col items-center opacity-60 hover:opacity-100 transition-opacity"
         >
-          <span className="text-xs uppercase tracking-widest mb-2">Scroll</span>
-          <div className="w-[1px] h-12 bg-gradient-to-b from-white to-transparent"></div>
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] mb-3">
+            Explore
+          </span>
+          <div className="w-[2px] h-16 bg-gradient-to-b from-amber-500/80 to-transparent rounded-full"></div>
         </Link>
       </motion.div>
     </section>
