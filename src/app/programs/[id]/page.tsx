@@ -26,7 +26,6 @@ import {
   addBooking,
   uploadBookingPaymentScreenshot,
   updateBookingPaymentScreenshot,
-  checkBookingAvailability,
 } from "../../../services/api";
 import { EventDetailData } from "../../../models/event_model";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -88,8 +87,6 @@ export default function ProgramDetailsPage() {
   const [isPaymentSidebarOpen, setIsPaymentSidebarOpen] = useState(false);
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
   const [bookingId, setBookingId] = useState<number | null>(null);
-  const [dateError, setDateError] = useState<string | null>(null);
-  const [isCheckingDate, setIsCheckingDate] = useState(false);
 
   const {
     register,
@@ -122,32 +119,6 @@ export default function ProgramDetailsPage() {
     ? Number(program.registrationfee) * Number(participantsCount)
     : 0;
 
-  useEffect(() => {
-    if (bookingdateValue && isOnline) {
-      setIsCheckingDate(true);
-      checkBookingAvailability(bookingdateValue)
-        .then((res) => {
-          if (res && res.success === false) {
-            setDateError(res.data);
-          } else {
-            setDateError(null);
-          }
-        })
-        .catch((error: any) => {
-          if (error.response && error.response.data && error.response.data.success === false) {
-            setDateError(error.response.data.data);
-          } else {
-            setDateError(null);
-          }
-        })
-        .finally(() => {
-          setIsCheckingDate(false);
-        });
-    } else {
-      setDateError(null);
-      setIsCheckingDate(false);
-    }
-  }, [bookingdateValue, isOnline]);
 
   const onSubmit = async (data: FormValues) => {
     if (isOnline && (!data.bookingdate || !data.bookingtime)) {
@@ -758,7 +729,7 @@ export default function ProgramDetailsPage() {
                       disabled
                       className="block w-full py-5 text-center bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed text-lg"
                     >
-                      Registration Closed
+                      Coming Soon...
                     </button>
                   )}
 
@@ -1071,17 +1042,8 @@ export default function ProgramDetailsPage() {
                           {...register("bookingdate")}
                           type="date"
                           min={new Date().toISOString().split('T')[0]}
-                          className={`w-full px-4 py-3 rounded-xl border transition-all text-sm ${dateError ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-200 bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white"}`}
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm"
                         />
-                        {isCheckingDate ? (
-                          <p className="mt-1 text-xs text-amber-500 flex items-center gap-1 font-medium">
-                            <Loader2 className="w-3 h-3 animate-spin" /> Checking availability...
-                          </p>
-                        ) : dateError ? (
-                          <p className="mt-1 text-xs text-red-500 font-medium">
-                            {dateError}
-                          </p>
-                        ) : null}
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
@@ -1180,7 +1142,7 @@ export default function ProgramDetailsPage() {
                   <div className="pt-4 mt-2 border-t border-gray-100 flex justify-end">
                     <button
                       type="submit"
-                      disabled={isSubmitting || !!dateError || isCheckingDate}
+                      disabled={isSubmitting}
                       className="group/btn relative flex w-full md:w-auto items-center justify-center overflow-hidden rounded-[0px] bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-4 font-bold text-white shadow-[0_8px_25px_-8px_rgba(245,158,11,0.6)] transition-all duration-300 hover:from-amber-600 hover:to-orange-600 hover:shadow-[0_12px_30px_-8px_rgba(245,158,11,0.8)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isSubmitting ? (

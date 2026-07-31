@@ -12,13 +12,13 @@ import { ProductModel } from "../models/product_model";
 import { AddressModel, CartModel } from "../models/OrderModel";
 import { config, json } from "zod";
 
-export const IMAGEBASEURL = "http://localhost:3003";
+export const BASEURL = "https://api.srikandhagurufoundation.org";
 
 export const getImageVideoUrl = (data: string) => {
   if (data.startsWith("https") || data.startsWith("http")) {
     return data;
   } else {
-    return `${IMAGEBASEURL}${data}`;
+    return `${BASEURL}${data}`;
   }
 };
 
@@ -58,7 +58,7 @@ export const getYouTubeThumbnailUrl = (url: string | null) => {
 };
 
 const api = axios.create({
-  baseURL: "http://localhost:3003/api",
+  baseURL: `${BASEURL}/api`,
   headers: {
     "Content-Type": "application/json",
   },
@@ -549,16 +549,6 @@ export const getEventBookings = async () => {
     return response.data;
   } catch (error) {
     console.error("Error fetching event bookings:", error);
-    throw error;
-  }
-};
-
-export const checkBookingAvailability = async (bookingdate: string) => {
-  try {
-    const response = await api.post("/booking/avalability", { bookingdate });
-    return response.data;
-  } catch (error) {
-    console.error("Error checking booking availability:", error);
     throw error;
   }
 };

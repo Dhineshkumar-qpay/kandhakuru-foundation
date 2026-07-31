@@ -18,6 +18,7 @@ import {
   getYouTubeThumbnailUrl,
   addToCart,
   getVideoTestimonials,
+  BASEURL,
 } from "../services/api";
 import { ProductModel } from "../models/product_model";
 import { EventModel } from "../models/event_model";
@@ -79,11 +80,7 @@ export default function Home() {
 // Hero section
 
 function Hero() {
-  const [heroImages, setHeroImages] = useState<string[]>([
-    "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcR2xj-V--K9M8rbnjDBiONg42HzmlWGDqA901Poz0OETFvAUJxo",
-    "https://scontent.fmaa2-2.fna.fbcdn.net/v/t51.82787-15/733831259_18059112200778949_178341886422952852_n.jpg?stp=dst-jpg_tt6&cstp=mx1080x1350&ctp=s1080x1350&_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=P616qBrMYe8Q7kNvwGcEvVB&_nc_oc=Adrk3qpNSXUKGtZe4dKSeCGOMF0fzM6D2hzDzW-o5PVc7XaL-YNJNRgYHiWu5EHzSSFtzv_dcx-f-UcVTL6i5frI&_nc_zt=23&_nc_ht=scontent.fmaa2-2.fna&_nc_gid=BETKhbRkD0-4r0vRSckmpA&_nc_ss=7b2a8&oh=00_AQDCzvauezlAVjPQhvJGE2ItPMuBH8GGQ4xOHaHgJ_hOsQ&oe=6A5E7BB3",
-    "https://scontent.fmaa2-4.fna.fbcdn.net/v/t51.82787-15/735238499_18058841468778949_2465957740438833201_n.jpg?stp=dst-jpg_tt6&cstp=mx1440x1416&ctp=s1440x1416&_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_ohc=-7HUPVxPBOgQ7kNvwFt6qVq&_nc_oc=Adrmioa_ICXvvQ1qCHj3o0TdBdAfVGAlxo1ZtqL67iDfmvrZT1MVsLtELDBLmBn79R7WTxFF_zBL3yPkzzr1tCqC&_nc_zt=23&_nc_ht=scontent.fmaa2-4.fna&_nc_gid=-qAeNjVcNLXWXdqpcl2VdA&_nc_ss=7b2a8&oh=00_AQASh2yv5gnz1cyO3u85L7yux5mAQgebzvDkhnXz_I3aZw&oe=6A5E7E4D",
-  ]);
+  const [heroImages, setHeroImages] = useState<string[]>([]);
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -171,18 +168,20 @@ function Hero() {
           >
             <div className="relative w-48 h-48 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-full overflow-hidden border-4 border-white/20 shadow-[0_0_50px_rgba(251,191,36,0.3)] backdrop-blur-md group">
               <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/20 to-transparent z-20 mix-blend-overlay pointer-events-none"></div>
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={currentImageIndex}
-                  src={heroImages[currentImageIndex]}
-                  alt="Spiritual Journey"
-                  initial={{ x: "100%", opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: "-100%", opacity: 0 }}
-                  transition={{ duration: 0.8, ease: "easeInOut" }}
-                  className="absolute inset-0 w-full h-full object-cover object-center z-10"
-                />
-              </AnimatePresence>
+              {heroImages.length > 0 && (
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={currentImageIndex}
+                    src={heroImages[currentImageIndex]}
+                    alt="Spiritual Journey"
+                    initial={{ x: "100%", opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: "-100%", opacity: 0 }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                    className="absolute inset-0 w-full h-full object-cover object-center z-10"
+                  />
+                </AnimatePresence>
+              )}
             </div>
           </motion.div>
         </div>
@@ -569,6 +568,8 @@ function Programs() {
     fetchEvents();
   }, []);
 
+  if (events.length === 0) return null;
+
   return (
     <section id="programs" className="py-24 bg-white">
       <div className="w-full px-4 md:px-8 lg:px-12 mx-auto max-w-[1920px]">
@@ -865,6 +866,8 @@ function Gallery() {
     fetchGallery();
   }, []);
 
+  if (images.length === 0) return null;
+
   return (
     <section id="gallery" className="py-24 bg-white border-t border-gray-100">
       <div className="container mx-auto px-4 max-w-7xl">
@@ -1000,6 +1003,8 @@ function Testimonials() {
     fetchTestimonials();
   }, []);
 
+  if (testimonials.length === 0) return null;
+
   return (
     <section className="py-24 bg-white relative overflow-hidden">
       {/* Subtle Background Pattern */}
@@ -1085,6 +1090,8 @@ function Videos() {
     };
     fetchVideos();
   }, []);
+
+  if (videos.length === 0) return null;
 
   return (
     <section className="py-20 relative overflow-hidden bg-[#FAFAF9]">
@@ -1271,6 +1278,8 @@ function BookShopPreview() {
     fetchBooks();
   }, []);
 
+  if (books.length === 0) return null;
+
   return (
     <section className="py-20 bg-white border-t border-gray-200">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
@@ -1415,7 +1424,7 @@ function BookShopPreview() {
                 <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
                   <div className="flex flex-col">
                     {selectedProduct.sellingprice &&
-                    selectedProduct.sellingprice > 0 ? (
+                      selectedProduct.sellingprice > 0 ? (
                       <div className="flex items-baseline gap-3">
                         <span className="text-3xl font-black text-gray-900">
                           ₹{selectedProduct.sellingprice}
@@ -1431,14 +1440,14 @@ function BookShopPreview() {
                     )}
                   </div>
                   {selectedProduct.sellingprice &&
-                  selectedProduct.sellingprice > 0 &&
-                  selectedProduct.price > selectedProduct.sellingprice ? (
+                    selectedProduct.sellingprice > 0 &&
+                    selectedProduct.price > selectedProduct.sellingprice ? (
                     <span className="bg-red-50 text-red-600 font-bold px-2 py-1 rounded text-sm">
                       {Math.round(
                         ((selectedProduct.price -
                           selectedProduct.sellingprice) /
                           selectedProduct.price) *
-                          100,
+                        100,
                       )}
                       % OFF
                     </span>

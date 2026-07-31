@@ -33,6 +33,10 @@ export default function Navbar() {
   }, []);
 
   const fetchCartCount = async () => {
+    if (!isLoggedIn) {
+      setCartCount(0);
+      return;
+    }
     try {
       const res = await getCartCount();
       if (res.success && res.data !== undefined) {
@@ -53,7 +57,7 @@ export default function Navbar() {
       window.removeEventListener("cartUpdated", handleCartUpdate);
       window.removeEventListener("openCart", handleOpenCart);
     };
-  }, []);
+  }, [isLoggedIn]);
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -140,7 +144,7 @@ export default function Navbar() {
             {isShopSection && (
               <div className={`flex items-center gap-4 mr-2 ${textColor}`}>
                 <button
-                  onClick={() => setIsCartOpen(true)}
+                  onClick={() => isLoggedIn ? setIsCartOpen(true) : openLogin()}
                   className={`transition-colors relative cursor-pointer ${isShopSection ? "hover:text-white/80" : "hover:text-brand-primary"}`}
                 >
                   <ShoppingCart size={24} />
@@ -153,7 +157,7 @@ export default function Navbar() {
                   )}
                 </button>
                 <button
-                  onClick={() => router.push("/my-account")}
+                  onClick={() => isLoggedIn ? router.push("/my-account") : openLogin()}
                   className={`transition-colors cursor-pointer ${isShopSection ? "hover:text-white/80" : "hover:text-brand-primary"}`}
                 >
                   <User size={24} />
@@ -183,7 +187,7 @@ export default function Navbar() {
             {isShopSection && (
               <div className={`flex items-center gap-3 mr-1 ${textColor}`}>
                 <button
-                  onClick={() => setIsCartOpen(true)}
+                  onClick={() => isLoggedIn ? setIsCartOpen(true) : openLogin()}
                   className={`transition-colors relative cursor-pointer ${isShopSection ? "hover:text-white/80" : "hover:text-brand-primary"}`}
                 >
                   <ShoppingCart size={20} />
@@ -196,7 +200,7 @@ export default function Navbar() {
                   )}
                 </button>
                 <button
-                  onClick={() => router.push("/my-account")}
+                  onClick={() => isLoggedIn ? router.push("/my-account") : openLogin()}
                   className={`transition-colors cursor-pointer ${isShopSection ? "hover:text-white/80" : "hover:text-brand-primary"}`}
                 >
                   <User size={20} />

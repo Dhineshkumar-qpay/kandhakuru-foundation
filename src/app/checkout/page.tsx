@@ -20,7 +20,7 @@ import {
   placeOrder,
   uploadPaymentScreenshot,
   updatePaymentScreenshot,
-  IMAGEBASEURL,
+  BASEURL,
 } from "../../services/api";
 import { AddressModel, CartModel } from "../../models/OrderModel";
 
@@ -502,7 +502,7 @@ export default function CheckoutPage() {
                       <div key={item.id} className="flex gap-4">
                         <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden shrink-0 border border-gray-100">
                           <img
-                            src={`${IMAGEBASEURL}${item.product?.image}`}
+                            src={`${BASEURL}${item.product?.image}`}
                             alt={item.product?.productname || ""}
                             className="w-full h-full object-cover"
                           />

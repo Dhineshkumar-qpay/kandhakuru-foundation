@@ -6,7 +6,7 @@ import {
   getCart,
   updateCartQuantity,
   removeFromCart,
-  IMAGEBASEURL,
+  BASEURL,
 } from "../services/api";
 import { CartModel } from "../models/OrderModel";
 
@@ -117,7 +117,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                   >
                     <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden shrink-0">
                       <img
-                        src={`${IMAGEBASEURL}${item.product?.image}`}
+                        src={`${BASEURL}${item.product?.image}`}
                         alt={item.product?.productname || ""}
                         className="w-full h-full object-cover"
                       />

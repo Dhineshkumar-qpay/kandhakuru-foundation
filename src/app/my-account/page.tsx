@@ -22,7 +22,7 @@ import {
   deleteAddress,
   getUser,
   getOrderHistory,
-  IMAGEBASEURL,
+  BASEURL,
 } from "../../services/api";
 import { AddressModel, OrderHistoryModel } from "../../models/OrderModel";
 import { UserModel } from "../../models/user_model";
@@ -651,7 +651,7 @@ export default function MyAccountPage() {
                                 <div key={idx} className="flex gap-3 group">
                                   <div className="w-14 h-14 bg-gray-50 rounded-lg overflow-hidden border border-gray-100 shrink-0 relative">
                                     <img
-                                      src={IMAGEBASEURL + item.productimage}
+                                      src={BASEURL + item.productimage}
                                       alt={item.productname}
                                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     />

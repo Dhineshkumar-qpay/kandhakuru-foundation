@@ -10,6 +10,7 @@ import {
   KeyRound,
   ArrowRight,
   CheckCircle2,
+  Loader2,
 } from "lucide-react";
 
 interface AuthContextType {
@@ -41,6 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const openLogin = () => {
     setStep("details");
@@ -60,6 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const handleRequestOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (username && email) {
+      setIsSubmitting(true);
       try {
         const response = await requestLogin({ username, email });
         if (response.success) {
@@ -70,6 +73,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch (error) {
         console.error("Login request error", error);
         alert("An error occurred. Please try again.");
+      } finally {
+        setIsSubmitting(false);
       }
     }
   };
@@ -78,6 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     e.preventDefault();
     const otpValue = otp.join("");
     if (otpValue.length === 6) {
+      setIsSubmitting(true);
       try {
         const response = await verifyOtpApi({ email, otp: otpValue });
         if (response.success && response.data) {
@@ -95,6 +101,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch (error) {
         console.error("Verify OTP error", error);
         alert("An error occurred verifying OTP.");
+      } finally {
+        setIsSubmitting(false);
       }
     }
   };
@@ -208,9 +216,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
                     <button
                       type="submit"
-                      className="w-full flex items-center justify-center gap-2 bg-brand-primary text-white font-bold py-3.5 rounded-md hover:bg-brand-primary/90 transition-all shadow-md hover:shadow-lg mt-8"
+                      disabled={isSubmitting}
+                      className="w-full flex items-center justify-center gap-2 bg-brand-primary text-white font-bold py-3.5 rounded-md hover:bg-brand-primary/90 transition-all shadow-md hover:shadow-lg mt-8 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
                     >
-                      Request OTP <ArrowRight size={18} />
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 size={18} className="animate-spin" />
+                          Sending OTP...
+                        </>
+                      ) : (
+                        <>
+                          Request OTP <ArrowRight size={18} />
+                        </>
+                      )}
                     </button>
                   </form>
                 )}
@@ -247,9 +265,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     <div className="space-y-4">
                       <button
                         type="submit"
-                        className="w-full flex items-center justify-center gap-2 bg-brand-primary text-white font-bold py-3.5 rounded-md hover:bg-brand-primary/90 transition-all shadow-md hover:shadow-lg"
+                        disabled={isSubmitting}
+                        className="w-full flex items-center justify-center gap-2 bg-brand-primary text-white font-bold py-3.5 rounded-md hover:bg-brand-primary/90 transition-all shadow-md hover:shadow-lg cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
                       >
-                        Verify & Login
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 size={18} className="animate-spin" />
+                            Verifying...
+                          </>
+                        ) : (
+                          "Verify & Login"
+                        )}
                       </button>
                       <button
                         type="button"

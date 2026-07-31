@@ -329,18 +329,16 @@ export default function DonatePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div
                     onClick={() => setSelectedCause("kovil")}
-                    className={`flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-400 ${
-                      selectedCause === "kovil"
+                    className={`flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-400 ${selectedCause === "kovil"
                         ? "border-brand-primary bg-white shadow-lg shadow-brand-primary/15 transform scale-[1.02]"
                         : "border-transparent bg-white shadow-sm hover:shadow-md hover:border-gray-200"
-                    }`}
+                      }`}
                   >
                     <div
-                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-                        selectedCause === "kovil"
+                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${selectedCause === "kovil"
                           ? "border-brand-primary bg-brand-primary/10"
                           : "border-gray-300 bg-gray-50"
-                      }`}
+                        }`}
                     >
                       {selectedCause === "kovil" && (
                         <motion.div
@@ -357,18 +355,16 @@ export default function DonatePage() {
                   </div>
                   <div
                     onClick={() => setSelectedCause("annadhanam")}
-                    className={`flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-400 ${
-                      selectedCause === "annadhanam"
+                    className={`flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-400 ${selectedCause === "annadhanam"
                         ? "border-brand-primary bg-white shadow-lg shadow-brand-primary/15 transform scale-[1.02]"
                         : "border-transparent bg-white shadow-sm hover:shadow-md hover:border-gray-200"
-                    }`}
+                      }`}
                   >
                     <div
-                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-                        selectedCause === "annadhanam"
+                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${selectedCause === "annadhanam"
                           ? "border-brand-primary bg-brand-primary/10"
                           : "border-gray-300 bg-gray-50"
-                      }`}
+                        }`}
                     >
                       {selectedCause === "annadhanam" && (
                         <motion.div
@@ -500,11 +496,10 @@ export default function DonatePage() {
                     <button
                       key={amt}
                       onClick={() => handleAmountClick(amt)}
-                      className={`py-3 px-2 rounded-xl font-bold transition-all border-2 cursor-pointer ${
-                        amount === amt
+                      className={`py-3 px-2 rounded-xl font-bold transition-all border-2 cursor-pointer ${amount === amt
                           ? "bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/30 scale-[1.05]"
                           : "bg-white text-gray-700 border-transparent shadow-sm hover:shadow-md hover:border-gray-200 hover:text-brand-primary"
-                      }`}
+                        }`}
                     >
                       ₹{amt}
                     </button>
@@ -788,9 +783,8 @@ export default function DonatePage() {
                     {faq.question}
                   </span>
                   <ChevronDown
-                    className={`text-gray-400 transition-transform duration-300 ${
-                      openFaq === idx ? "rotate-180" : ""
-                    }`}
+                    className={`text-gray-400 transition-transform duration-300 ${openFaq === idx ? "rotate-180" : ""
+                      }`}
                   />
                 </button>
                 <AnimatePresence>

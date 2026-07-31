@@ -17,7 +17,7 @@ import {
   Truck,
   X,
 } from "lucide-react";
-import { getOrderDetail, IMAGEBASEURL } from "../../../services/api";
+import { getOrderDetail, BASEURL } from "../../../services/api";
 import { OrderDetailResponseModel } from "../../../models/OrderModel";
 
 export default function OrderDetailsPage() {
@@ -145,7 +145,7 @@ export default function OrderDetailsPage() {
                     >
                       <div className="w-24 h-24 sm:w-32 sm:h-32 bg-white rounded-xl overflow-hidden border border-gray-100 shrink-0">
                         <img
-                          src={IMAGEBASEURL + item.productimage}
+                          src={BASEURL + item.productimage}
                           alt={item.productname}
                           className="w-full h-full object-cover"
                         />
@@ -357,13 +357,13 @@ export default function OrderDetailsPage() {
                       Screenshot
                     </p>
                     <a
-                      href={IMAGEBASEURL + order.screenshot}
+                      href={BASEURL + order.screenshot}
                       target="_blank"
                       rel="noreferrer"
                       className="block w-full h-50 rounded-lg overflow-hidden border border-gray-200 hover:border-[var(--color-deepgreen)] transition-colors cursor-pointer group relative"
                     >
                       <img
-                        src={IMAGEBASEURL + order.screenshot}
+                        src={BASEURL + order.screenshot}
                         alt="Payment"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                       />

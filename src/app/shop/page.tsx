@@ -59,37 +59,45 @@ export default function ShopPage() {
 
   return (
     <div className="bg-gray-50 min-h-screen pt-0  text-[var(--foreground)]">
-      {/* Corporate Hero Section */}
-      <section className="bg-white border-b border-gray-200">
+      {/* Premium Hero Section */}
+      <section className="relative pt-8 pb-8 lg:pt-12 lg:pb-12 bg-gray-50">
         <div className="container mx-auto px-4 max-w-7xl">
-          <div className="flex flex-col md:flex-row items-center py-16 lg:py-24 gap-12">
+          <div className="bg-white rounded-3xl p-8 md:p-12 lg:p-16 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden">
+            {/* Background Accent */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-[var(--color-deepgreen)]/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="flex-1 space-y-6"
+              className="flex-1 space-y-8 relative z-10"
             >
-              <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight text-gray-900">
+              <div className="inline-block">
+                <span className="bg-[var(--color-deepgreen)]/10 text-[var(--color-deepgreen)] font-bold px-4 py-1.5 rounded-full text-xs uppercase tracking-widest border border-[var(--color-deepgreen)]/20">
+                  Official Store
+                </span>
+              </div>
+              <h1 className="text-4xl lg:text-5xl font-black tracking-tight leading-tight text-gray-900">
                 Premium Spiritual Resources <br />
-                <span className="text-brand-secondary">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-deepgreen)] to-emerald-500">
                   Curated for Your Journey
                 </span>
               </h1>
-              <p className="text-md text-gray-600 max-w-xl leading-relaxed">
+              <p className="text-lg text-gray-600 max-w-xl leading-relaxed font-medium">
                 Explore our official selection of authentic spiritual tools,
                 literature, and wellness items. Every purchase supports the
                 foundation's global initiatives.
               </p>
-              <div className="pt-4 flex items-center gap-4">
+              <div className="pt-2 flex items-center gap-6">
                 <button
                   onClick={() =>
                     document
                       .getElementById("products-section")
                       ?.scrollIntoView({ behavior: "smooth" })
                   }
-                  className="bg-[var(--color-deepgreen)] text-white px-8 py-3.5 font-bold tracking-wide shadow-[0_4px_14px_0_rgba(6,95,70,0.39)] hover:bg-[var(--color-deepgreen)]/90 transition-all hover:shadow-[0_6px_20px_rgba(6,95,70,0.23)] rounded-[0px] cursor-pointer"
+                  className="bg-[var(--color-deepgreen)] text-white px-8 py-4 font-bold tracking-wide shadow-[0_10px_20px_rgba(6,95,70,0.2)] hover:bg-[var(--color-deepgreen)]/90 transition-all hover:shadow-[0_10px_25px_rgba(6,95,70,0.3)] hover:-translate-y-1 rounded-xl cursor-pointer flex items-center gap-3 group"
                 >
-                  Shop Collection
+                  Shop Collection <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
                 </button>
               </div>
             </motion.div>
@@ -98,71 +106,70 @@ export default function ShopPage() {
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex-1 w-full hidden md:flex justify-end relative"
+              className="flex-1 w-full hidden md:flex justify-end relative z-10"
             >
               {products.length > 0 ? (
                 <div
-                  className="relative w-150 h-[400px] rounded-3xl overflow-hidden cursor-pointer group shadow-2xl"
+                  className="relative w-full max-w-md h-[450px] rounded-[2rem] overflow-hidden cursor-pointer group shadow-2xl border border-white"
                   onClick={() => setSelectedProduct(products[0])}
                 >
                   {/* Background Image */}
                   <img
                     src={getImageVideoUrl(products[0].image)}
                     alt={products[0].productname}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
 
                   {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent opacity-90" />
 
                   {/* Category Badge */}
-                  <div className="absolute top-6 left-6">
-                    <span className="px-4 py-2 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-semibold uppercase tracking-widest border border-white/20">
-                      {products[0].category}
+                  <div className="absolute top-6 left-6 flex items-center gap-2">
+                    <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider border border-white/30 shadow-sm">
+                       <Star size={12} className="fill-white" /> Featured
                     </span>
                   </div>
 
                   {/* Content */}
                   <div className="absolute inset-0 flex flex-col justify-end p-8 text-white">
-                    <h2 className="text-4xl font-bold leading-tight mb-3">
+                    <p className="text-emerald-400 font-semibold text-sm uppercase tracking-widest mb-2">
+                      {products[0].category}
+                    </p>
+                    <h2 className="text-3xl font-extrabold leading-tight mb-4 drop-shadow-md">
                       {products[0].productname}
                     </h2>
 
-                    <p className="text-white/80 text-sm leading-6 line-clamp-3 mb-6">
-                      {products[0].description}
-                    </p>
-
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-end justify-between mt-2 pt-6 border-t border-white/20">
                       <div>
-                        <p className="text-xs uppercase tracking-widest text-white/60 mb-1">
+                        <p className="text-xs uppercase tracking-widest text-gray-300 mb-1.5 font-medium">
                           Starting From
                         </p>
-
                         <div className="flex items-center gap-3">
                           {products[0].sellingprice &&
                             products[0].sellingprice < products[0].price ? (
-                            <span className="text-white/60 line-through text-lg">
+                            <span className="text-gray-400 line-through text-lg font-semibold">
                               ₹{products[0].price}
                             </span>
                           ) : (
                             <></>
                           )}
-                          <span className="text-3xl font-black text-[#FFD54A]">
+                          <span className="text-3xl font-black text-white drop-shadow-sm">
                             ₹{products[0].sellingprice || products[0].price}
                           </span>
                         </div>
                       </div>
 
-                      <button className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-300 group-hover:bg-white group-hover:text-black group-hover:scale-110">
-                        <ArrowRight className="w-6 h-6" />
+                      <button className="w-14 h-14 rounded-2xl bg-white text-gray-900 flex items-center justify-center transition-all duration-300 group-hover:bg-[var(--color-deepgreen)] group-hover:text-white shadow-lg group-hover:scale-105">
+                        <ArrowRight className="w-6 h-6 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
                       </button>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="relative w-full h-[400px] bg-gray-100 rounded-lg overflow-hidden border border-gray-200 shadow-inner">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Loader2 className="w-8 h-8 text-[var(--color-deepgreen)] animate-spin" />
+                <div className="relative w-full max-w-md h-[450px] bg-gray-50 rounded-[2rem] overflow-hidden border border-gray-100 shadow-inner">
+                  <div className="absolute inset-0 flex items-center justify-center flex-col gap-4">
+                    <Loader2 className="w-10 h-10 text-[var(--color-deepgreen)] animate-spin" />
+                    <span className="text-sm font-medium text-gray-400 uppercase tracking-widest">Loading Featured</span>
                   </div>
                 </div>
               )}
