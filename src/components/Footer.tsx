@@ -326,7 +326,7 @@ export default function Footer() {
             className="group flex flex-wrap justify-center items-center gap-3 px-5 py-2.5 transition-all duration-300"
           >
             <span className="text-sm text-slate-500 font-medium group-hover:text-slate-700 transition-colors">
-              Developed by <span className="font-bold text-green-800 group-hover:text-[var(--color-deepgreen)] transition-colors">Qpay India Private Limited</span>
+              Developed by <span className="font-bold text-green-800 group-hover:text-[var(--color-deepgreen)] transition-colors">QPay India Private Limited</span>
             </span>
             <div className="bg-white rounded-lg p-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100 group-hover:scale-105 group-hover:shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all duration-300">
               <img

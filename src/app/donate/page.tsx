@@ -85,7 +85,7 @@ export default function DonatePage() {
   const [error, setError] = useState("");
 
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  
+
   const faqs = [
     { question: t("donate.q1"), answer: t("donate.a1") },
     { question: t("donate.q2"), answer: t("donate.a2") },
@@ -373,18 +373,16 @@ export default function DonatePage() {
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <button
                         onClick={() => setSelectedCause("kovil")}
-                        className={`flex items-center gap-4 rounded-2xl border px-5 py-4 text-left transition-all duration-300 ${
-                          selectedCause === "kovil"
+                        className={`flex items-center gap-4 rounded-2xl border px-5 py-4 text-left transition-all duration-300 ${selectedCause === "kovil"
                             ? "border-brand-primary bg-white shadow-[0_10px_30px_-15px_rgba(245,158,11,0.35)]"
                             : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
-                        }`}
+                          }`}
                       >
                         <div
-                          className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${
-                            selectedCause === "kovil"
+                          className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${selectedCause === "kovil"
                               ? "border-brand-primary"
                               : "border-slate-300"
-                          }`}
+                            }`}
                         >
                           {selectedCause === "kovil" && (
                             <motion.div
@@ -405,18 +403,16 @@ export default function DonatePage() {
 
                       <button
                         onClick={() => setSelectedCause("annadhanam")}
-                        className={`flex items-center gap-4 rounded-2xl border px-5 py-4 text-left transition-all duration-300 ${
-                          selectedCause === "annadhanam"
+                        className={`flex items-center gap-4 rounded-2xl border px-5 py-4 text-left transition-all duration-300 ${selectedCause === "annadhanam"
                             ? "border-brand-primary bg-white shadow-[0_10px_30px_-15px_rgba(245,158,11,0.35)]"
                             : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
-                        }`}
+                          }`}
                       >
                         <div
-                          className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${
-                            selectedCause === "annadhanam"
+                          className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${selectedCause === "annadhanam"
                               ? "border-brand-primary"
                               : "border-slate-300"
-                          }`}
+                            }`}
                         >
                           {selectedCause === "annadhanam" && (
                             <motion.div
@@ -532,6 +528,7 @@ export default function DonatePage() {
 
                       <textarea
                         placeholder={t("donate.full_address")}
+                        required
                         rows={3}
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
@@ -551,11 +548,10 @@ export default function DonatePage() {
                         <button
                           key={amt}
                           onClick={() => handleAmountClick(amt)}
-                          className={`rounded-xl border px-3 py-3 text-sm font-semibold transition-all cursor-pointer ${
-                            amount === amt
+                          className={`rounded-xl border px-3 py-3 text-sm font-semibold transition-all cursor-pointer ${amount === amt
                               ? "border-brand-primary bg-brand-primary text-white shadow-[0_10px_24px_-12px_rgba(245,158,11,0.55)]"
                               : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
-                          }`}
+                            }`}
                         >
                           ₹{amt}
                         </button>
@@ -592,6 +588,7 @@ export default function DonatePage() {
                         !mobile ||
                         !email ||
                         !country ||
+                        !address ||
                         (!amount && !customAmount)
                       ) {
                         setError(
@@ -793,9 +790,8 @@ export default function DonatePage() {
                     {faq.question}
                   </span>
                   <ChevronDown
-                    className={`text-gray-400 transition-transform duration-300 ${
-                      openFaq === idx ? "rotate-180" : ""
-                    }`}
+                    className={`text-gray-400 transition-transform duration-300 ${openFaq === idx ? "rotate-180" : ""
+                      }`}
                   />
                 </button>
                 <AnimatePresence>
