@@ -417,7 +417,7 @@ function SpiritualPhilosophy() {
           </motion.div>
         </div>
 
-        <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-3 xl:grid-cols-4">
+        <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-3 xl:grid-cols-3">
           {religions.map((religion, index) => (
             <motion.div
               key={religion.name}

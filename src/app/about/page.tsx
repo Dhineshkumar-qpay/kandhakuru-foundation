@@ -193,7 +193,7 @@ export default function AboutPage() {
               <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200 border-8 border-white bg-slate-100">
                 <img
                   src="kandhaguru.jpg"
-                  alt="Sri Khandhaguru Guruji"
+                  alt="Sri Kandhaguru Guruji"
                   className="w-full h-[500px] md:h-[600px] object-cover hover:scale-105 transition-transform duration-1000"
                   onError={(e) => {
                     e.currentTarget.src =
@@ -506,7 +506,7 @@ export default function AboutPage() {
               <div className="relative h-64 shrink-0 bg-gray-200 overflow-hidden">
                 <img
                   src="kandhaguru.jpg"
-                  alt="Sri Khandhaguru Guruji"
+                  alt="Sri Kandhaguru Guruji"
                   className="w-full h-full object-cover "
                   onError={(e) => {
                     e.currentTarget.src =
