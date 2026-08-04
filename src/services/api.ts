@@ -597,6 +597,8 @@ export const uploadBookingPaymentScreenshot = async (imageFile: File) => {
         "Content-Type": "multipart/form-data",
       },
     });
+    console.log(response.data);
+    
     return response.data;
   } catch (error) {
     console.error("Error uploading booking payment screenshot:", error);
@@ -610,6 +612,7 @@ export const updateBookingPaymentScreenshot = async (data: {
 }) => {
   try {
     const response = await api.post("/booking/update-payment-screenshot", data);
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error updating booking payment screenshot:", error);

@@ -264,7 +264,7 @@
     "pan_number": "PAN Number",
     "aadhaar_number": "Aadhaar Number",
     "passport_number": "Passport Number *",
-    "full_address": "Full Address (Optional)",
+    "full_address": "Full Address",
     "donation_amount": "Donation Amount",
     "enter_custom": "Enter Custom Amount",
     "donate_securely": "Donate Securely",
