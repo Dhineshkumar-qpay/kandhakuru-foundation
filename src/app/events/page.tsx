@@ -6,8 +6,10 @@ import { Calendar, MapPin, Clock, ArrowRight } from "lucide-react";
 import { getEvents, getImageVideoUrl } from "../../services/api";
 import Link from "next/link";
 import { EventModel } from "../../models/event_model";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 export default function EventsPage() {
+  const { t } = useLanguage();
   const [events, setEvents] = useState<EventModel[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -44,21 +46,20 @@ export default function EventsPage() {
             <div className="inline-flex items-center gap-3 mb-6">
               <span className="w-10 h-px bg-gradient-to-r from-transparent to-brand-primary"></span>
               <span className="px-4 py-1.5 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-black tracking-[0.2em] uppercase border border-brand-primary/20 shadow-sm">
-                Join Our Gatherings
+                {t("events.join_gatherings")}
               </span>
               <span className="w-10 h-px bg-gradient-to-l from-transparent to-brand-primary"></span>
             </div>
 
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-normal font-black text-gray-900 tracking-tight mb-6">
-              Upcoming{" "}
+              {t("events.upcoming")}{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-orange-500">
-                Events
+                {t("events.events_title")}
               </span>
             </h1>
 
             <p className="text-lg text-gray-600 max-w-4xl mx-auto font-light leading-relaxed">
-              Experience the power of collective consciousness. Be a part of our
-              sacred gatherings, satsangs, and spiritual celebrations.
+              {t("events.events_desc")}
             </p>
           </motion.div>
         </div>
@@ -70,11 +71,11 @@ export default function EventsPage() {
           <div className="space-y-8">
             {loading ? (
               <div className="text-center py-10 text-gray-500">
-                Loading events...
+                {t("events.loading")}
               </div>
             ) : events.length === 0 ? (
               <div className="text-center py-10 text-gray-500">
-                No upcoming events found.
+                {t("events.no_events")}
               </div>
             ) : (
               events.map((event, index) => (
@@ -160,7 +161,7 @@ export default function EventsPage() {
                           </div>
 
                           <span className="font-medium truncate pr-2">
-                            {event.city || "Venue TBD"}
+                            {event.city || t("events.venue_tbd")}
                           </span>
                         </div>
                       </div>
@@ -170,7 +171,7 @@ export default function EventsPage() {
                     <div className="w-full md:w-16 bg-gray-50 group-hover:bg-brand-primary transition-colors duration-500 flex items-center justify-center py-4 md:py-0 border-t md:border-t-0 md:border-l border-gray-100">
                       <div className="flex md:flex-col items-center gap-2 text-gray-400 group-hover:text-white transition-colors duration-500">
                         <span className="md:hidden font-bold text-sm">
-                          View Details
+                          {t("events.view_details")}
                         </span>
 
                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

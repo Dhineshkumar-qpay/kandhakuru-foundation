@@ -2,7 +2,8 @@
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { requestLogin, verifyOtpApi } from "../services/api";
+import { requestLogin, verifyOtpApi, registerUser } from "../services/api";
+import { useLanguage } from "../i18n/LanguageContext";
 import {
   X,
   User,
@@ -11,6 +12,8 @@ import {
   ArrowRight,
   CheckCircle2,
   Loader2,
+  Phone,
+  AlertCircle,
 } from "lucide-react";
 
 interface AuthContextType {
@@ -37,18 +40,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   }, []);
 
+  const { t } = useLanguage();
   // Login form state
+  const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [step, setStep] = useState<"details" | "otp" | "success">("details");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const openLogin = () => {
     setStep("details");
+    setAuthMode("login");
     setUsername("");
     setEmail("");
+    setMobile("");
     setOtp(["", "", "", "", "", ""]);
+    setErrorMessage(null);
     setIsSidebarOpen(true);
   };
   const closeLogin = () => setIsSidebarOpen(false);
@@ -61,26 +71,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const handleRequestOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (username && email) {
-      setIsSubmitting(true);
-      try {
-        const response = await requestLogin({ username, email });
-        if (response.success) {
-          setStep("otp");
-        } else {
-          alert(response.message || "Login failed");
+    setErrorMessage(null);
+    if (authMode === "login") {
+      if (email) {
+        setIsSubmitting(true);
+        try {
+          const response = await requestLogin({ email });
+          if (response.success) {
+            setStep("otp");
+          } else {
+            setErrorMessage(response.message || response.data?.message || "Login failed");
+          }
+        } catch (error: any) {
+          console.error("Login request error", error);
+          const msg = error.response?.data?.data?.message || error.response?.data?.message || error.message || "An error occurred. Please try again.";
+          setErrorMessage(msg);
+        } finally {
+          setIsSubmitting(false);
         }
-      } catch (error) {
-        console.error("Login request error", error);
-        alert("An error occurred. Please try again.");
-      } finally {
-        setIsSubmitting(false);
+      }
+    } else {
+      if (username && email && mobile) {
+        setIsSubmitting(true);
+        try {
+          const response = await registerUser({ username, email, mobile });
+          if (response.success) {
+            setStep("otp");
+          } else {
+            setErrorMessage(response.message || response.data?.message || "Registration failed");
+          }
+        } catch (error: any) {
+          console.error("Registration error", error);
+          const msg = error.response?.data?.data?.message || error.response?.data?.message || error.message || "An error occurred. Please try again.";
+          setErrorMessage(msg);
+        } finally {
+          setIsSubmitting(false);
+        }
       }
     }
   };
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
     const otpValue = otp.join("");
     if (otpValue.length === 6) {
       setIsSubmitting(true);
@@ -96,11 +129,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             closeLogin();
           }, 1500);
         } else {
-          alert(response.message || "Invalid OTP");
+          setErrorMessage(response.message || response.data?.message || "Invalid OTP");
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Verify OTP error", error);
-        alert("An error occurred verifying OTP.");
+        const msg = error.response?.data?.data?.message || error.response?.data?.message || error.message || "An error occurred verifying OTP.";
+        setErrorMessage(msg);
       } finally {
         setIsSubmitting(false);
       }
@@ -156,9 +190,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     />
                   </div>
                   <h2 className="text-xl font-extrabold text-gray-900">
-                    {step === "details" && "Welcome Back"}
-                    {step === "otp" && "Verify OTP"}
-                    {step === "success" && "Success"}
+                    {step === "details" && authMode === "login" && t("auth.welcome_back")}
+                    {step === "details" && authMode === "register" && t("auth.create_account")}
+                    {step === "otp" && t("auth.verify_otp")}
+                    {step === "success" && t("auth.success")}
                   </h2>
                 </div>
                 <button
@@ -171,66 +206,121 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
               <div className="flex-1 overflow-y-auto p-6 sm:p-8">
                 {step === "details" && (
-                  <form onSubmit={handleRequestOtp} className="space-y-6">
-                    <p className="text-sm text-gray-500 mb-6">
-                      Please enter your details to login or create an account.
-                    </p>
-
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-gray-900">
-                        Username
-                      </label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <User className="h-5 w-5 text-gray-400" />
-                        </div>
-                        <input
-                          type="text"
-                          required
-                          value={username}
-                          onChange={(e) => setUsername(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-gray-900"
-                          placeholder="Enter your username"
-                        />
-                      </div>
+                  <div className="space-y-6">
+                    <div className="flex bg-gray-100 p-1 rounded-lg">
+                      <button
+                        onClick={() => setAuthMode("login")}
+                        className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${
+                          authMode === "login"
+                            ? "bg-white text-gray-900 shadow-sm"
+                            : "text-gray-500 hover:text-gray-700"
+                        }`}
+                      >
+                        {t("auth.login_tab")}
+                      </button>
+                      <button
+                        onClick={() => setAuthMode("register")}
+                        className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${
+                          authMode === "register"
+                            ? "bg-white text-gray-900 shadow-sm"
+                            : "text-gray-500 hover:text-gray-700"
+                        }`}
+                      >
+                        {t("auth.register_tab")}
+                      </button>
                     </div>
 
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-gray-900">
-                        Email Address
-                      </label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Mail className="h-5 w-5 text-gray-400" />
-                        </div>
-                        <input
-                          type="email"
-                          required
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-gray-900"
-                          placeholder="Enter your email"
-                        />
-                      </div>
-                    </div>
+                    <form onSubmit={handleRequestOtp} className="space-y-6">
+                      <p className="text-sm text-gray-500 mb-6">
+                        {authMode === "login" ? t("auth.login_desc") : t("auth.register_desc")}
+                      </p>
 
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-full flex items-center justify-center gap-2 bg-brand-primary text-white font-bold py-3.5 rounded-md hover:bg-brand-primary/90 transition-all shadow-md hover:shadow-lg mt-8 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 size={18} className="animate-spin" />
-                          Sending OTP...
-                        </>
-                      ) : (
-                        <>
-                          Request OTP <ArrowRight size={18} />
-                        </>
+                      {errorMessage && (
+                        <div className="bg-red-50 text-red-600 text-sm font-semibold p-3 rounded-md flex items-start gap-2">
+                          <AlertCircle className="w-5 h-5 shrink-0" />
+                          <span>{errorMessage}</span>
+                        </div>
                       )}
-                    </button>
-                  </form>
+
+                      {authMode === "register" && (
+                        <div className="space-y-2">
+                          <label className="text-sm font-bold text-gray-900">
+                            {t("auth.username")}
+                          </label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <User className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                              type="text"
+                              required
+                              value={username}
+                              onChange={(e) => setUsername(e.target.value)}
+                              className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-gray-900"
+                              placeholder={t("auth.enter_username")}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-bold text-gray-900">
+                          {t("auth.email_address")}
+                        </label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <Mail className="h-5 w-5 text-gray-400" />
+                          </div>
+                          <input
+                            type="email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-gray-900"
+                            placeholder={t("auth.enter_email")}
+                          />
+                        </div>
+                      </div>
+
+                      {authMode === "register" && (
+                        <div className="space-y-2">
+                          <label className="text-sm font-bold text-gray-900">
+                            {t("auth.mobile")}
+                          </label>
+                          <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                              <Phone className="h-5 w-5 text-gray-400" />
+                            </div>
+                            <input
+                              type="text"
+                              required
+                              value={mobile}
+                              onChange={(e) => setMobile(e.target.value)}
+                              className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all text-gray-900"
+                              placeholder={t("auth.enter_mobile")}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full flex items-center justify-center gap-2 bg-brand-primary text-white font-bold py-3.5 rounded-md hover:bg-brand-primary/90 transition-all shadow-md hover:shadow-lg mt-8 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 size={18} className="animate-spin" />
+                            {authMode === "login" ? t("auth.sending_otp") : t("auth.registering")}
+                          </>
+                        ) : (
+                          <>
+                            {authMode === "login" ? t("auth.request_otp") : t("auth.register_btn")} <ArrowRight size={18} />
+                          </>
+                        )}
+                      </button>
+                    </form>
+                  </div>
                 )}
 
                 {step === "otp" && (
@@ -240,10 +330,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                         <KeyRound className="h-8 w-8 text-brand-primary" />
                       </div>
                       <p className="text-sm text-gray-500">
-                        We have sent a 6-digit OTP to <br />
+                        {t("auth.sent_otp_to")} <br />
                         <span className="font-bold text-gray-900">{email}</span>
                       </p>
                     </div>
+
+                    {errorMessage && (
+                      <div className="bg-red-50 text-red-600 text-sm font-semibold p-3 rounded-md flex items-start gap-2">
+                        <AlertCircle className="w-5 h-5 shrink-0" />
+                        <span>{errorMessage}</span>
+                      </div>
+                    )}
 
                     <div className="flex justify-center gap-2 sm:gap-3">
                       {otp.map((digit, index) => (
@@ -271,10 +368,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                         {isSubmitting ? (
                           <>
                             <Loader2 size={18} className="animate-spin" />
-                            Verifying...
+                            {t("auth.verifying")}
                           </>
                         ) : (
-                          "Verify & Login"
+                          t("auth.verify_login")
                         )}
                       </button>
                       <button
@@ -282,7 +379,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                         onClick={() => setStep("details")}
                         className="w-full text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors"
                       >
-                        Back to details
+                        {t("auth.back_to_details")}
                       </button>
                     </div>
                   </form>
@@ -298,10 +395,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                       <CheckCircle2 className="w-20 h-20 text-brand-secondary" />
                     </motion.div>
                     <h3 className="text-2xl font-extrabold text-gray-900">
-                      Login Successful
+                      {t("auth.login_successful")}
                     </h3>
                     <p className="text-sm text-gray-500">
-                      Welcome, {username}!
+                      {t("auth.welcome")}{username ? `, ${username}` : ""}!
                     </p>
                   </div>
                 )}

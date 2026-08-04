@@ -21,6 +21,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { LanguageProvider } from "@/i18n/LanguageContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,14 +34,16 @@ export default function RootLayout({
       className={`${outfit.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <AuthProvider>
-          <Navbar />
-          <main className="flex-1">
-            {children}
-          </main>
-          <Footer />
-          <GlobalEventPopup />
-        </AuthProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <Navbar />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+            <GlobalEventPopup />
+          </AuthProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

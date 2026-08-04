@@ -16,8 +16,10 @@ import {
 } from "lucide-react";
 import { getEvents, getImageVideoUrl } from "../../services/api";
 import { EventModel } from "../../models/event_model";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 export default function ProgramsPage() {
+  const { t } = useLanguage();
   const [events, setEvents] = useState<EventModel[]>([]);
   const [activeTab, setActiveTab] = useState<"domestic" | "international">(
     "domestic",
@@ -135,7 +137,7 @@ export default function ProgramsPage() {
               <div className="flex items-end justify-start md:justify-end shrink-0 md:mt-0 mt-4">
                 <Link href={`/programs/${prog.id}`}>
                   <button className="px-8 py-4 bg-gray-50 border border-gray-200 text-brand-primary text-xs font-black uppercase tracking-widest rounded-2xl group-hover:bg-brand-primary group-hover:text-white group-hover:border-brand-primary transition-all duration-300 shadow-sm flex items-center gap-2 cursor-pointer">
-                    View Details
+                    {t("programs.view_details")}
                     <ArrowRight
                       size={16}
                       className="group-hover:translate-x-1 transition-transform"
@@ -169,20 +171,18 @@ export default function ProgramsPage() {
             <div className="inline-flex items-center gap-3 mb-6">
               <span className="w-10 h-px bg-gradient-to-r from-transparent to-brand-primary"></span>
               <span className="px-4 py-1.5 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-black tracking-[0.2em] uppercase border border-brand-primary/20 shadow-sm">
-                Explore Our Offerings
+                {t("programs.explore_offerings")}
               </span>
               <span className="w-10 h-px bg-gradient-to-l from-transparent to-brand-primary"></span>
             </div>
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-normal font-black text-gray-900 tracking-tight mb-6">
-              Spiritual{" "}
+              {t("programs.spiritual")}{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-orange-500">
-                Programs
+                {t("programs.programs_title")}
               </span>
             </h1>
             <p className="text-lg text-gray-600 max-w-4xl mx-auto font-light leading-relaxed mb-12">
-              Embark on a journey of self-discovery and spiritual awakening.
-              Join our transformative programs designed to elevate your
-              consciousness and bring inner peace.
+              {t("programs.programs_desc")}
             </p>
           </motion.div>
 
@@ -205,7 +205,7 @@ export default function ProgramsPage() {
                 alt="Domestic"
                 className={`w-5 h-5 ${activeTab === "domestic" ? "filter brightness-0 invert" : "opacity-60"}`}
               />
-              Domestic Programs
+              {t("programs.domestic")}
             </button>
             <button
               onClick={() => setActiveTab("international")}
@@ -220,7 +220,7 @@ export default function ProgramsPage() {
                 alt="International"
                 className={`w-5 h-5 ${activeTab === "international" ? "filter brightness-0 invert" : "opacity-60"}`}
               />
-              International Programs
+              {t("programs.international")}
             </button>
           </motion.div>
         </div>
@@ -233,10 +233,10 @@ export default function ProgramsPage() {
             <>
               <div className="mb-8">
                 <h3 className="text-2xl font-bold text-gray-900 tracking-tight text-center">
-                  Offline Programs
+                  {t("programs.offline_prog")}
                 </h3>
                 <p className="text-gray-500 text-center mt-2">
-                  Programs conducted at different places on different dates.
+                  {t("programs.offline_desc")}
                 </p>
               </div>
 
@@ -305,11 +305,11 @@ export default function ProgramsPage() {
 
                         {program.status === "active" ? (
                           <span className="block w-full py-2.5 px-4 text-center bg-gray-50 border border-gray-200 text-brand-primary font-bold rounded-xl group-hover:bg-brand-primary group-hover:border-brand-primary group-hover:text-white transition-all duration-300 shadow-sm uppercase tracking-wider text-xs">
-                            View Details
+                            {t("programs.view_details")}
                           </span>
                         ) : (
                           <span className="block w-full py-2.5 px-4 text-center bg-gray-100 text-gray-400 font-bold rounded-xl uppercase tracking-wider text-xs">
-                            Coming Soon
+                            {t("programs.coming_soon")}
                           </span>
                         )}
                       </div>
@@ -321,10 +321,10 @@ export default function ProgramsPage() {
               {onlineEvents.length > 0 && (
                 <div className="mt-20 mb-8 border-t border-gray-200 pt-12">
                   <h3 className="text-2xl font-bold text-gray-900 tracking-tight text-center">
-                    Online Programs
+                    {t("programs.online_prog")}
                   </h3>
                   <p className="text-gray-500 text-center mt-2">
-                    Join our online sessions from anywhere in the world.
+                    {t("programs.online_desc")}
                   </p>
                 </div>
               )}
@@ -337,10 +337,10 @@ export default function ProgramsPage() {
             <>
               <div className="mb-8">
                 <h3 className="text-2xl font-bold text-gray-900 tracking-tight text-center">
-                  International Programs (Online Only)
+                  {t("programs.intl_online_only")}
                 </h3>
                 <p className="text-gray-500 text-center mt-2">
-                  Join our online programs from anywhere in the world.
+                  {t("programs.intl_desc")}
                 </p>
               </div>
 

@@ -4,8 +4,10 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, Target, Users, Send, Star, X, ArrowRight } from "lucide-react";
 import { addTestimonial } from "../../services/api";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function AboutPage() {
+  const { t } = useLanguage();
   const [rating, setRating] = useState(5);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [name, setName] = useState("");
@@ -16,14 +18,14 @@ export default function AboutPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const founderStory = [
-    '"My journey into the spiritual path began when I was just a boy of 12 years. It was my beloved grandfather, Sri Kandhaguru, who first introduced me to the ancient wisdom of Kriya Yogam. I was drawn to its depth even at that tender age, though I did not yet fully grasp its transformative power. Little did I know then that this introduction would lay the foundation for the journey of self-discovery and spiritual awakening that would define my life.',
-    "Years later, at the age of 32, I felt an unshakable calling within my heart—a yearning that could not be ignored. I left my village behind and embarked on a journey to the sacred Amarnath. Known for its divine energy and spiritual significance, this holy site drew seekers from all walks of life. There, amidst the serene mountains and the company of ascetics and monks, my destiny unfolded. It was there that I met my true Master—Sri Mouna Siddhar, a direct disciple of the great Mahavatar Babaji Maharaj himself.",
-    "Sri Mouna Siddhar saw within me a readiness to tread the sacred path of Kriya Yogam. With his infinite grace, he accepted me as his disciple. For 48 days, I remained under his close guidance, learning the profound techniques of Kriya Yogam. Those days were a blessing beyond measure, as they gave me not only the sacred knowledge but also the strength to walk the path of self-realization. It was during this time that I received the initiation into Kriya Yogam—a moment that forever changed the course of my life.",
-    "Upon my return, I immersed myself completely in the practice of Kriya Yogam. I applied its techniques diligently, navigating the ups and downs of life with newfound clarity and peace. Over the next eight years, my practice deepened, and I experienced a profound transformation. I began to understand how to free myself from the struggles, distractions, and burdens of the material world.",
-    "In 2019, after years of intense practice and spiritual growth, I was guided to establish the Sri Kandhaguru Foundation in Bhavani, Erode District, Tamil Nadu. The purpose of this Foundation was clear—to share the timeless teachings of Kriya Yogam with all who sought spiritual growth and inner peace. I wanted to create a space where seekers could learn and practice these techniques under direct guidance, as I once had.",
-    "Since then, the work of the Foundation has grown in ways I could not have imagined. Thousands of seekers from Tamil Nadu and beyond have come to learn Kriya Yogam. To date, I have been blessed to initiate over 15,342 students into this sacred practice. Watching them transform their lives through the teachings of Kriya Yogam brings me immense joy and fulfillment.",
-    'My mission is simple yet profound—to guide each seeker to discover the divinity within themselves. Through the Sri Kandhaguru Foundation, I continue to serve this purpose, offering a path to inner peace, transformation, and self-realization. This journey is not mine alone; it is a shared journey, and I walk it alongside all those who seek the light within."',
-    "With blessings and gratitude,\nKandhaguru Guruji",
+    t("about.founder_story_1"),
+    t("about.founder_story_2"),
+    t("about.founder_story_3"),
+    t("about.founder_story_4"),
+    t("about.founder_story_5"),
+    t("about.founder_story_6"),
+    t("about.founder_story_7"),
+    t("about.founder_story_8"),
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -68,7 +70,7 @@ export default function AboutPage() {
           >
             <span className="w-12 h-[2px] bg-gradient-to-r from-transparent to-amber-500"></span>
             <span className="inline-block py-1 px-3 rounded-full bg-amber-500/10 text-amber-700 text-xs font-normal tracking-[0.2em] uppercase border border-amber-200/50 shadow-sm">
-              Our Journey
+              {t("about.our_journey")}
             </span>
             <span className="w-12 h-[2px] bg-gradient-to-l from-transparent to-amber-500"></span>
           </motion.div>
@@ -79,9 +81,9 @@ export default function AboutPage() {
             transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
             className="text-4xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight text-center font-normal"
           >
-            About{" "}
+            {t("about.about")}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600 font-normal">
-              Us
+              {t("about.us")}
             </span>
           </motion.h1>
         </div>
@@ -121,7 +123,7 @@ export default function AboutPage() {
                     49.1K+
                   </p>
                   <p className="text-sm text-gray-500 font-medium mt-1">
-                    Lives Transformed
+                    {t("about.lives_transformed")}
                   </p>
                 </div>
               </motion.div>
@@ -130,47 +132,29 @@ export default function AboutPage() {
             {/* Content Side */}
             <div className="w-full lg:w-7/12 p-10 lg:p-16 xl:p-20 flex flex-col justify-center bg-gray-50/50">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-white border border-gray-200 text-gray-700 text-xs font-semibold mb-8 uppercase tracking-wider shadow-sm w-max">
-                Our Story
+                {t("about.our_story")}
               </div>
 
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 leading-tight">
-                Sri Kandhaguru Foundation
+                {t("about.foundation_title")}
               </h2>
 
               <div className="space-y-6 text-xl text-gray-600 font-light leading-relaxed text-justify">
+                <p>{t("about.foundation_p1")}</p>
                 <p>
-                  Sri Kandhaguru Foundation was established in 2022 by Sri
-                  Kandhaguru, a revered spiritual master committed to sharing
-                  the sacred teachings of Mahaavatar Babaji Shiva Kriya Yogam.
-                  Acting upon the divine guidance of Guru Mouna Siddhar, Sri
-                  Kandhaguru founded this organisation with a single purpose —
-                  to make the transformative power of Kriya Yogam accessible to
-                  all.
-                </p>
-                <p>
-                  Since its inception, the foundation has touched and
-                  transformed the lives of more than{" "}
+                  {t("about.foundation_p2_1")}{" "}
                   <strong className="text-black font-bold">
-                    50,000 people
+                    {t("about.foundation_p2_2")}
                   </strong>
-                  , guiding them toward spiritual awakening, inner balance, and
-                  enlightened living. Through the profound practice of Shiva
-                  Kriya Yogam, countless individuals have not only experienced
-                  deep spiritual growth but have also achieved self-development,
-                  mental clarity, and remarkable progress in their personal and
-                  professional lives.
+                  {t("about.foundation_p2_3")}
                 </p>
 
                 <div className="mt-10 p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
                   <p className="text-sm font-bold text-gray-900 uppercase tracking-widest mb-2">
-                    Our Core Belief
+                    {t("about.core_belief_title")}
                   </p>
                   <p className="text-gray-500 text-base m-0">
-                    At Sri Kandhaguru Foundation, we believe that enlightenment
-                    is not a distant goal but a living experience available to
-                    everyone. Our mission is to continue spreading this ancient,
-                    powerful yogic science across the world, helping each seeker
-                    discover the limitless potential within.
+                    {t("about.core_belief_desc")}
                   </p>
                 </div>
 
@@ -186,7 +170,7 @@ export default function AboutPage() {
                         Sri Kandhaguru
                       </h4>
                       <p className="text-brand-primary font-medium text-xs tracking-wide uppercase mt-1">
-                        Founder & Spiritual Guide
+                        {t("about.founder_role")}
                       </p>
                     </div>
                   </div>
@@ -209,7 +193,7 @@ export default function AboutPage() {
               <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200 border-8 border-white bg-slate-100">
                 <img
                   src="kandhaguru.jpg"
-                  alt="Shree Khandhaguru Guruji"
+                  alt="Sri Khandhaguru Guruji"
                   className="w-full h-[500px] md:h-[600px] object-cover hover:scale-105 transition-transform duration-1000"
                   onError={(e) => {
                     e.currentTarget.src =
@@ -228,23 +212,23 @@ export default function AboutPage() {
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-px w-12 bg-amber-500"></div>
                 <span className="text-amber-600 font-bold text-xs tracking-[0.25em] uppercase">
-                  Founder's Message
+                  {t("about.founders_message")}
                 </span>
               </div>
 
               <h2 className="text-3xl md:text-4xl lg:text-4xl font-black font-normal text-slate-900 mb-8 leading-[1.15] tracking-tight">
-                Shree Khandhaguru Guruji's <br />
+                {t("about.life_journey_title1")} <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">
-                  Life Journey
+                  {t("about.life_journey_title2")}
                 </span>
               </h2>
 
               <div className="relative mb-10">
-                <span className="absolute -top-6 -left-2 text-7xl text-slate-200 font-serif leading-none opacity-60">"</span>
+                <span className="absolute -top-6 -left-2 text-7xl text-slate-200 font-serif leading-none opacity-60">
+                  "
+                </span>
                 <p className="text-xl text-slate-600 font-light leading-relaxed italic pl-8 relative z-10 text-justify">
-                  My journey into the spiritual path began when I was just a boy
-                  of 12 years. It was my beloved grandfather, Sri Kandhaguru, who
-                  first introduced me to the ancient wisdom of Kriya Yogam...
+                  {t("about.life_journey_preview")}
                 </p>
               </div>
 
@@ -253,7 +237,7 @@ export default function AboutPage() {
                   onClick={() => setIsSidebarOpen(true)}
                   className="px-8 py-4 bg-brand-primary text-white font-bold text-sm tracking-widest uppercase rounded-[0px] hover:bg-brand-primary transition-all duration-300 shadow-xl shadow-slate-900/10 hover:shadow-brand-primary/20 flex items-center gap-3 group cursor-pointer"
                 >
-                  Read Full Story
+                  {t("about.read_full_story")}
                   <ArrowRight
                     size={18}
                     className="group-hover:translate-x-1 transition-transform"
@@ -281,18 +265,12 @@ export default function AboutPage() {
                   <Eye size={24} strokeWidth={1.5} />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 tracking-tight uppercase">
-                  Our Vision
+                  {t("about.our_vision")}
                 </h3>
               </div>
 
               <p className="text-gray-600 leading-relaxed text-lg font-light text-justify">
-                To create a world where every individual has access to essential
-                resources and support, ensuring that basic needs such as food,
-                shelter, healthcare, and education are met. We envision a
-                compassionate and equitable society where the foundation's
-                efforts in providing these necessities empower individuals and
-                communities to thrive, fostering a harmonious environment where
-                everyone has the opportunity to live with dignity and purpose.
+                {t("about.vision_desc")}
               </p>
             </motion.div>
 
@@ -309,19 +287,12 @@ export default function AboutPage() {
                   <Target size={24} strokeWidth={1.5} />
                 </div>
                 <h3 className="text-2xl font-bold text-white tracking-tight uppercase">
-                  Our Mission
+                  {t("about.our_mission")}
                 </h3>
               </div>
 
               <p className="text-gray-300 leading-relaxed text-lg font-light text-justify">
-                To disseminate the teachings of Kriya Yogam, fostering spiritual
-                growth, inner peace, and holistic well-being. We are dedicated
-                to guiding individuals on their journey towards self-realization
-                and enlightenment through authentic Kriya Yogam practices,
-                rooted in ancient wisdom and adapted for contemporary needs. Our
-                mission is to build a supportive community where practitioners
-                can explore and deepen their connection with themselves and the
-                world around them.
+                {t("about.mission_desc")}
               </p>
             </motion.div>
           </div>
@@ -333,16 +304,14 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3">
-              What We Do
+              {t("about.what_we_do")}
             </h2>
             <h3 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
-              How We Make a Difference
+              {t("about.how_we_make_diff")}
             </h3>
             <div className="w-16 h-1 bg-brand-primary/20 mx-auto mt-6 rounded-full"></div>
             <p className="text-gray-600 mt-6 text-lg font-light leading-relaxed">
-              Our multifaceted approach ensures that every aspect of human
-              growth—spiritual, physical, mental, and social—is nurtured. Here
-              is an in-depth look at the foundational pillars of our daily work.
+              {t("about.what_we_do_desc")}
             </p>
           </div>
 
@@ -354,16 +323,10 @@ export default function AboutPage() {
               className="bg-white p-10 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:-translate-y-2 transition-transform duration-300"
             >
               <h4 className="text-xl font-bold text-gray-900 mb-4">
-                Spiritual Education & Retreats
+                {t("about.srv_edu")}
               </h4>
               <p className="text-gray-600 leading-relaxed font-light text-justify">
-                We conduct regular workshops, seminars, and intensive retreats
-                focusing on the ancient science of Shiva Kriya Yogam. These
-                programs are meticulously designed to teach advanced meditation
-                techniques, dynamic breathwork (pranayama), and profound
-                spiritual philosophy. Seekers of all levels are given
-                personalized guidance to experience true inner silence and
-                accelerated spiritual evolution.
+                {t("about.srv_edu_desc")}
               </p>
             </motion.div>
 
@@ -375,15 +338,10 @@ export default function AboutPage() {
               className="bg-white p-10 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:-translate-y-2 transition-transform duration-300"
             >
               <h4 className="text-xl font-bold text-gray-900 mb-4">
-                Community Service & Charity
+                {t("about.srv_charity")}
               </h4>
               <p className="text-gray-600 leading-relaxed font-light text-justify">
-                Our foundation actively participates in massive humanitarian
-                efforts. We organize widespread food distribution drives
-                (Annadanam), set up free rural health camps, and provide vital
-                educational support and scholarships for underprivileged
-                children. We believe that translating spiritual values into
-                compassionate, tangible action is the highest form of worship.
+                {t("about.srv_charity_desc")}
               </p>
             </motion.div>
 
@@ -395,15 +353,10 @@ export default function AboutPage() {
               className="bg-white p-10 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:-translate-y-2 transition-transform duration-300"
             >
               <h4 className="text-xl font-bold text-gray-900 mb-4">
-                Holistic Wellness
+                {t("about.srv_wellness")}
               </h4>
               <p className="text-gray-600 leading-relaxed font-light text-justify">
-                Beyond spiritual teachings, we strongly emphasize the
-                inseparable connection between the mind, body, and spirit. We
-                offer comprehensive guidance on ancient Ayurvedic lifestyle
-                practices, proper yogic diet (Sattvic food), and mindful daily
-                living habits to help individuals achieve vibrant physical
-                health, emotional stability, and unparalleled mental clarity.
+                {t("about.srv_wellness_desc")}
               </p>
             </motion.div>
 
@@ -415,15 +368,10 @@ export default function AboutPage() {
               className="bg-white p-10 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-gray-100 hover:-translate-y-2 transition-transform duration-300"
             >
               <h4 className="text-xl font-bold text-gray-900 mb-4">
-                Global Outreach & Online Programs
+                {t("about.srv_global")}
               </h4>
               <p className="text-gray-600 leading-relaxed font-light text-justify">
-                To ensure that geographical boundaries do not limit spiritual
-                growth, we have expanded our reach through interactive digital
-                platforms. We host weekly global live-streamed guided
-                meditations, extensive online courses, and one-on-one virtual
-                mentoring sessions, allowing thousands of international seekers
-                to easily stay connected and practice from their homes.
+                {t("about.srv_global_desc")}
               </p>
             </motion.div>
           </div>
@@ -435,10 +383,10 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="text-center mb-12">
             <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3">
-              Share Your Experience
+              {t("about.share_exp")}
             </h2>
             <h3 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
-              Submit a Testimonial
+              {t("about.submit_testimonial")}
             </h3>
             <div className="w-16 h-1 bg-brand-primary/20 mx-auto mt-6 rounded-full"></div>
           </div>
@@ -458,7 +406,7 @@ export default function AboutPage() {
               {/* Rating */}
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-3">
-                  Your Rating
+                  {t("about.your_rating")}
                 </label>
                 <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -471,10 +419,11 @@ export default function AboutPage() {
                       className="transition-transform hover:scale-110 focus:outline-none"
                     >
                       <Star
-                        className={`w-8 h-8 transition-colors ${star <= (hoveredRating || rating)
+                        className={`w-8 h-8 transition-colors ${
+                          star <= (hoveredRating || rating)
                             ? "fill-yellow-400 text-yellow-400"
                             : "fill-transparent text-gray-300"
-                          }`}
+                        }`}
                       />
                     </button>
                   ))}
@@ -484,27 +433,27 @@ export default function AboutPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    Full Name
+                    {t("about.full_name")}
                   </label>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Enter your name"
+                    placeholder={t("about.ph_name")}
                     className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-primary focus:border-transparent outline-none transition-all"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-900 mb-2">
-                    Email Address
+                    {t("about.email_address")}
                   </label>
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
+                    placeholder={t("about.ph_email")}
                     className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-primary focus:border-transparent outline-none transition-all"
                   />
                 </div>
@@ -512,14 +461,14 @@ export default function AboutPage() {
 
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Your Message
+                  {t("about.your_message")}
                 </label>
                 <textarea
                   rows={5}
                   required
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Share your experience..."
+                  placeholder={t("about.ph_message")}
                   className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-primary focus:border-transparent outline-none transition-all resize-none"
                 ></textarea>
               </div>
@@ -530,7 +479,7 @@ export default function AboutPage() {
                 className="w-full bg-brand-primary text-white font-bold py-4 px-8 rounded-[0px] shadow-lg hover:bg-brand-primary/90 hover:shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 <Send size={18} />
-                {loading ? "Submitting..." : "Submit Testimonial"}
+                {loading ? t("about.submitting") : t("about.submit_testimonial")}
               </button>
             </form>
           </motion.div>
@@ -557,7 +506,7 @@ export default function AboutPage() {
               <div className="relative h-64 shrink-0 bg-gray-200 overflow-hidden">
                 <img
                   src="kandhaguru.jpg"
-                  alt="Shree Khandhaguru Guruji"
+                  alt="Sri Khandhaguru Guruji"
                   className="w-full h-full object-cover "
                   onError={(e) => {
                     e.currentTarget.src =
@@ -576,7 +525,7 @@ export default function AboutPage() {
                 </button>
                 <div className="absolute bottom-8 left-8 right-8 pointer-events-none">
                   <h2 className="text-2xl font-black text-white mb-2 font-semibold tracking-tight leading-tight">
-                    Shree Khandhaguru Guruji's Life Journey
+                    {t("about.life_journey_title1")} {t("about.life_journey_title2")}
                   </h2>
                 </div>
               </div>
@@ -605,7 +554,7 @@ export default function AboutPage() {
                   onClick={() => setIsSidebarOpen(false)}
                   className="w-full py-4 rounded-[0px] bg-brand-primary text-white font-bold tracking-widest uppercase hover:bg-brand-primary transition-colors shadow-lg cursor-pointer text-sm"
                 >
-                  Close
+                  {t("about.close")}
                 </button>
               </div>
             </motion.div>

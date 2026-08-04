@@ -28,8 +28,10 @@ import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/navigation";
 import { UserModel } from "../../models/user_model";
 import { BookingData, Healthissue } from "../../models/booking_model";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 export default function ProfilePage() {
+  const { t } = useLanguage();
   const [eventBookings, setEventBookings] = useState<BookingData[]>([]);
   const [loadingBookings, setLoadingBookings] = useState(true);
   const [user, setUser] = useState<UserModel | null>(null);
@@ -90,19 +92,18 @@ export default function ProfilePage() {
     if (s === "pending")
       return {
         icon: <Clock className="w-3.5 h-3.5" />,
-        label: "Waiting for approval. It will take 24 hrs",
+        label: t("profile.waiting_approval"),
         className: "text-amber-700 bg-amber-50 border border-amber-200",
       };
     if (s === "cancelled")
       return {
         icon: <XCircle className="w-3.5 h-3.5" />,
-        label:
-          "Booking Cancelled. The amount will be refunded within 24 hours.",
+        label: t("profile.cancelled_msg"),
         className: "text-red-700 bg-red-50 border border-red-200",
       };
     return {
       icon: <CheckCircle2 className="w-3.5 h-3.5" />,
-      label: "Booking Confirmed",
+      label: t("profile.booking_confirmed"),
       className: "text-emerald-700 bg-emerald-50 border border-emerald-200",
     };
   };
@@ -147,9 +148,9 @@ export default function ProfilePage() {
             </div>
             
             <div className="flex-1 pt-2 md:pt-4">
-              <span className="inline-block px-3 py-1 bg-brand-primary/10 text-brand-primary text-xs font-bold uppercase tracking-widest rounded-full mb-3">Member Profile</span>
+              <span className="inline-block px-3 py-1 bg-brand-primary/10 text-brand-primary text-xs font-bold uppercase tracking-widest rounded-full mb-3">{t("profile.member_profile")}</span>
               <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
-                {user?.username ? user.username : "My Profile"}
+                {user?.username ? user.username : t("profile.my_profile")}
               </h1>
               {user?.email && (
                 <p className="text-slate-500 flex items-center justify-center md:justify-start gap-2 text-sm font-medium">
@@ -164,7 +165,7 @@ export default function ProfilePage() {
             className="flex items-center justify-center gap-2 px-6 py-3 bg-slate-50 hover:bg-red-50 text-slate-600 hover:text-red-600 border border-slate-200 hover:border-red-200 rounded-[0px] transition-all duration-300 shadow-sm font-semibold whitespace-nowrap mt-4 md:mt-4 w-full md:w-auto cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
-            Sign Out
+            {t("profile.sign_out")}
           </button>
         </motion.div>
 
@@ -172,7 +173,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-10">
           {[
             {
-              label: "Total Bookings",
+              label: t("profile.total_bookings"),
               value: eventBookings.length,
               icon: <Receipt className="w-5 h-5" />,
               color: "text-brand-primary",
@@ -181,7 +182,7 @@ export default function ProfilePage() {
               border: "border-slate-100",
             },
             {
-              label: "Confirmed",
+              label: t("profile.confirmed"),
               value: confirmedCount,
               icon: <CheckCircle2 className="w-5 h-5" />,
               color: "text-emerald-600",
@@ -190,7 +191,7 @@ export default function ProfilePage() {
               border: "border-slate-100",
             },
             {
-              label: "Pending",
+              label: t("profile.pending"),
               value: pendingCount,
               icon: <Clock className="w-5 h-5" />,
               color: "text-amber-500",
@@ -227,12 +228,12 @@ export default function ProfilePage() {
           <div className="px-6 md:px-8 py-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50">
             <div>
               <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-brand-primary" /> Event History
+                <Calendar className="w-5 h-5 text-brand-primary" /> {t("profile.event_history")}
               </h2>
-              <p className="text-sm text-slate-500 mt-1">Manage and view all your past and upcoming event bookings.</p>
+              <p className="text-sm text-slate-500 mt-1">{t("profile.event_history_desc")}</p>
             </div>
             <span className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-slate-100 text-slate-600 text-xs font-bold tracking-widest uppercase border border-slate-200">
-              {eventBookings.length} Records
+              {eventBookings.length} {t("profile.records")}
             </span>
           </div>
 
@@ -240,20 +241,20 @@ export default function ProfilePage() {
             {loadingBookings ? (
               <div className="flex flex-col items-center justify-center py-20">
                 <div className="w-16 h-16 rounded-full border-4 border-slate-100 border-t-brand-primary animate-spin mb-4"></div>
-                <p className="text-slate-500 font-medium animate-pulse">Loading your itinerary...</p>
+                <p className="text-slate-500 font-medium animate-pulse">{t("profile.loading_itinerary")}</p>
               </div>
             ) : eventBookings.length === 0 ? (
               <div className="text-center py-20 px-4">
                 <div className="w-24 h-24 mx-auto mb-6 bg-slate-50 rounded-full flex items-center justify-center">
                   <Calendar className="w-10 h-10 text-slate-300" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-3">Your Journey Awaits</h3>
-                <p className="text-slate-500 max-w-md mx-auto mb-8">You haven't registered for any events yet. Discover our upcoming sessions and begin your path.</p>
+                <h3 className="text-xl font-bold text-slate-900 mb-3">{t("profile.journey_awaits")}</h3>
+                <p className="text-slate-500 max-w-md mx-auto mb-8">{t("profile.no_events")}</p>
                 <button
                   onClick={() => router.push("/events")}
                   className="px-8 py-3.5 bg-brand-primary text-white font-bold rounded-xl hover:bg-brand-primary/90 transition-colors shadow-lg shadow-brand-primary/30"
                 >
-                  Explore Events
+                  {t("profile.explore_events")}
                 </button>
               </div>
             ) : (
@@ -270,15 +271,15 @@ export default function ProfilePage() {
                     >
                       <div className="flex justify-between items-start mb-4">
                         <div className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${isOnline ? "bg-indigo-50 text-indigo-600" : "bg-teal-50 text-teal-600"}`}>
-                          {isOnline ? "Online" : "In-Person"}
+                          {isOnline ? t("profile.online") : t("profile.in_person")}
                         </div>
                         <div className={`px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest flex items-center gap-1 ${statusConfig.className}`}>
-                          {statusConfig.label.includes("Confirmed") ? "Confirmed" : statusConfig.label.includes("Cancel") ? "Cancelled" : "Pending"}
+                          {booking.bookingstatus?.toLowerCase() === "confirmed" ? t("profile.confirmed") : booking.bookingstatus?.toLowerCase() === "cancelled" ? t("profile.cancelled") : t("profile.pending")}
                         </div>
                       </div>
 
                       <h5 className="font-bold text-slate-900 text-lg leading-tight mb-4 group-hover:text-brand-primary transition-colors line-clamp-2">
-                        {booking.eventname || "Special Event"}
+                        {booking.eventname || t("profile.special_event")}
                       </h5>
 
                       <div className="space-y-3 mb-6 flex-grow">
@@ -294,7 +295,7 @@ export default function ProfilePage() {
                           <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
                             <Users className="w-4 h-4 text-slate-400" />
                           </div>
-                          <span className="font-medium">{booking.participants} Participant{booking.participants && booking.participants > 1 ? 's' : ''}</span>
+                          <span className="font-medium">{booking.participants} {booking.participants && booking.participants > 1 ? t("profile.participants") : t("profile.participant")}</span>
                         </div>
                         {booking.totalamount && (
                           <div className="flex items-center gap-3 text-sm text-slate-600">
@@ -308,10 +309,10 @@ export default function ProfilePage() {
 
                       <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-sm mt-auto">
                         <span className="text-slate-400 font-medium text-xs">
-                          Booked: {booking.createdAt ? new Date(booking.createdAt).toLocaleDateString() : "N/A"}
+                          {t("profile.booked")}: {booking.createdAt ? new Date(booking.createdAt).toLocaleDateString() : "N/A"}
                         </span>
                         <span className="text-brand-primary font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                          Details <ChevronRight className="w-4 h-4" />
+                          {t("profile.details")} <ChevronRight className="w-4 h-4" />
                         </span>
                       </div>
                     </div>
@@ -351,7 +352,7 @@ export default function ProfilePage() {
                 </button>
                 <div className="pr-8">
                   <p className="text-white text-xs font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
-                    <Receipt size={14} /> Booking Details
+                    <Receipt size={14} /> {t("profile.booking_details")}
                   </p>
                   <h3 className="text-xl font-bold text-slate-900 leading-snug">
                     {selectedBooking.eventname}
@@ -375,16 +376,16 @@ export default function ProfilePage() {
 
                   {/* Event Info */}
                   <div className="space-y-4">
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">Event Information</h4>
+                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">{t("profile.event_info")}</h4>
                     <div className="grid gap-4">
                       <div className="flex items-start gap-3">
                         <Calendar size={18} className="text-slate-400 shrink-0 mt-0.5" />
                         <div>
-                          <p className="text-xs text-slate-500 font-medium mb-0.5">Date</p>
+                          <p className="text-xs text-slate-500 font-medium mb-0.5">{t("profile.date")}</p>
                           <p className="text-sm font-bold text-slate-900">
                             {selectedBooking.eventdate !== "0000-00-00"
                               ? new Date(selectedBooking.eventdate ?? "").toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })
-                              : "TBD"}
+                              : t("profile.tbd")}
                           </p>
                         </div>
                       </div>
@@ -392,7 +393,7 @@ export default function ProfilePage() {
                         <div className="flex items-start gap-3">
                           <MapPin size={18} className="text-slate-400 shrink-0 mt-0.5" />
                           <div>
-                            <p className="text-xs text-slate-500 font-medium mb-0.5">Location</p>
+                            <p className="text-xs text-slate-500 font-medium mb-0.5">{t("profile.location")}</p>
                             <p className="text-sm font-bold text-slate-900 leading-relaxed">{selectedBooking.address}</p>
                           </div>
                         </div>
@@ -402,15 +403,15 @@ export default function ProfilePage() {
 
                   {/* Contact Details */}
                   <div className="space-y-4">
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">Participant Details</h4>
+                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">{t("profile.participant_details")}</h4>
                     <div className="grid gap-3">
                       {[
-                        { label: "Name", value: selectedBooking.fullname },
-                        { label: "Email", value: selectedBooking.email },
-                        { label: "Phone", value: selectedBooking.phone },
-                        { label: "WhatsApp", value: selectedBooking.whatsapp },
-                        { label: "Gender & Age", value: selectedBooking.gender && selectedBooking.age ? `${selectedBooking.gender}, ${selectedBooking.age} yrs` : null },
-                        { label: "Location", value: selectedBooking.state ? `${selectedBooking.city ? selectedBooking.city + ", " : ""}${selectedBooking.state}` : null },
+                        { label: t("profile.name"), value: selectedBooking.fullname },
+                        { label: t("profile.email"), value: selectedBooking.email },
+                        { label: t("profile.phone"), value: selectedBooking.phone },
+                        { label: t("profile.whatsapp"), value: selectedBooking.whatsapp },
+                        { label: t("profile.gender_age"), value: selectedBooking.gender && selectedBooking.age ? `${selectedBooking.gender}, ${selectedBooking.age} yrs` : null },
+                        { label: t("profile.location"), value: selectedBooking.state ? `${selectedBooking.city ? selectedBooking.city + ", " : ""}${selectedBooking.state}` : null },
                       ].map(({ label, value }) =>
                         value ? (
                           <div key={label} className="flex justify-between items-start text-sm">
@@ -424,15 +425,15 @@ export default function ProfilePage() {
 
                   {/* Summary */}
                   <div className="space-y-4">
-                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">Payment & Summary</h4>
+                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">{t("profile.payment_summary")}</h4>
                     <div className="grid gap-3">
                       {[
-                        { label: "Total Participants", value: selectedBooking.participants },
-                        { label: "Adults / Children", value: `${selectedBooking.adultcount} / ${selectedBooking.childrencount}` },
-                        { label: "Delivery Mode", value: selectedBooking.deliverymode, capitalize: true },
-                        { label: "Booking Date", value: selectedBooking.bookingdate ? new Date(selectedBooking.bookingdate).toLocaleDateString() : "" },
-                        { label: "Payment Status", value: selectedBooking.paymentstatus, capitalize: true },
-                        { label: "Transaction ID", value: selectedBooking.transactionid },
+                        { label: t("profile.total_participants"), value: selectedBooking.participants },
+                        { label: t("profile.adults_children"), value: `${selectedBooking.adultcount} / ${selectedBooking.childrencount}` },
+                        { label: t("profile.delivery_mode"), value: selectedBooking.deliverymode, capitalize: true },
+                        { label: t("profile.booking_date"), value: selectedBooking.bookingdate ? new Date(selectedBooking.bookingdate).toLocaleDateString() : "" },
+                        { label: t("profile.payment_status"), value: selectedBooking.paymentstatus, capitalize: true },
+                        { label: t("profile.transaction_id"), value: selectedBooking.transactionid },
                       ].map(({ label, value, capitalize }) =>
                         value ? (
                           <div key={label} className="flex justify-between items-start text-sm">
@@ -444,7 +445,7 @@ export default function ProfilePage() {
                     </div>
                     
                     <div className="mt-6 bg-slate-50 p-4 rounded-xl flex justify-between items-center border border-slate-100">
-                      <span className="text-slate-600 font-medium">Total Amount</span>
+                      <span className="text-slate-600 font-medium">{t("profile.total_amount")}</span>
                       <span className="text-2xl font-black text-brand-primary">
                         ₹{Number(selectedBooking.totalamount).toLocaleString()}
                       </span>
@@ -455,7 +456,7 @@ export default function ProfilePage() {
                   {selectedBooking?.ishealthissue && (selectedBooking.healthissues?.length ?? 0) > 0 && (
                     <div className="space-y-4">
                       <h4 className="text-xs font-bold text-red-500 uppercase tracking-widest border-b border-red-100 pb-2 flex items-center gap-2">
-                        <Activity size={14} /> Health Declarations
+                        <Activity size={14} /> {t("profile.health_declarations")}
                       </h4>
                       <div className="grid gap-3">
                         {(selectedBooking.healthissues || []).map((hi: Healthissue, idx: number) => (

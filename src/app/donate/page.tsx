@@ -24,6 +24,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { addDonor } from "../../services/api";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 const fadeUp: any = {
   hidden: { opacity: 0, y: 30 },
@@ -46,7 +47,7 @@ const faqs = [
   {
     question: "Can I donate for a specific cause?",
     answer:
-      "Yes, you can choose either 'Kovil Kattada Thiruppani' or 'Annadhanam Contribution' from the dropdown in the donation form.",
+      "Yes, you can choose either '{t(\"donate.kovil_kattada\")}' or 'Annadhanam Contribution' from the dropdown in the donation form.",
   },
   {
     question: "Are online payments secure?",
@@ -61,6 +62,7 @@ const faqs = [
 ];
 
 export default function DonatePage() {
+  const { t } = useLanguage();
   const [selectedCause, setSelectedCause] = useState("kovil");
   const [amount, setAmount] = useState<number | "">("");
   const [customAmount, setCustomAmount] = useState<string>("");
@@ -83,6 +85,13 @@ export default function DonatePage() {
   const [error, setError] = useState("");
 
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  
+  const faqs = [
+    { question: t("donate.q1"), answer: t("donate.a1") },
+    { question: t("donate.q2"), answer: t("donate.a2") },
+    { question: t("donate.q3"), answer: t("donate.a3") },
+    { question: t("donate.q4"), answer: t("donate.a4") },
+  ];
   const formRef = useRef<HTMLDivElement>(null);
 
   const handleAmountClick = (val: number) => {
@@ -124,31 +133,29 @@ export default function DonatePage() {
               variants={fadeUp}
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/20 text-amber-700 font-bold text-xs uppercase tracking-widest mb-6 border border-amber-500/30 backdrop-blur-sm"
             >
-              <span>Sacred Offerings</span>
+              <span>{t("donate.sacred_offerings")}</span>
             </motion.div>
             <motion.h1
               variants={fadeUp}
               className="text-3xl md:text-4xl lg:text-5xl font-normal text-gray-900 mb-6 tracking-tight leading-tight "
             >
-              Support Sacred Services Through Your{" "}
+              {t("donate.support_sacred")}{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">
-                Generous Donation
+                {t("donate.generous_donation")}
               </span>
             </motion.h1>
             <motion.p
               variants={fadeUp}
               className="text-lg text-gray-700 mb-10 leading-relaxed max-w-2xl mx-auto font-medium"
             >
-              Every contribution helps preserve ancient temples, uphold our
-              spiritual heritage, and provide nourishing food to devotees and
-              those in need.
+              {t("donate.hero_desc")}
             </motion.p>
             <motion.div variants={fadeUp}>
               <button
                 onClick={() => scrollToForm("kovil")}
                 className="px-10 py-4 rounded-[0px] bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-lg hover:shadow-lg hover:shadow-orange-500/30 transition-all hover:-translate-y-1 inline-flex items-center gap-2 cursor-pointer"
               >
-                Donate Now <ArrowRight size={20} />
+                {t("donate.donate_now")} <ArrowRight size={20} />
               </button>
             </motion.div>
           </motion.div>
@@ -178,42 +185,36 @@ export default function DonatePage() {
                       <Landmark size={24} />
                     </div>
                     <h3 className="text-2xl font-bold text-white leading-tight">
-                      Temple Construction &
-                      <br />
-                      Renovation
+                      {t("donate.temple_title")}
                     </h3>
                   </div>
                 </div>
               </div>
               <div className="p-8 flex flex-col flex-grow">
                 <p className="text-gray-600 mb-6 font-medium leading-relaxed">
-                  Support the monumental task of constructing and renovating
-                  sacred temple spaces, ensuring our spiritual heritage stands
-                  tall for generations.
+                  {t("donate.temple_desc")}
                 </p>
                 <ul className="space-y-3 mb-8 flex-grow">
                   <li className="flex items-center gap-3 text-sm font-bold text-gray-700">
-                    <CheckCircle2 size={18} className="text-amber-500" /> Temple
-                    Construction
+                    <CheckCircle2 size={18} className="text-amber-500" /> {t("donate.temple_const")}
                   </li>
                   <li className="flex items-center gap-3 text-sm font-bold text-gray-700">
-                    <CheckCircle2 size={18} className="text-amber-500" /> Temple
-                    Renovation
-                  </li>
-                  <li className="flex items-center gap-3 text-sm font-bold text-gray-700">
-                    <CheckCircle2 size={18} className="text-amber-500" />{" "}
-                    Preservation of Heritage
+                    <CheckCircle2 size={18} className="text-amber-500" /> {t("donate.temple_renov")}
                   </li>
                   <li className="flex items-center gap-3 text-sm font-bold text-gray-700">
                     <CheckCircle2 size={18} className="text-amber-500" />{" "}
-                    Spiritual Service
+                    {t("donate.preservation")}
+                  </li>
+                  <li className="flex items-center gap-3 text-sm font-bold text-gray-700">
+                    <CheckCircle2 size={18} className="text-amber-500" />{" "}
+                    {t("donate.spiritual_service")}
                   </li>
                 </ul>
                 <button
                   onClick={() => scrollToForm("kovil")}
                   className="w-full py-4 rounded-xl bg-amber-50 text-amber-700 font-bold hover:bg-amber-500 hover:text-white transition-colors border border-amber-200 hover:border-transparent"
                 >
-                  Donate for Temple
+                  {t("donate.donate_temple")}
                 </button>
               </div>
             </motion.div>
@@ -238,42 +239,34 @@ export default function DonatePage() {
                       <Utensils size={24} />
                     </div>
                     <h3 className="text-2xl font-bold text-white leading-tight">
-                      Annadhanam
-                      <br />
-                      Contribution
+                      {t("donate.anna_title")}
                     </h3>
                   </div>
                 </div>
               </div>
               <div className="p-8 flex flex-col flex-grow">
                 <p className="text-gray-600 mb-6 font-medium leading-relaxed">
-                  Join the highest form of charity by sponsoring fresh,
-                  nutritious meals for visiting devotees, spiritual seekers, and
-                  the underprivileged.
+                  {t("donate.anna_desc")}
                 </p>
                 <ul className="space-y-3 mb-8 flex-grow">
                   <li className="flex items-center gap-3 text-sm font-bold text-gray-700">
-                    <CheckCircle2 size={18} className="text-green-600" /> Feed
-                    Devotees
+                    <CheckCircle2 size={18} className="text-green-600" /> {t("donate.feed_devotees")}
                   </li>
                   <li className="flex items-center gap-3 text-sm font-bold text-gray-700">
-                    <CheckCircle2 size={18} className="text-green-600" /> Serve
-                    Humanity
+                    <CheckCircle2 size={18} className="text-green-600" /> {t("donate.serve_humanity")}
                   </li>
                   <li className="flex items-center gap-3 text-sm font-bold text-gray-700">
-                    <CheckCircle2 size={18} className="text-green-600" /> Daily
-                    Annadhanam
+                    <CheckCircle2 size={18} className="text-green-600" /> {t("donate.daily_anna")}
                   </li>
                   <li className="flex items-center gap-3 text-sm font-bold text-gray-700">
-                    <CheckCircle2 size={18} className="text-green-600" /> Sacred
-                    Charity
+                    <CheckCircle2 size={18} className="text-green-600" /> {t("donate.sacred_charity")}
                   </li>
                 </ul>
                 <button
                   onClick={() => scrollToForm("annadhanam")}
                   className="w-full py-4 rounded-xl bg-green-50 text-green-700 font-bold hover:bg-green-600 hover:text-white transition-colors border border-green-200 hover:border-transparent"
                 >
-                  Donate for Food
+                  {t("donate.donate_food")}
                 </button>
               </div>
             </motion.div>
@@ -284,301 +277,364 @@ export default function DonatePage() {
       {/* 3. Main Form Section */}
       <section
         ref={formRef}
-        className="py-24 relative overflow-hidden bg-[#FAFAF9]"
+        className="relative overflow-hidden py-24 bg-[#F7F7F5]"
       >
-        {/* Background Ambient Glows */}
-        <div className="absolute top-1/2 left-0 w-96 h-96 bg-brand-primary/10 rounded-full blur-[100px] -translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
-        <div className="absolute top-1/2 right-0 w-96 h-96 bg-orange-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+        {/* Background accents */}
+        <div className="absolute -top-24 left-0 h-96 w-96 rounded-full bg-brand-primary/10 blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/2 right-0 h-[28rem] w-[28rem] -translate-y-1/2 rounded-full bg-orange-500/10 blur-[120px] pointer-events-none" />
 
-        <div className="container mx-auto px-4 max-w-3xl relative z-10">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeUp}
-            className="bg-white/90 backdrop-blur-3xl rounded-[2.5rem] p-6 md:p-10 shadow-[0_20px_80px_-15px_rgba(0,0,0,0.08)] border border-white relative overflow-hidden"
+            className="overflow-hidden rounded-[1rem] border border-white/70 bg-white/80 shadow-[0_24px_90px_-20px_rgba(0,0,0,0.12)] backdrop-blur-2xl"
           >
-            {/* Inner Glow */}
-            <div className="absolute inset-0 bg-gradient-to-b from-brand-primary/5 to-transparent pointer-events-none"></div>
-
-            <div className="text-center mb-10 relative z-10">
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-primary to-orange-500 text-white shadow-xl shadow-brand-primary/30 mb-4 transform -rotate-3">
-                <Heart size={28} className="fill-white/20" />
-              </div>
-              <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">
-                Make a{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-orange-500">
-                  Secure Donation
-                </span>
-              </h2>
-              <p className="text-gray-600 font-medium text-base max-w-md mx-auto leading-relaxed">
-                Your generous contribution helps us continue our sacred mission
-                and serve the community.
-              </p>
-            </div>
-
-            <div className="space-y-8 relative z-10">
-              {/* Cause Selection */}
-              <div className="bg-gray-50/50 p-5 rounded-3xl border border-gray-100/50">
-                <label className="flex items-center gap-3 text-sm font-black text-gray-900 mb-5 uppercase tracking-widest">
-                  <span className="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center">
-                    1
-                  </span>
-                  Select Cause
-                </label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div
-                    onClick={() => setSelectedCause("kovil")}
-                    className={`flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-400 ${selectedCause === "kovil"
-                        ? "border-brand-primary bg-white shadow-lg shadow-brand-primary/15 transform scale-[1.02]"
-                        : "border-transparent bg-white shadow-sm hover:shadow-md hover:border-gray-200"
-                      }`}
-                  >
-                    <div
-                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${selectedCause === "kovil"
-                          ? "border-brand-primary bg-brand-primary/10"
-                          : "border-gray-300 bg-gray-50"
-                        }`}
-                    >
-                      {selectedCause === "kovil" && (
-                        <motion.div
-                          layoutId="cause-dot"
-                          className="w-2.5 h-2.5 bg-brand-primary rounded-full shadow-sm"
-                        ></motion.div>
-                      )}
-                    </div>
-                    <span
-                      className={`font-extrabold text-base transition-colors ${selectedCause === "kovil" ? "text-brand-primary" : "text-gray-700"}`}
-                    >
-                      Kovil Kattada Thiruppani
-                    </span>
-                  </div>
-                  <div
-                    onClick={() => setSelectedCause("annadhanam")}
-                    className={`flex items-center gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-all duration-400 ${selectedCause === "annadhanam"
-                        ? "border-brand-primary bg-white shadow-lg shadow-brand-primary/15 transform scale-[1.02]"
-                        : "border-transparent bg-white shadow-sm hover:shadow-md hover:border-gray-200"
-                      }`}
-                  >
-                    <div
-                      className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${selectedCause === "annadhanam"
-                          ? "border-brand-primary bg-brand-primary/10"
-                          : "border-gray-300 bg-gray-50"
-                        }`}
-                    >
-                      {selectedCause === "annadhanam" && (
-                        <motion.div
-                          layoutId="cause-dot"
-                          className="w-2.5 h-2.5 bg-brand-primary rounded-full shadow-sm"
-                        ></motion.div>
-                      )}
-                    </div>
-                    <span
-                      className={`font-extrabold text-base transition-colors ${selectedCause === "annadhanam" ? "text-brand-primary" : "text-gray-700"}`}
-                    >
-                      Annadhanam Contribution
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Donor Information */}
-              <div className="bg-gray-50/50 p-5 rounded-3xl border border-gray-100/50">
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-5 gap-3">
-                  <label className="flex items-center gap-3 text-sm font-black text-gray-900 uppercase tracking-widest">
-                    <span className="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center">
-                      2
-                    </span>
-                    Donor Details
-                  </label>
-                  <select
-                    value={donortype}
-                    onChange={(e) => setDonortype(e.target.value)}
-                    className="px-5 py-3 rounded-xl border-2 border-transparent bg-white shadow-sm hover:shadow-md focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary transition-all font-bold text-gray-900 text-sm cursor-pointer"
-                  >
-                    <option value="domestic">Domestic (Indian Citizen)</option>
-                    <option value="international">
-                      International (Foreign Citizen)
-                    </option>
-                  </select>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    placeholder="Full Name *"
-                    required
-                    value={fullname}
-                    onChange={(e) => setFullname(e.target.value)}
-                    className="w-full px-5 py-3.5 rounded-xl border-2 border-transparent bg-white shadow-sm hover:shadow-md focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary transition-all font-semibold text-gray-900 placeholder:text-gray-400 text-sm"
-                  />
-                  <input
-                    type="tel"
-                    placeholder="Mobile Number *"
-                    required
-                    value={mobile}
-                    onChange={(e) => setMobile(e.target.value)}
-                    className="w-full px-5 py-3.5 rounded-xl border-2 border-transparent bg-white shadow-sm hover:shadow-md focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary transition-all font-semibold text-gray-900 placeholder:text-gray-400 text-sm"
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email Address *"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-5 py-3.5 rounded-xl border-2 border-transparent bg-white shadow-sm hover:shadow-md focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary transition-all font-semibold text-gray-900 placeholder:text-gray-400 text-sm md:col-span-2"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Country *"
-                    required
-                    value={country}
-                    onChange={(e) => setCountry(e.target.value)}
-                    className="w-full px-5 py-3.5 rounded-xl border-2 border-transparent bg-white shadow-sm hover:shadow-md focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary transition-all font-semibold text-gray-900 placeholder:text-gray-400 text-sm"
-                  />
-                  {donortype === "domestic" ? (
-                    <div className="flex gap-4 w-full">
-                      <input
-                        type="text"
-                        placeholder="PAN Number"
-                        value={pannumber}
-                        maxLength={10}
-                        onChange={(e) =>
-                          setPannumber(
-                            e.target.value
-                              .toUpperCase()
-                              .replace(/[^A-Z0-9]/g, ""),
-                          )
-                        }
-                        className="w-1/2 px-5 py-3.5 rounded-xl border-2 border-transparent bg-white shadow-sm hover:shadow-md focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary transition-all font-semibold text-gray-900 uppercase placeholder:text-gray-400 placeholder:normal-case text-sm"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Aadhaar Number"
-                        value={aadhaarnumber}
-                        maxLength={12}
-                        onChange={(e) =>
-                          setAadhaarnumber(
-                            e.target.value.replace(/[^0-9]/g, ""),
-                          )
-                        }
-                        className="w-1/2 px-5 py-3.5 rounded-xl border-2 border-transparent bg-white shadow-sm hover:shadow-md focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary transition-all font-semibold text-gray-900 uppercase placeholder:text-gray-400 placeholder:normal-case text-sm"
-                      />
-                    </div>
-                  ) : (
-                    <input
-                      type="text"
-                      placeholder="Passport Number *"
-                      value={passportnumber}
-                      onChange={(e) => setPassportnumber(e.target.value)}
-                      className="w-full px-5 py-3.5 rounded-xl border-2 border-transparent bg-white shadow-sm hover:shadow-md focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary transition-all font-semibold text-gray-900 placeholder:text-gray-400 text-sm uppercase placeholder:normal-case"
+            <div className="grid lg:grid-cols-[0.95fr_1.45fr]">
+              {/* Left panel */}
+              <div className="relative bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 px-8 py-10 md:px-12 md:py-14 text-white">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent_35%)]" />
+                <div className="relative z-10">
+                  <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 border border-white/10">
+                    <Heart
+                      size={26}
+                      className="text-amber-300 fill-amber-300/20"
                     />
-                  )}
-                  <textarea
-                    placeholder="Full Address (Optional)"
-                    rows={2}
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    className="w-full px-5 py-3.5 rounded-xl border-2 border-transparent bg-white shadow-sm hover:shadow-md focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary transition-all font-semibold text-gray-900 placeholder:text-gray-400 text-sm md:col-span-2 resize-none"
-                  ></textarea>
-                </div>
-              </div>
-
-              {/* Amount Selection */}
-              <div className="bg-gray-50/50 p-5 rounded-3xl border border-gray-100/50">
-                <label className="flex items-center gap-3 text-sm font-black text-gray-900 mb-5 uppercase tracking-widest">
-                  <span className="w-8 h-8 rounded-full bg-brand-primary/10 text-brand-primary flex items-center justify-center">
-                    3
-                  </span>
-                  Donation Amount
-                </label>
-                <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-5">
-                  {predefinedAmounts.map((amt) => (
-                    <button
-                      key={amt}
-                      onClick={() => handleAmountClick(amt)}
-                      className={`py-3 px-2 rounded-xl font-bold transition-all border-2 cursor-pointer ${amount === amt
-                          ? "bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/30 scale-[1.05]"
-                          : "bg-white text-gray-700 border-transparent shadow-sm hover:shadow-md hover:border-gray-200 hover:text-brand-primary"
-                        }`}
-                    >
-                      ₹{amt}
-                    </button>
-                  ))}
-                </div>
-                <div className="relative">
-                  <span className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg">
-                    ₹
-                  </span>
-                  <input
-                    type="number"
-                    placeholder="Enter Custom Amount"
-                    value={customAmount}
-                    onChange={handleCustomAmountChange}
-                    className="w-full px-5 py-4 pl-12 pr-5 rounded-xl border-2 border-transparent bg-white shadow-sm hover:shadow-md focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-primary/10 focus:border-brand-primary transition-all font-black text-gray-900 placeholder:text-gray-400 text-lg"
-                  />
-                </div>
-              </div>
-
-              <div className="pt-8">
-                {error && (
-                  <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 rounded-2xl text-center font-bold text-sm shadow-sm flex items-center justify-center gap-2">
-                    <CheckCircle2 size={18} className="text-red-500" />
-                    {error}
                   </div>
-                )}
-                <button
-                  onClick={() => {
-                    setError("");
-                    if (
-                      !fullname ||
-                      !mobile ||
-                      !email ||
-                      !country ||
-                      (!amount && !customAmount)
-                    ) {
-                      setError(
-                        "Please fill all required fields and select an amount.",
-                      );
-                      return;
-                    }
-                    if (
-                      donortype === "domestic" &&
-                      !pannumber &&
-                      !aadhaarnumber
-                    ) {
-                      setError(
-                        "Please provide either PAN or Aadhaar number for domestic donation.",
-                      );
-                      return;
-                    }
-                    if (donortype === "international" && !passportnumber) {
-                      setError(
-                        "Please provide Passport number for international donation.",
-                      );
-                      return;
-                    }
 
-                    const donationAmount = amount || Number(customAmount);
-                    if (donationAmount > 200000) {
-                      setShowContactDialog(true);
-                      return;
-                    }
-
-                    setIsSidebarOpen(true);
-                  }}
-                  className="w-full py-4 rounded-[0px] bg-gradient-to-r from-brand-primary to-orange-500 text-white font-black uppercase tracking-widest text-base hover:from-orange-500 hover:to-brand-primary transition-all duration-500 shadow-[0_10px_30px_rgb(245,158,11,0.3)] hover:shadow-[0_15px_40px_rgb(245,158,11,0.4)] hover:-translate-y-1 flex justify-center items-center gap-3 group cursor-pointer"
-                >
-                  <ShieldCheck
-                    size={24}
-                    className="text-white/80 group-hover:text-white transition-colors"
-                  />
-                  <span>
-                    Donate Securely{" "}
-                    {amount || customAmount
-                      ? `| ₹${amount || customAmount}`
-                      : ""}
+                  <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-300">
+                    {t("donate.secure_donation")}
                   </span>
-                </button>
+
+                  <h2 className="mt-6 text-4xl font-semibold tracking-tight md:text-5xl">
+                    {t("donate.support_mission")}{" "}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-orange-500">
+                      {t("donate.sacred_mission")}
+                    </span>
+                  </h2>
+
+                  <p className="mt-5 max-w-md text-sm leading-7 text-slate-300 md:text-base">
+                    {t("donate.mission_desc")}
+                  </p>
+
+                  <div className="mt-10 space-y-4">
+                    <div className="rounded-2xl border border-white/10 bg-white/5 px-5 py-4">
+                      <p className="text-xs uppercase tracking-[0.25em] text-slate-400">
+                        {t("donate.step_1")}
+                      </p>
+                      <p className="mt-1 font-medium text-white">
+                        {t("donate.choose_cause")}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl border border-white/10 bg-white/5 px-5 py-4">
+                      <p className="text-xs uppercase tracking-[0.25em] text-slate-400">
+                        {t("donate.step_2")}
+                      </p>
+                      <p className="mt-1 font-medium text-white">
+                        {t("donate.enter_donor")}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl border border-white/10 bg-white/5 px-5 py-4">
+                      <p className="text-xs uppercase tracking-[0.25em] text-slate-400">
+                        {t("donate.step_3")}
+                      </p>
+                      <p className="mt-1 font-medium text-white">
+                        {t("donate.confirm_amt")}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-10 rounded-2xl border border-amber-300/15 bg-amber-300/10 px-5 py-5">
+                    <p className="text-sm leading-7 text-amber-100">
+                      {t("donate.large_donation_note")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right form */}
+              <div className="px-6 py-8 sm:px-8 md:px-10 md:py-12">
+                <div className="mb-8">
+                  <h3 className="text-2xl font-semibold tracking-tight text-slate-900">
+                    {t("donate.donation_form")}
+                  </h3>
+                  <p className="mt-2 text-sm leading-7 text-slate-500">
+                    {t("donate.form_desc")}
+                  </p>
+                </div>
+
+                <div className="space-y-8">
+                  {/* Cause */}
+                  <div className="rounded-3xl border border-slate-200 bg-slate-50/70 p-5">
+                    <label className="mb-4 block text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
+                      {t("donate.cause_selection")}
+                    </label>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <button
+                        onClick={() => setSelectedCause("kovil")}
+                        className={`flex items-center gap-4 rounded-2xl border px-5 py-4 text-left transition-all duration-300 ${
+                          selectedCause === "kovil"
+                            ? "border-brand-primary bg-white shadow-[0_10px_30px_-15px_rgba(245,158,11,0.35)]"
+                            : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
+                        }`}
+                      >
+                        <div
+                          className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${
+                            selectedCause === "kovil"
+                              ? "border-brand-primary"
+                              : "border-slate-300"
+                          }`}
+                        >
+                          {selectedCause === "kovil" && (
+                            <motion.div
+                              layoutId="cause-dot"
+                              className="h-2.5 w-2.5 rounded-full bg-brand-primary"
+                            />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-slate-900">
+                            {t("donate.kovil_kattada")}
+                          </p>
+                          <p className="text-sm text-slate-500">
+                            {t("donate.temple_support")}
+                          </p>
+                        </div>
+                      </button>
+
+                      <button
+                        onClick={() => setSelectedCause("annadhanam")}
+                        className={`flex items-center gap-4 rounded-2xl border px-5 py-4 text-left transition-all duration-300 ${
+                          selectedCause === "annadhanam"
+                            ? "border-brand-primary bg-white shadow-[0_10px_30px_-15px_rgba(245,158,11,0.35)]"
+                            : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
+                        }`}
+                      >
+                        <div
+                          className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${
+                            selectedCause === "annadhanam"
+                              ? "border-brand-primary"
+                              : "border-slate-300"
+                          }`}
+                        >
+                          {selectedCause === "annadhanam" && (
+                            <motion.div
+                              layoutId="cause-dot"
+                              className="h-2.5 w-2.5 rounded-full bg-brand-primary"
+                            />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-slate-900">
+                            {t("donate.anna_title")}
+                          </p>
+                          <p className="text-sm text-slate-500">
+                            {t("donate.food_support")}
+                          </p>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Donor details */}
+                  <div className="rounded-3xl border border-slate-200 bg-slate-50/70 p-5">
+                    <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <label className="block text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
+                        {t("donate.donor_details")}
+                      </label>
+                      <select
+                        value={donortype}
+                        onChange={(e) => setDonortype(e.target.value)}
+                        className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-800 outline-none transition focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10"
+                      >
+                        <option value="domestic">
+                          {t("donate.domestic_citizen")}
+                        </option>
+                        <option value="international">
+                          {t("donate.intl_citizen")}
+                        </option>
+                      </select>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <input
+                        type="text"
+                        placeholder={t("donate.full_name")}
+                        required
+                        value={fullname}
+                        onChange={(e) => setFullname(e.target.value)}
+                        className="rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-medium text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10"
+                      />
+                      <input
+                        type="tel"
+                        placeholder={t("donate.mobile_number")}
+                        required
+                        value={mobile}
+                        onChange={(e) => setMobile(e.target.value)}
+                        className="rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-medium text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10"
+                      />
+                      <input
+                        type="email"
+                        placeholder={t("donate.email_address")}
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="md:col-span-2 rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-medium text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10"
+                      />
+                      <input
+                        type="text"
+                        placeholder={t("donate.country")}
+                        required
+                        value={country}
+                        onChange={(e) => setCountry(e.target.value)}
+                        className="rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-medium text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10"
+                      />
+
+                      {donortype === "domestic" ? (
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:col-span-2">
+                          <input
+                            type="text"
+                            placeholder={t("donate.pan_number")}
+                            value={pannumber}
+                            maxLength={10}
+                            onChange={(e) =>
+                              setPannumber(
+                                e.target.value
+                                  .toUpperCase()
+                                  .replace(/[^A-Z0-9]/g, ""),
+                              )
+                            }
+                            className="rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-medium text-slate-900 uppercase outline-none transition placeholder:normal-case placeholder:text-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10"
+                          />
+                          <input
+                            type="text"
+                            placeholder={t("donate.aadhaar_number")}
+                            value={aadhaarnumber}
+                            maxLength={12}
+                            onChange={(e) =>
+                              setAadhaarnumber(
+                                e.target.value.replace(/[^0-9]/g, ""),
+                              )
+                            }
+                            className="rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-medium text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10"
+                          />
+                        </div>
+                      ) : (
+                        <input
+                          type="text"
+                          placeholder={t("donate.passport_number")}
+                          value={passportnumber}
+                          onChange={(e) => setPassportnumber(e.target.value)}
+                          className="md:col-span-2 rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-medium text-slate-900 uppercase outline-none transition placeholder:normal-case placeholder:text-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10"
+                        />
+                      )}
+
+                      <textarea
+                        placeholder={t("donate.full_address")}
+                        rows={3}
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        className="md:col-span-2 resize-none rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-medium text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Amount */}
+                  <div className="rounded-3xl border border-slate-200 bg-slate-50/70 p-5">
+                    <label className="mb-4 block text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
+                      {t("donate.donation_amount")}
+                    </label>
+
+                    <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
+                      {predefinedAmounts.map((amt) => (
+                        <button
+                          key={amt}
+                          onClick={() => handleAmountClick(amt)}
+                          className={`rounded-xl border px-3 py-3 text-sm font-semibold transition-all cursor-pointer ${
+                            amount === amt
+                              ? "border-brand-primary bg-brand-primary text-white shadow-[0_10px_24px_-12px_rgba(245,158,11,0.55)]"
+                              : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                          }`}
+                        >
+                          ₹{amt}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="mt-4 relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">
+                        ₹
+                      </span>
+                      <input
+                        type="number"
+                        placeholder={t("donate.enter_custom")}
+                        value={customAmount}
+                        onChange={handleCustomAmountChange}
+                        className="w-full rounded-xl border border-slate-200 bg-white py-3.5 pl-10 pr-4 text-sm font-semibold text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Error */}
+                  {error && (
+                    <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm font-medium text-red-600">
+                      {error}
+                    </div>
+                  )}
+
+                  {/* CTA */}
+                  <button
+                    onClick={() => {
+                      setError("");
+                      if (
+                        !fullname ||
+                        !mobile ||
+                        !email ||
+                        !country ||
+                        (!amount && !customAmount)
+                      ) {
+                        setError(
+                          "Please fill all required fields and select an amount.",
+                        );
+                        return;
+                      }
+                      if (
+                        donortype === "domestic" &&
+                        !pannumber &&
+                        !aadhaarnumber
+                      ) {
+                        setError(
+                          "Please provide either PAN or Aadhaar number for domestic donation.",
+                        );
+                        return;
+                      }
+                      if (donortype === "international" && !passportnumber) {
+                        setError(
+                          "Please provide Passport number for international donation.",
+                        );
+                        return;
+                      }
+
+                      const donationAmount = amount || Number(customAmount);
+                      if (donationAmount > 200000) {
+                        setShowContactDialog(true);
+                        return;
+                      }
+
+                      setIsSidebarOpen(true);
+                    }}
+                    className="mt-2 flex w-full items-center justify-center gap-3 rounded-[0px] bg-gradient-to-r from-brand-primary to-orange-500 px-6 py-4 text-sm font-semibold uppercase tracking-[0.25em] text-white shadow-[0_16px_40px_-14px_rgba(245,158,11,0.65)] transition-all duration-300 hover:-translate-y-0.5 hover:from-orange-500 hover:to-brand-primary cursor-pointer"
+                  >
+                    <ShieldCheck size={22} />
+                    <span>
+                      {t("donate.donate_securely")}{" "}
+                      {amount || customAmount
+                        ? `| ₹${amount || customAmount}`
+                        : ""}
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -590,7 +646,7 @@ export default function DonatePage() {
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
-              Why Support Us?
+              {t("donate.why_support")}
             </h2>
             <div className="w-16 h-1 bg-amber-500 mx-auto rounded-full"></div>
           </div>
@@ -598,25 +654,25 @@ export default function DonatePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
             {[
               {
-                title: "Support Temple Construction",
+                title: t("donate.support_temple"),
                 icon: Landmark,
                 color: "text-amber-600",
                 bg: "bg-amber-50",
               },
               {
-                title: "Feed the Needy through Annadhanam",
+                title: t("donate.feed_needy"),
                 icon: Utensils,
                 color: "text-green-600",
                 bg: "bg-green-50",
               },
               {
-                title: "Preserve Spiritual Heritage",
+                title: t("donate.preserve_heritage"),
                 icon: BookOpen,
                 color: "text-orange-600",
                 bg: "bg-orange-50",
               },
               {
-                title: "Participate in Divine Service",
+                title: t("donate.part_divine"),
                 icon: Heart,
                 color: "text-rose-600",
                 bg: "bg-rose-50",
@@ -641,52 +697,6 @@ export default function DonatePage() {
               </motion.div>
             ))}
           </div>
-
-          <div className="bg-[#FFFDF7] rounded-3xl p-10 border border-gray-100 shadow-sm">
-            <h3 className="text-2xl font-extrabold text-gray-900 mb-8 text-center">
-              Our Current Progress
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              <div>
-                <div className="flex justify-between items-end mb-2">
-                  <span className="font-bold text-gray-800">
-                    Temple Renovation Fund
-                  </span>
-                  <span className="text-amber-600 font-extrabold">65%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-3 mb-6 overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    whileInView={{ width: "65%" }}
-                    transition={{ duration: 1.5, ease: "easeOut" }}
-                    className="bg-amber-500 h-3 rounded-full"
-                  ></motion.div>
-                </div>
-                <div className="flex items-center gap-2 text-gray-500 font-medium text-sm">
-                  <Users size={16} /> 1,240 Devotees Supported
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between items-end mb-2">
-                  <span className="font-bold text-gray-800">
-                    Monthly Annadhanam Goal
-                  </span>
-                  <span className="text-green-600 font-extrabold">82%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-3 mb-6 overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    whileInView={{ width: "82%" }}
-                    transition={{ duration: 1.5, ease: "easeOut" }}
-                    className="bg-green-600 h-3 rounded-full"
-                  ></motion.div>
-                </div>
-                <div className="flex items-center gap-2 text-gray-500 font-medium text-sm">
-                  <Utensils size={16} /> 45,000 Meals Sponsored
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -697,29 +707,29 @@ export default function DonatePage() {
             {[
               {
                 icon: ShieldCheck,
-                title: "Secure Payments",
-                desc: "256-bit SSL encryption",
+                title: t("donate.secure_payments"),
+                desc: t("donate.ssl_enc"),
                 color: "text-emerald-600",
                 bg: "bg-emerald-100/50",
               },
               {
                 icon: Globe2,
-                title: "Transparent Usage",
-                desc: "100% funds go to cause",
+                title: t("donate.trans_usage"),
+                desc: t("donate.funds_go"),
                 color: "text-blue-600",
                 bg: "bg-blue-100/50",
               },
               {
                 icon: Heart,
-                title: "Trusted Non-Profit",
-                desc: "Registered NGO",
+                title: t("donate.trusted_ngo"),
+                desc: `${t("donate.registered_ngo")} - 6/2022`,
                 color: "text-rose-600",
                 bg: "bg-rose-100/50",
               },
               {
                 icon: Building2,
-                title: "80G Tax Benefit",
-                desc: "Valid tax exemptions",
+                title: t("donate.tax_benefit"),
+                desc: t("donate.valid_tax"),
                 color: "text-amber-600",
                 bg: "bg-amber-100/50",
               },
@@ -762,7 +772,7 @@ export default function DonatePage() {
             className="text-center mb-12"
           >
             <h2 className="text-3xl lg:text-4xl font-extrabold text-gray-900 mb-4">
-              Frequently Asked Questions
+              {t("donate.faq")}
             </h2>
           </motion.div>
 
@@ -783,8 +793,9 @@ export default function DonatePage() {
                     {faq.question}
                   </span>
                   <ChevronDown
-                    className={`text-gray-400 transition-transform duration-300 ${openFaq === idx ? "rotate-180" : ""
-                      }`}
+                    className={`text-gray-400 transition-transform duration-300 ${
+                      openFaq === idx ? "rotate-180" : ""
+                    }`}
                   />
                 </button>
                 <AnimatePresence>
@@ -825,7 +836,7 @@ export default function DonatePage() {
             >
               <div className="flex items-center justify-between p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
                 <h2 className="text-xl font-bold text-gray-900">
-                  Complete Donation
+                  {t("donate.complete_donation")}
                 </h2>
                 <button
                   onClick={() => setIsSidebarOpen(false)}
@@ -838,7 +849,7 @@ export default function DonatePage() {
               <div className="p-6 flex-grow flex flex-col gap-8">
                 <div className="text-center space-y-4">
                   <p className="text-gray-600 font-medium">
-                    Scan the QR Code below to pay
+                    {t("donate.scan_qr")}
                   </p>
                   <div className="bg-gray-50 rounded-xl border-2 border-gray-100 inline-block">
                     <img
@@ -854,8 +865,7 @@ export default function DonatePage() {
 
                 <div className="bg-blue-50/50 rounded-2xl p-6 border border-blue-100/50">
                   <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <Upload className="w-5 h-5 text-blue-500" /> Upload
-                    Screenshot
+                    <Upload className="w-5 h-5 text-blue-500" /> {t("donate.upload_ss")}
                   </h3>
                   <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-blue-200 rounded-xl bg-white hover:bg-blue-50/50 transition-colors cursor-pointer relative overflow-hidden group">
                     {paymentScreenshot ? (
@@ -873,7 +883,7 @@ export default function DonatePage() {
                       <div className="flex flex-col items-center justify-center pt-5 pb-6 text-blue-500">
                         <Upload className="w-8 h-8 mb-2 opacity-50" />
                         <p className="text-sm font-medium">
-                          Click to upload screenshot
+                          {t("donate.click_upload")}
                         </p>
                       </div>
                     )}
@@ -956,7 +966,7 @@ export default function DonatePage() {
                   disabled={isSubmitting}
                   className="w-full bg-brand-primary text-white font-bold py-4 rounded-[0px] hover:bg-brand-primary/90 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
-                  {isSubmitting ? "Submitting..." : "Submit Donation"}
+                  {isSubmitting ? t("donate.submitting") : t("donate.submit_donation")}
                 </button>
               </div>
             </motion.div>
@@ -989,17 +999,16 @@ export default function DonatePage() {
                 <Smartphone className="w-8 h-8 text-amber-500" />
               </div>
               <h2 className="text-2xl font-black text-gray-900 mb-4">
-                Large Donation Request
+                {t("donate.large_req")}
               </h2>
               <p className="text-gray-600 mb-8 leading-relaxed font-medium">
-                For donations exceeding ₹2,00,000, we prefer to handle the
-                process personally. Please contact our support team to proceed.
+                {t("donate.large_req_desc")}
               </p>
               <a
                 href="tel:+919842023346"
                 className="inline-flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-amber-500 text-white font-bold hover:bg-amber-600 transition-all shadow-lg hover:shadow-xl"
               >
-                Call +91 98420 23346
+                {t("donate.call")}
               </a>
             </motion.div>
           </motion.div>
@@ -1090,7 +1099,7 @@ export default function DonatePage() {
                 transition={{ delay: 0.7 }}
                 className="text-3xl font-black text-gray-900 mb-3 tracking-tight"
               >
-                Donation Successful!
+                {t("donate.donation_success")}
               </motion.h2>
               <motion.p
                 initial={{ opacity: 0, y: 10 }}
@@ -1098,7 +1107,7 @@ export default function DonatePage() {
                 transition={{ delay: 0.8 }}
                 className="text-gray-500 font-medium text-lg"
               >
-                Thank you for your generous contribution.
+                {t("donate.thank_you")}
               </motion.p>
             </motion.div>
           </motion.div>

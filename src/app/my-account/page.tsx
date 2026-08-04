@@ -13,6 +13,7 @@ import {
   X,
   Loader2,
 } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/navigation";
 import {
@@ -28,6 +29,7 @@ import { AddressModel, OrderHistoryModel } from "../../models/OrderModel";
 import { UserModel } from "../../models/user_model";
 
 export default function MyAccountPage() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<"profile" | "address" | "orders">(
     "profile",
   );
@@ -147,9 +149,9 @@ export default function MyAccountPage() {
   };
 
   const tabs = [
-    { id: "profile", label: "My Profile", icon: User },
-    { id: "address", label: "Saved Addresses", icon: MapPin },
-    { id: "orders", label: "Order History", icon: Package },
+    { id: "profile", label: t("my_account.my_profile"), icon: User },
+    { id: "address", label: t("my_account.saved_addresses"), icon: MapPin },
+    { id: "orders", label: t("my_account.order_history"), icon: Package },
   ] as const;
 
   return (
@@ -157,10 +159,10 @@ export default function MyAccountPage() {
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="mb-8 md:mb-12">
           <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
-            My Account
+            {t("my_account.my_account")}
           </h1>
           <p className="text-gray-500 mt-2 text-lg">
-            Manage your personal information and orders.
+            {t("my_account.manage_info")}
           </p>
         </div>
 
@@ -211,7 +213,7 @@ export default function MyAccountPage() {
                   className="flex items-center justify-center gap-2 w-full p-4 rounded-xl text-red-500 font-bold bg-red-50 hover:bg-red-500 hover:text-white transition-all shadow-sm hover:shadow-md cursor-pointer"
                 >
                   <LogOut className="w-5 h-5" />
-                  Logout
+                  {t("my_account.logout")}
                 </button>
               </div>
             </div>
@@ -231,11 +233,11 @@ export default function MyAccountPage() {
                   >
                     <div className="flex items-center justify-between mb-8">
                       <h2 className="text-2xl font-bold text-gray-900">
-                        Personal Information
+                        {t("my_account.personal_info")}
                       </h2>
-                      <button className="flex items-center gap-2 text-[var(--color-deepgreen)] font-semibold bg-[var(--color-deepgreen)]/10 px-4 py-2 rounded-full hover:bg-[var(--color-deepgreen)] hover:text-white transition-colors cursor-pointer">
+                      {/* <button className="flex items-center gap-2 text-[var(--color-deepgreen)] font-semibold bg-[var(--color-deepgreen)]/10 px-4 py-2 rounded-full hover:bg-[var(--color-deepgreen)] hover:text-white transition-colors cursor-pointer">
                         <Edit3 className="w-4 h-4" /> Edit
-                      </button>
+                      </button> */}
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {loadingUser ? (
@@ -249,23 +251,23 @@ export default function MyAccountPage() {
                         <>
                           <div className="space-y-1">
                             <label className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                              Full Name
+                              {t("my_account.full_name")}
                             </label>
                             <p className="text-gray-900 font-medium p-3 bg-gray-50 rounded-lg border border-gray-100">
-                              {user?.username || "Not Provided"}
+                              {user?.username || t("my_account.not_provided")}
                             </p>
                           </div>
                           <div className="space-y-1">
                             <label className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                              Email Address
+                              {t("my_account.email_address")}
                             </label>
                             <p className="text-gray-900 font-medium p-3 bg-gray-50 rounded-lg border border-gray-100">
-                              {user?.email || "Not Provided"}
+                              {user?.email || t("my_account.not_provided")}
                             </p>
                           </div>
                           <div className="space-y-1">
                             <label className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                              Phone Number
+                              {t("my_account.phone_number")}
                             </label>
                             <p className="text-gray-900 font-medium p-3 bg-gray-50 rounded-lg border border-gray-100">
                               {user?.mobile ? `+91 ${user.mobile}` : "N/A"}
@@ -290,8 +292,8 @@ export default function MyAccountPage() {
                         <div className="flex items-center justify-between mb-8">
                           <h2 className="text-2xl font-bold text-gray-900">
                             {editingAddressId
-                              ? "Edit Address"
-                              : "Add New Address"}
+                              ? t("my_account.edit_address")
+                              : t("checkout.add_new_address")}
                           </h2>
                           <button
                             onClick={() => setIsAddressModalOpen(false)}
@@ -307,7 +309,7 @@ export default function MyAccountPage() {
                         >
                           <div>
                             <label className="block text-sm font-bold text-gray-700 mb-2">
-                              Place Type
+                              {t("checkout.place_type")}
                             </label>
                             <select
                               value={addressForm.place}
@@ -319,15 +321,15 @@ export default function MyAccountPage() {
                               }
                               className="w-full bg-gray-50 border border-gray-200 py-3 px-4 rounded-xl focus:ring-2 focus:ring-[var(--color-deepgreen)]/20 focus:border-[var(--color-deepgreen)] outline-none transition-all font-medium"
                             >
-                              <option value="home">Home</option>
-                              <option value="office">Office</option>
-                              <option value="others">Others</option>
+                              <option value="home">{t("checkout.home")}</option>
+                              <option value="office">{t("checkout.office")}</option>
+                              <option value="others">{t("checkout.others")}</option>
                             </select>
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                               <label className="block text-sm font-bold text-gray-700 mb-2">
-                                Contact Name
+                                {t("checkout.contact_name")}
                               </label>
                               <input
                                 required
@@ -344,7 +346,7 @@ export default function MyAccountPage() {
                             </div>
                             <div>
                               <label className="block text-sm font-bold text-gray-700 mb-2">
-                                Contact Number
+                                {t("checkout.contact_number")}
                               </label>
                               <input
                                 required
@@ -362,7 +364,7 @@ export default function MyAccountPage() {
                           </div>
                           <div>
                             <label className="block text-sm font-bold text-gray-700 mb-2">
-                              Address / Street
+                              {t("checkout.address_street")}
                             </label>
                             <textarea
                               required
@@ -380,7 +382,7 @@ export default function MyAccountPage() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                               <label className="block text-sm font-bold text-gray-700 mb-2">
-                                City
+                                {t("checkout.city")}
                               </label>
                               <input
                                 required
@@ -397,7 +399,7 @@ export default function MyAccountPage() {
                             </div>
                             <div>
                               <label className="block text-sm font-bold text-gray-700 mb-2">
-                                District
+                                {t("checkout.district")}
                               </label>
                               <input
                                 required
@@ -416,7 +418,7 @@ export default function MyAccountPage() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                               <label className="block text-sm font-bold text-gray-700 mb-2">
-                                State
+                                {t("checkout.state")}
                               </label>
                               <input
                                 required
@@ -433,7 +435,7 @@ export default function MyAccountPage() {
                             </div>
                             <div>
                               <label className="block text-sm font-bold text-gray-700 mb-2">
-                                Pincode
+                                {t("checkout.pincode")}
                               </label>
                               <input
                                 required
@@ -455,13 +457,13 @@ export default function MyAccountPage() {
                               onClick={() => setIsAddressModalOpen(false)}
                               className="flex-1 py-4 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-all cursor-pointer"
                             >
-                              Cancel
+                              {t("checkout.cancel")}
                             </button>
                             <button
                               type="submit"
                               className="flex-1 py-4 bg-[var(--color-deepgreen)] text-white font-bold rounded-xl hover:bg-[var(--color-deepgreen)]/90 transition-all shadow-md cursor-pointer"
                             >
-                              Save Address
+                              {t("checkout.save_address")}
                             </button>
                           </div>
                         </form>
@@ -470,7 +472,7 @@ export default function MyAccountPage() {
                       <>
                         <div className="flex items-center justify-between mb-8">
                           <h2 className="text-2xl font-bold text-gray-900">
-                            Saved Addresses
+                            {t("my_account.saved_addresses")}
                           </h2>
                           <button
                             onClick={() => {
@@ -502,7 +504,7 @@ export default function MyAccountPage() {
                           </div>
                         ) : addresses.length === 0 ? (
                           <p className="text-gray-500">
-                            No saved addresses found.
+                            {t("my_account.no_saved_addresses")}
                           </p>
                         ) : (
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -578,7 +580,7 @@ export default function MyAccountPage() {
                     transition={{ duration: 0.2 }}
                   >
                     <h2 className="text-2xl font-bold text-gray-900 mb-8">
-                      Order History
+                      {t("my_account.order_history")}
                     </h2>
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                       {loadingOrders ? (
@@ -592,10 +594,10 @@ export default function MyAccountPage() {
                         <div className="text-center py-12">
                           <Package className="w-16 h-16 text-gray-200 mx-auto mb-4" />
                           <h3 className="text-xl font-bold text-gray-900 mb-2">
-                            No orders found
+                            {t("my_account.no_orders_found")}
                           </h3>
                           <p className="text-gray-500">
-                            You haven't placed any orders yet.
+                            {t("my_account.no_orders_yet")}
                           </p>
                         </div>
                       ) : (

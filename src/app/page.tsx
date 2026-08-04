@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useLanguage } from "@/i18n/LanguageContext";
 import {
   getEvents,
   getGallery,
@@ -80,6 +81,7 @@ export default function Home() {
 // Hero section
 
 function Hero() {
+  const { t } = useLanguage();
   const [heroImages, setHeroImages] = useState<string[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -137,29 +139,25 @@ function Hero() {
             className="w-full lg:w-3/5 text-center lg:text-left pt-10 lg:pt-0"
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black font-semibold text-white tracking-tight mb-6 leading-[1.1] drop-shadow-xl">
-              The Way of <br className="hidden md:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-orange-500">
-                Kriya Yogam
-              </span>
+              {t("home.hero_title")}
             </h1>
 
             <p className="text-lg md:text-xl text-white/80 mb-10 leading-relaxed max-w-2xl mx-auto lg:mx-0 font-medium border-l-2 border-amber-400/50 pl-6">
-              Guide your soul toward inner peace and holistic well-being through
-              the timeless, transformative wisdom of Shiva Kriya Yogam.
+              {t("home.hero_subtitle")}
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-5">
               <Link
                 href="/contact"
-                className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-4 rounded-[0px] font-bold hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] transition-all hover:-translate-y-1 flex items-center gap-2 w-full sm:w-auto justify-center"
+                className="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-normal px-8 py-4 rounded-[0px] font-bold hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] transition-all hover:-translate-y-1 flex items-center gap-2 w-full sm:w-auto justify-center"
               >
-                Begin Journey <ArrowRight size={20} />
+                {t("home.begin_journey")} <ArrowRight size={20} />
               </Link>
               <Link
                 href="/about"
-                className="bg-white/5 backdrop-blur-lg border border-white/20 text-white px-8 py-4 rounded-[0px] font-bold hover:bg-white/10 hover:border-white/40 transition-all hover:-translate-y-1 flex items-center w-full sm:w-auto justify-center"
+                className="bg-white/5 backdrop-blur-lg border border-white/20 text-white font-normal px-8 py-4 rounded-[0px] font-bold hover:bg-white/10 hover:border-white/40 transition-all hover:-translate-y-1 flex items-center w-full sm:w-auto justify-center"
               >
-                Discover More
+                {t("home.discover_more")}
               </Link>
             </div>
           </motion.div>
@@ -195,7 +193,7 @@ function Hero() {
               )}
 
               {/* Floating Element */}
-              <div className="absolute -bottom-6 -left-6 z-30 bg-white/10 backdrop-blur-xl border border-white/20 p-4 rounded-2xl shadow-xl transform rotate-[-5deg]">
+              {/* <div className="absolute -bottom-6 -left-6 z-30 bg-white/10 backdrop-blur-xl border border-white/20 p-4 rounded-2xl shadow-xl transform rotate-[-5deg]">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center text-white">
                     <Sparkles size={24} />
@@ -205,7 +203,7 @@ function Hero() {
                     <p className="text-white/70 text-xs">Join our community</p>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </motion.div>
         </div>
@@ -234,6 +232,7 @@ function Hero() {
 // KriyaYogam
 
 function KriyaYogam() {
+  const { t } = useLanguage();
   return (
     <section
       id="kriya-yogam"
@@ -248,40 +247,29 @@ function KriyaYogam() {
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "0px 0px -100px 0px" }}
             className="w-full lg:w-1/2"
           >
             <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3">
-              The Way of Life
+              {t("home.kriya_yogam_subtitle")}
             </h2>
             <h3 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-8">
-              Kriya Yogam
+              {t("home.kriya_yogam_title")}
             </h3>
 
             <div className="space-y-6 text-lg text-gray-700 leading-relaxed relative text-justify">
               <div className="absolute -left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-brand-primary via-brand-secondary to-transparent "></div>
 
-              <p>
-                Kriya Yogam is more than a set of techniques-it is a way of
-                life.
-              </p>
-              <p>
-                When practiced with sincerity and consistency, it sharpens the
-                mind, opens the heart, and harmonizes the practitioner with the
-                universe.
-              </p>
-              <p>
-                This path becomes a lifelong companion, bringing peace, joy, and
-                a deep sense of connection that transcends the ordinary. Through
-                dedication, Kriya Yogam leads to profound inner transformation.
-              </p>
+              <p>{t("home.kriya_yogam_desc1")}</p>
+              <p>{t("home.kriya_yogam_desc2")}</p>
+              <p>{t("home.kriya_yogam_desc3")}</p>
             </div>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "0px 0px -100px 0px" }}
             transition={{ duration: 0.8 }}
             className="w-full lg:w-1/2 relative"
           >
@@ -303,7 +291,7 @@ function KriyaYogam() {
               {/* Center Image */}
               <div className="absolute inset-8 rounded-full overflow-hidden shadow-2xl border-4 border-white">
                 <div
-                  className="w-full h-full bg-cover bg-center"
+                  className="w-full h-full bg-contain bg-center"
                   style={{
                     backgroundImage: "url('babaji.jpg')",
                     objectFit: "contain",
@@ -322,142 +310,138 @@ function KriyaYogam() {
 // SpiritualPhilosophy
 
 const floatingParticles = [
-  { top: "10%", left: "20%", dur: "3s" },
-  { top: "30%", left: "80%", dur: "4s" },
-  { top: "70%", left: "15%", dur: "2.5s" },
-  { top: "85%", left: "75%", dur: "3.5s" },
-  { top: "45%", left: "50%", dur: "5s" },
-  { top: "15%", left: "60%", dur: "4.5s" },
-  { top: "60%", left: "90%", dur: "3.2s" },
-  { top: "25%", left: "40%", dur: "2.8s" },
+  { top: "12%", left: "18%", dur: "8s", size: "1px" },
+  { top: "24%", left: "78%", dur: "10s", size: "1.5px" },
+  { top: "68%", left: "14%", dur: "9s", size: "1px" },
+  { top: "82%", left: "70%", dur: "11s", size: "1.25px" },
+  { top: "46%", left: "52%", dur: "12s", size: "1px" },
+  { top: "18%", left: "60%", dur: "10.5s", size: "1.25px" },
+  { top: "58%", left: "88%", dur: "9.5s", size: "1px" },
+  { top: "30%", left: "38%", dur: "8.5s", size: "1.25px" },
 ];
 
 function SpiritualPhilosophy() {
+  const { t } = useLanguage();
   const religions = [
-    {
-      name: "Christianity",
-      desc: "The path of unconditional love and grace",
-      icon: <Bird className="w-8 h-8" strokeWidth={1.5} />,
+     {
+      name: t("home.rel_hinduism"),
+      desc: t("home.rel_hinduism_desc"),
+      icon: <Flame className="w-7 h-7" strokeWidth={1.6} />,
     },
     {
-      name: "Islam",
-      desc: "The path of absolute devotion and surrender",
-      icon: <Moon className="w-8 h-8" strokeWidth={1.5} />,
+      name: t("home.rel_christianity"),
+      desc: t("home.rel_christianity_desc"),
+      icon: <Bird className="w-7 h-7" strokeWidth={1.6} />,
     },
     {
-      name: "Buddhism",
-      desc: "The path of mindfulness and inner peace",
-      icon: <Sun className="w-8 h-8" strokeWidth={1.5} />,
+      name: t("home.rel_islam"),
+      desc: t("home.rel_islam_desc"),
+      icon: <Moon className="w-7 h-7" strokeWidth={1.6} />,
     },
-    {
-      name: "Hinduism",
-      desc: "The path of cosmic understanding and dharma",
-      icon: <Flame className="w-8 h-8" strokeWidth={1.5} />,
-    },
+   
   ];
 
   return (
-    <section className="py-32 relative overflow-hidden bg-[#FAFAF9]">
-      {/* Professional Fixed Background Image */}
+    <section className="relative overflow-hidden py-28 bg-[#0f1115]">
+      {/* Background image */}
       <div
-        className="absolute inset-0 bg-cover bg-fixed bg-center opacity-70 z-0 pointer-events-none"
+        className="absolute inset-0 bg-cover bg-center"
         style={{
           backgroundImage: "url('about.jpeg')",
+          backgroundAttachment: "fixed"
         }}
-      ></div>
+      />
 
-      {/* Luxurious Background Elements */}
-      <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-gradient-to-br from-amber-200 to-orange-100 blur-3xl opacity-60"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-gradient-to-tl from-amber-300 to-orange-200 blur-3xl opacity-40 animate-pulse"></div>
-      </div>
+      {/* Dark cinematic overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0b0d12]/85 via-[#0b0d12]/70 to-[#0b0d12]/90" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_45%)]" />
 
-      {/* Floating Particles (Hydration safe) */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        {floatingParticles.map((particle, i) => (
+      {/* Soft particles */}
+      <div className="absolute inset-0 pointer-events-none">
+        {floatingParticles.map((p, i) => (
           <div
             key={i}
-            className="absolute w-2 h-2 bg-amber-400/40 rounded-full animate-pulse shadow-[0_0_8px_rgba(251,191,36,0.6)]"
+            className="absolute rounded-full bg-white/40 blur-[0.5px] animate-pulse"
             style={{
-              top: particle.top,
-              left: particle.left,
-              animationDuration: particle.dur,
+              top: p.top,
+              left: p.left,
+              width: p.size,
+              height: p.size,
+              animationDuration: p.dur,
             }}
           />
         ))}
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
-        <div className="flex flex-col items-center">
-          {/* Main Title Area */}
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="w-full max-w-4xl bg-white/60 backdrop-blur-3xl border border-white/50 p-10 md:p-16 rounded-[0rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] mb-20 text-center relative overflow-hidden"
+            viewport={{ once: true, margin: "0px 0px -100px 0px" }}
+            transition={{ duration: 0.75 }}
+            className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/8 backdrop-blur-2xl px-6 py-12 sm:px-10 md:px-16 md:py-16 shadow-[0_24px_80px_rgba(0,0,0,0.35)]"
           >
-            {/* Subtle inner glow */}
-            <div className="absolute inset-0 bg-gradient-to-b from-white/40 to-transparent pointer-events-none"></div>
+            <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-amber-300 via-orange-400 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
 
             <div className="relative z-10">
-              <span className="inline-block py-1.5 px-4 rounded-full bg-amber-500/10 text-amber-700 text-xs font-bold tracking-[0.2em] uppercase mb-6 border border-amber-200/50 shadow-sm">
-                Spiritual Philosophy
+              <span className="inline-flex items-center rounded-full border border-amber-300/20 bg-amber-300/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.28em] text-amber-100">
+                {t("home.spiritual_philosophy")}
               </span>
 
-              <h2 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-6">
-                One Truth,{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500 font-light">
-                  Many Paths
+              <h2 className="mt-6 text-4xl font-semibold tracking-tight text-white md:text-5xl">
+                {t("home.one_truth_title1")}{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-orange-500">
+                  {t("home.one_truth_title2")}
                 </span>
               </h2>
 
-              <p className="text-lg md:text-xl text-slate-700 font-light leading-relaxed max-w-2xl mx-auto mb-10">
-                We respectfully acknowledge that every religion provides a
-                unique and sacred path toward divine realization. They are all
-                valid expressions of humanity's eternal search for Truth.
+              <div className="mt-6 inline-block bg-amber-400/20 border border-amber-400/40 rounded-xl px-6 py-3 shadow-[0_0_15px_rgba(251,191,36,0.3)]">
+                <h3 className="text-xl md:text-2xl font-bold text-amber-300 tracking-wide">
+                  {t("home.one_truth_subtitle")}
+                </h3>
+              </div>
+
+              <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
+                {t("home.sp_desc1")}
               </p>
 
-              <div className="relative px-8 py-8 bg-white/50 rounded-2xl border border-white/60 italic text-slate-800 font-medium shadow-[inset_0_2px_15px_rgba(255,255,255,0.7)]">
-                <Quote className="absolute top-4 left-4 w-6 h-6 text-amber-500/30 rotate-180" />
-                "Sanatana Dharma preserves ancient yogic wisdom while deeply
-                respecting all faiths. Kriya Yogam is a universal science that
-                transcends boundaries."
-                <Quote className="absolute bottom-4 right-4 w-6 h-6 text-amber-500/30" />
+              <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-white/10 bg-black/20 px-6 py-6 text-slate-200 shadow-inner">
+                <Quote className="mb-3 h-5 w-5 text-amber-200/60" />
+                <p className="text-sm leading-7 md:text-base">
+                  {t("home.sp_quote")}
+                </p>
               </div>
             </div>
           </motion.div>
+        </div>
 
-          {/* Religions Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-            {religions.map((religion, index) => (
-              <motion.div
-                key={religion.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.15, duration: 0.7 }}
-                className="group h-full"
-              >
-                <div className="relative h-full bg-white/40 backdrop-blur-2xl border border-white/60 p-8 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:bg-white/60 hover:shadow-[0_20px_40px_-15px_rgba(217,119,6,0.2)] hover:-translate-y-2 transition-all duration-500 overflow-hidden flex flex-col items-center text-center">
-                  {/* Decorative corner element */}
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-amber-200/30 to-transparent rounded-bl-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-white to-amber-50/50 flex items-center justify-center text-amber-600 mb-6 shadow-sm border border-white group-hover:scale-110 group-hover:text-orange-500 transition-all duration-500 relative z-10">
-                    {religion.icon}
-                  </div>
-
-                  <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight relative z-10">
-                    {religion.name}
-                  </h3>
-
-                  <p className="text-slate-600 leading-relaxed font-light text-sm relative z-10">
-                    {religion.desc}
-                  </p>
+        <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-3 xl:grid-cols-4">
+          {religions.map((religion, index) => (
+            <motion.div
+              key={religion.name}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "0px 0px -100px 0px" }}
+              transition={{ delay: index * 0.12, duration: 0.6 }}
+              className="group h-full"
+            >
+              <div className="relative flex h-full flex-col items-center overflow-hidden rounded-3xl border border-white/20 bg-white/10 px-7 py-10 text-center backdrop-blur-xl shadow-[0_16px_40px_rgba(0,0,0,0.25)] transition-all duration-500 hover:-translate-y-2 hover:border-white/40 hover:bg-white/20 group">
+                <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none" />
+                <div className="relative mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 text-brand-primary shadow-sm border border-white/20 group-hover:scale-110 group-hover:bg-white/30 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                  {religion.icon}
                 </div>
-              </motion.div>
-            ))}
-          </div>
+                <h3 className="relative text-xl font-bold tracking-tight text-white transition-colors">
+                  {religion.name}
+                </h3>
+                <p className="relative mt-3 text-sm leading-7 text-white/80 font-medium group-hover:text-white transition-colors">
+                  {religion.desc}
+                </p>
+                <div className="absolute bottom-0 left-0 h-1.5 w-full bg-gradient-to-r from-brand-primary to-brand-secondary scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
@@ -466,6 +450,7 @@ function SpiritualPhilosophy() {
 
 // RoleOfReligions
 function RoleOfReligions() {
+  const { t } = useLanguage();
   return (
     <section className="py-24 bg-white relative overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
@@ -474,52 +459,34 @@ function RoleOfReligions() {
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "0px 0px -100px 0px" }}
             transition={{ duration: 0.8 }}
             className="space-y-8"
           >
             <div className="inline-flex items-center gap-4">
               <span className="text-sm font-semibold tracking-widest text-brand-primary uppercase">
-                Divine Connection
+                {t("home.role_of_religions_subtitle")}
               </span>
               <div className="h-px w-12 bg-gradient-to-r from-brand-primary to-transparent"></div>
             </div>
 
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
-              The Role of Religions in Connecting with the Divine
+              {t("home.role_of_religions_title")}
             </h2>
 
             <div className="space-y-6 text-lg text-gray-600 leading-relaxed text-justify">
-              <p>
-                Every religion offers a unique path to connect with the Divine.
-                Sincere devotion, regardless of faith, leads to spiritual
-                realization. Figures like Jesus, Muhammad, Buddha, and
-                Ramakrishna Paramahamsa have demonstrated how following a
-                spiritual path can transcend our limits, guiding us to the
-                Divine. While religions like Christianity, Islam, and Buddhism
-                were founded by visionaries, Hinduism stands apart as Sanatana
-                Dharma, an "eternal" path with no single founder.
-              </p>
+              <p>{t("home.role_of_religions_desc1")}</p>
 
               <div className="bg-brand-primary/5 border-l-4 border-brand-primary p-6 rounded-r-2xl">
-                <p>
-                  In ancient times, Rishis, through deep meditation, channeled
-                  divine wisdom that became the Vedas. These texts explored the
-                  relationship between Brahma (the Creator) and the individual
-                  soul (Purusha), which was simplified into the Upanishads.
-                </p>
+                <p>{t("home.role_of_religions_desc2")}</p>
               </div>
 
               <p>
-                The essence of these teachings, including the famous{" "}
+                {t("home.role_of_religions_desc3_1")}{" "}
                 <span className="font-semibold text-gray-900">
-                  "Tat Tvam Asi"
+                  {t("home.role_of_religions_desc3_2")}
                 </span>{" "}
-                (You are that), was further distilled into the Bhagavad Gita. In
-                the Gita, Krishna represents divine consciousness, and Arjuna
-                symbolizes the individual consciousness. The Gita teaches paths
-                of realization through Jnana Yoga, Karma Yoga, Bhakti Yoga, and
-                Raja Yoga.
+                {t("home.role_of_religions_desc3_3")}
               </p>
             </div>
           </motion.div>
@@ -528,7 +495,7 @@ function RoleOfReligions() {
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "0px 0px -100px 0px" }}
             transition={{ duration: 0.8 }}
             className="grid grid-cols-2 gap-4 h-full relative mt-12 lg:mt-0"
           >
@@ -578,6 +545,7 @@ function RoleOfReligions() {
 // Programs
 
 function Programs() {
+  const { t } = useLanguage();
   const [events, setEvents] = useState<EventModel[]>([]);
 
   useEffect(() => {
@@ -597,37 +565,36 @@ function Programs() {
   if (events.length === 0) return null;
 
   return (
-    <section id="programs" className="py-24 bg-white">
+    <section id="programs" className="py-24 bg-white overflow-hidden">
       <div className="w-full px-4 md:px-8 lg:px-12 mx-auto max-w-[1920px]">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "0px 0px -100px 0px" }}
             className="max-w-2xl"
           >
             <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3">
-              Join Us
+              {t("home.prog_subtitle")}
             </h2>
             <h3 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-4">
-              Our Programs
+              {t("home.prog_title")}
             </h3>
             <p className="text-lg text-gray-600">
-              Take the first step towards spiritual transformation by joining
-              our upcoming events and sessions.
+              {t("home.prog_desc")}
             </p>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "0px 0px -100px 0px" }}
           >
             <Link
               href="/programs"
               className="text-brand-primary font-bold hover:text-brand-secondary transition-colors inline-flex items-center gap-1 text-sm uppercase tracking-wider group"
             >
-              View All Programs{" "}
+              {t("home.prog_btn")}{" "}
               <ArrowRight
                 size={16}
                 className="group-hover:translate-x-1 transition-transform"
@@ -642,7 +609,7 @@ function Programs() {
               key={program.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "0px 0px -100px 0px" }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
               className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-md hover:shadow-2xl transition-all duration-500 flex flex-col cursor-pointer"
             >
@@ -701,7 +668,7 @@ function Programs() {
 
                   {program.status === "active" ? (
                     <span className="block w-full py-3 px-6 text-center bg-gray-50 border border-gray-200 text-brand-primary font-bold rounded-xl group-hover:bg-brand-primary group-hover:border-brand-primary group-hover:text-white transition-all duration-300 shadow-sm uppercase tracking-wider text-xs">
-                      View Details
+                      {t("home.view_details")}
                     </span>
                   ) : (
                     <span className="block w-full py-3 px-6 text-center bg-gray-100 text-gray-400 font-bold rounded-xl uppercase tracking-wider text-xs">
@@ -720,17 +687,18 @@ function Programs() {
 
 // Eligibility
 function Eligibility() {
+  const { t } = useLanguage();
   const requirements = [
     {
-      text: "Minimum Age: 12+ Years",
+      text: t("home.eligibility_req1"),
       icon: <UserCheck className="w-5 h-5" strokeWidth={2.5} />,
     },
     {
-      text: "Open to All Backgrounds",
+      text: t("home.eligibility_req2"),
       icon: <Users className="w-5 h-5" strokeWidth={2.5} />,
     },
     {
-      text: "No Prior Yoga Experience Required",
+      text: t("home.eligibility_req3"),
       icon: <Sparkles className="w-5 h-5" strokeWidth={2.5} />,
     },
   ];
@@ -749,27 +717,25 @@ function Eligibility() {
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "0px 0px -100px 0px" }}
             transition={{ duration: 0.8 }}
             className="flex flex-col justify-center"
           >
             <div className="inline-flex items-center gap-3 mb-6">
               <span className="px-5 py-2 rounded-full bg-amber-50 border border-amber-200/60 text-xs font-black tracking-[0.2em] text-amber-700 uppercase shadow-sm">
-                Participation
+                {t("home.eligibility_subtitle")}
               </span>
             </div>
 
-            <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight mb-6 leading-[1.15]">
-              Who Can Attend <br />
+            <h2 className="text-4xl md:text-5xl font-black font-normal text-slate-900 tracking-tight mb-6 leading-[1.15]">
+              {t("home.eligibility_title1")} <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600">
-                Our Program?
+                {t("home.eligibility_title2")}
               </span>
             </h2>
 
             <p className="text-lg md:text-xl text-slate-600 font-medium leading-relaxed mb-10 max-w-lg">
-              Our programs are designed for universal access. Anyone above 12
-              years of age is eligible to participate and learn the sacred
-              science of Shiva Kriya Yogam.
+              {t("home.eligibility_desc")}
             </p>
 
             <div className="bg-white/80 backdrop-blur-2xl border border-slate-200/60 p-8 md:p-10 rounded-[2rem] shadow-[0_8px_40px_rgb(0,0,0,0.04)] relative group overflow-hidden">
@@ -795,7 +761,7 @@ function Eligibility() {
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "0px 0px -100px 0px" }}
             transition={{ duration: 0.8 }}
             className="relative"
           >
@@ -807,14 +773,12 @@ function Eligibility() {
                   <div className="p-3 bg-slate-900 rounded-2xl text-white shadow-xl shadow-slate-900/20">
                     <Shirt className="w-7 h-7" strokeWidth={2} />
                   </div>
-                  Dress Code
+                  {t("home.dress_code_title")}
                 </h3>
               </div>
 
               <p className="text-slate-600 font-medium text-lg mb-10 leading-relaxed">
-                Traditional and comfortable clothing is strictly recommended to
-                ensure ease of practice, meditation, and respect for the ashram
-                environment.
+                {t("home.dress_code_desc")}
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
@@ -827,10 +791,10 @@ function Eligibility() {
                     />
                   </div>
                   <h4 className="text-center text-base font-bold text-slate-900">
-                    Vesti & Shirt
+                    {t("home.dress1_title")}
                   </h4>
                   <p className="text-center text-xs text-slate-500 font-semibold mt-1 uppercase tracking-wider">
-                    Traditional
+                    {t("home.dress1_sub")}
                   </p>
                 </div>
 
@@ -843,10 +807,10 @@ function Eligibility() {
                     />
                   </div>
                   <h4 className="text-center text-base font-bold text-slate-900">
-                    Track Pants & Tee
+                    {t("home.dress2_title")}
                   </h4>
                   <p className="text-center text-xs text-slate-500 font-semibold mt-1 uppercase tracking-wider">
-                    Comfortable
+                    {t("home.dress2_sub")}
                   </p>
                 </div>
               </div>
@@ -857,8 +821,7 @@ function Eligibility() {
                   strokeWidth={2.5}
                 />
                 <p className="text-sm text-amber-900 font-bold leading-relaxed">
-                  Please wear clean, modest, and comfortable clothing. Tight or
-                  revealing outfits are not permitted during the sessions.
+                  {t("home.dress_warning")}
                 </p>
               </div>
             </div>
@@ -872,6 +835,7 @@ function Eligibility() {
 // Gallery
 
 function Gallery() {
+  const { t } = useLanguage();
   const [images, setImages] = useState<GalleryModel[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -895,15 +859,15 @@ function Gallery() {
   if (images.length === 0) return null;
 
   return (
-    <section id="gallery" className="py-24 bg-white border-t border-gray-100">
+    <section id="gallery" className="py-24 bg-white border-t border-gray-100 overflow-hidden">
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-8 border-b border-gray-100 pb-8">
           <div className="max-w-xl">
             <h2 className="text-xs font-bold tracking-widest text-brand-primary uppercase mb-2">
-              Visual Archives
+              {t("home.gal_subtitle")}
             </h2>
             <h3 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
-              Our Gallery
+              {t("home.gal_title")}
             </h3>
           </div>
 
@@ -912,7 +876,7 @@ function Gallery() {
               href="/gallery"
               className="text-brand-primary font-bold hover:text-brand-secondary transition-colors inline-flex items-center gap-1 text-sm uppercase tracking-wider group"
             >
-              View All{" "}
+              {t("home.gal_btn")}{" "}
               <ArrowRight
                 size={16}
                 className="group-hover:translate-x-1 transition-transform"
@@ -1041,7 +1005,7 @@ function Testimonials() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "0px 0px -100px 0px" }}
             className="max-w-2xl"
           >
             <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3 flex items-center gap-2">
@@ -1060,7 +1024,7 @@ function Testimonials() {
               key={testimonial.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "0px 0px -100px 0px" }}
               transition={{ delay: index * 0.1 }}
               className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 relative group"
             >
@@ -1100,6 +1064,7 @@ function Testimonials() {
 
 // Videos
 function Videos() {
+  const { t } = useLanguage();
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const [videos, setVideos] = useState<VideoModel[]>([]);
 
@@ -1132,10 +1097,10 @@ function Videos() {
           <div className="max-w-xl">
             <h2 className="text-sm font-bold tracking-widest text-amber-600 uppercase mb-3 flex items-center gap-2">
               <span className="w-8 h-px bg-amber-600"></span>
-              Sacred Teachings
+              {t("home.vid_subtitle")}
             </h2>
             <h3 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
-              Video Library
+              {t("home.vid_title")}
             </h3>
           </div>
 
@@ -1143,7 +1108,7 @@ function Videos() {
             href="/videos"
             className="text-brand-primary font-bold hover:text-brand-secondary transition-colors inline-flex items-center gap-1 text-sm uppercase tracking-wider group"
           >
-            View Full Library
+            {t("home.vid_btn")}
             <ArrowRight
               size={16}
               className="group-hover:translate-x-1 transition-transform"
@@ -1157,7 +1122,7 @@ function Videos() {
               key={video.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "0px 0px -100px 0px" }}
               transition={{ delay: index * 0.1, duration: 0.6 }}
               className="group flex flex-col cursor-pointer bg-white/80 backdrop-blur-xl border border-white rounded-[0px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_-15px_rgba(217,119,6,0.2)] hover:-translate-y-2 transition-all duration-500 overflow-hidden"
               onClick={() => setActiveVideo(getImageVideoUrl(video.video))}
@@ -1280,6 +1245,7 @@ function Videos() {
 
 // Book Shop Preview
 function BookShopPreview() {
+  const { t } = useLanguage();
   const { isLoggedIn, openLogin } = useAuth();
   const router = useRouter();
 
@@ -1307,15 +1273,15 @@ function BookShopPreview() {
   if (books.length === 0) return null;
 
   return (
-    <section className="py-20 bg-white border-t border-gray-200">
+    <section className="py-20 bg-white border-t border-gray-200 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
           <div className="max-w-2xl">
             <span className="text-brand-primary font-bold uppercase tracking-widest text-xs mb-3 block border-l-2 border-brand-primary pl-2">
-              Official Publications
+              {t("home.shop_subtitle")}
             </span>
             <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight">
-              Spiritual Wisdom in Print
+              {t("home.shop_title")}
             </h2>
           </div>
           <div className="mt-4 md:mt-0">
@@ -1323,7 +1289,7 @@ function BookShopPreview() {
               href="/shop"
               className="inline-flex items-center gap-2 text-sm font-bold text-brand-primary hover:text-brand-secondary transition-colors"
             >
-              View Shop <ArrowRight size={16} />
+              {t("home.shop_btn")} <ArrowRight size={16} />
             </Link>
           </div>
         </div>
@@ -1334,7 +1300,7 @@ function BookShopPreview() {
               key={idx}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "0px 0px -100px 0px" }}
               transition={{ duration: 0.5, delay: idx * 0.2 }}
               className="bg-white border border-gray-200 rounded-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col sm:flex-row group cursor-pointer"
               onClick={() => setSelectedProduct(book)}
@@ -1399,7 +1365,7 @@ function BookShopPreview() {
                     ) : (
                       <ShoppingCart size={16} />
                     )}
-                    Add to Cart
+                    {t("home.add_to_cart")}
                   </button>
                 </div>
               </div>
@@ -1551,8 +1517,8 @@ function BookShopPreview() {
                       <ShoppingCart size={20} />
                     )}
                     {addingToCartId === selectedProduct.id
-                      ? "Adding..."
-                      : "Add to Cart"}
+                      ? t("home.adding")
+                      : t("home.add_to_cart")}
                   </button>
                   <button
                     disabled={buyingNowId === selectedProduct.id}
@@ -1577,8 +1543,8 @@ function BookShopPreview() {
                       <Loader2 size={20} className="animate-spin" />
                     ) : null}
                     {buyingNowId === selectedProduct.id
-                      ? "Processing..."
-                      : "Buy Now"}
+                      ? t("home.processing")
+                      : t("home.buy_now")}
                     {!buyingNowId || buyingNowId !== selectedProduct.id ? (
                       <ArrowRight size={20} />
                     ) : null}
@@ -1595,6 +1561,7 @@ function BookShopPreview() {
 
 // Video Testimonials
 function VideoTestimonials() {
+  const { t } = useLanguage();
   const [videoTestimonials, setVideoTestimonials] = useState<
     VideoTestimonialModel[]
   >([]);
@@ -1646,10 +1613,10 @@ function VideoTestimonials() {
           <div className="max-w-2xl">
             <h2 className="text-sm font-bold tracking-widest text-amber-600 uppercase mb-3 flex items-center gap-2">
               <span className="w-8 h-px bg-amber-600"></span>
-              Real Stories
+              {t("home.vtest_subtitle")}
             </h2>
             <h3 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
-              Video Experiences
+              {t("home.vtest_title")}
             </h3>
           </div>
 

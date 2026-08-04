@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addContactUs } from "../../services/api";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 const formSchema = z.object({
   firstName: z.string().min(2, { message: "First name is required" }),
@@ -21,6 +22,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function Contact() {
+  const { t } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -77,7 +79,7 @@ export default function Contact() {
           >
             <span className="w-12 h-[2px] bg-gradient-to-r from-transparent to-amber-500"></span>
             <span className="inline-block py-1 px-3 rounded-full bg-amber-500/10 text-amber-700 text-xs font-normal tracking-[0.2em] uppercase border border-amber-200/50 shadow-sm">
-              Get In Touch
+              {t("contact.get_in_touch")}
             </span>
             <span className="w-12 h-[2px] bg-gradient-to-l from-transparent to-amber-500"></span>
           </motion.div>
@@ -88,7 +90,7 @@ export default function Contact() {
             transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
             className="text-4xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight text-center font-normal"
           >
-            Contact <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600 font-normal">Us</span>
+            {t("contact.contact")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600 font-normal">{t("contact.us")}</span>
           </motion.h1>
         </div>
       </section>
@@ -107,7 +109,7 @@ export default function Contact() {
               >
                 <h4 className="text-xl font-bold text-gray-900 mb-8 tracking-tight flex items-center gap-3">
                   <div className="w-2 h-8 bg-brand-primary rounded-full"></div>
-                  Foundation Office
+                  {t("contact.foundation_office")}
                 </h4>
 
                 <div className="space-y-8">
@@ -117,7 +119,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <h5 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-2">
-                        Location
+                        {t("contact.location")}
                       </h5>
                       <p className="text-gray-600 leading-relaxed font-light text-sm">
                         211, Kandhaguru Garden, <br />
@@ -134,7 +136,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <h5 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-2">
-                        Phone
+                        {t("contact.phone")}
                       </h5>
                       <p className="text-gray-600 font-light text-sm mb-1">
                         +91 98420 23346
@@ -151,7 +153,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <h5 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-2">
-                        Email
+                        {t("contact.email")}
                       </h5>
                       <p className="text-gray-600 font-light text-sm">
                         srikandhagurufoundation@gmail.com
@@ -192,7 +194,7 @@ export default function Contact() {
               >
                 <div className="flex items-center justify-between mb-8 border-b border-gray-100 pb-4">
                   <h4 className="text-xl font-bold text-gray-900 tracking-tight ">
-                    Send Us a Message
+                    {t("contact.send_message")}
                   </h4>
                 </div>
 
@@ -202,17 +204,16 @@ export default function Contact() {
                       <Send className="w-6 h-6 text-green-600" />
                     </div>
                     <h5 className="text-2xl font-bold mb-3 tracking-tight">
-                      Application Submitted
+                      {t("contact.app_submitted")}
                     </h5>
                     <p className="text-gray-600 font-light mb-8 max-w-md">
-                      Your message has been securely sent to our team. A
-                      foundation representative will contact you shortly.
+                      {t("contact.msg_sent")}
                     </p>
                     <button
                       onClick={() => setIsSuccess(false)}
                       className="px-8 py-3 bg-brand-primary text-white text-sm font-bold tracking-widest uppercase hover:bg-brand-primary transition-colors rounded-[0px] shadow-md"
                     >
-                      Send Another Message
+                      {t("contact.send_another")}
                     </button>
                   </div>
                 ) : (
@@ -220,14 +221,14 @@ export default function Contact() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                          First Name{" "}
+                          {t("contact.first_name")}{" "}
                           <span className="text-brand-primary">*</span>
                         </label>
                         <input
                           {...register("firstName")}
                           type="text"
                           className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.firstName ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
-                          placeholder="First Name"
+                          placeholder={t("contact.first_name")}
                         />
                         {errors.firstName && (
                           <p className="mt-1.5 text-xs text-red-500 font-medium">
@@ -237,14 +238,14 @@ export default function Contact() {
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                          Last Name{" "}
+                          {t("contact.last_name")}{" "}
                           <span className="text-brand-primary">*</span>
                         </label>
                         <input
                           {...register("lastName")}
                           type="text"
                           className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.lastName ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
-                          placeholder="Last Name"
+                          placeholder={t("contact.last_name")}
                         />
                         {errors.lastName && (
                           <p className="mt-1.5 text-xs text-red-500 font-medium">
@@ -257,14 +258,14 @@ export default function Contact() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                          Email Address{" "}
+                          {t("contact.email_addr")}{" "}
                           <span className="text-brand-primary">*</span>
                         </label>
                         <input
                           {...register("email")}
                           type="email"
                           className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.email ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
-                          placeholder="Email Address"
+                          placeholder={t("contact.email_addr")}
                         />
                         {errors.email && (
                           <p className="mt-1.5 text-xs text-red-500 font-medium">
@@ -274,14 +275,14 @@ export default function Contact() {
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                          Mobile Number{" "}
+                          {t("contact.mobile_num")}{" "}
                           <span className="text-brand-primary">*</span>
                         </label>
                         <input
                           {...register("mobile")}
                           type="tel"
                           className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.mobile ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
-                          placeholder="Mobile Number"
+                          placeholder={t("contact.mobile_num")}
                         />
                         {errors.mobile && (
                           <p className="mt-1.5 text-xs text-red-500 font-medium">
@@ -293,13 +294,13 @@ export default function Contact() {
 
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                        Message <span className="text-brand-primary">*</span>
+                        {t("contact.message")} <span className="text-brand-primary">*</span>
                       </label>
                       <textarea
                         {...register("message")}
                         rows={5}
                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm resize-none ${errors.message ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
-                        placeholder="Your Message..."
+                        placeholder={t("contact.your_msg")}
                       />
                       {errors.message && (
                         <p className="mt-1.5 text-xs text-red-500 font-medium">
@@ -310,8 +311,7 @@ export default function Contact() {
 
                     <div className="pt-8 mt-4 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-6">
                       <p className="text-xs text-gray-500 font-light max-w-xs leading-relaxed">
-                        By submitting this application, you agree to the
-                        foundation's terms and privacy directives.
+                        {t("contact.terms")}
                       </p>
                       <button
                         type="submit"
@@ -322,7 +322,7 @@ export default function Contact() {
                           <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
                         ) : (
                           <>
-                            Send Message <Send size={16} />
+                            {t("contact.btn_send")} <Send size={16} />
                           </>
                         )}
                       </button>

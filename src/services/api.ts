@@ -13,6 +13,7 @@ import { AddressModel, CartModel } from "../models/OrderModel";
 import { config, json } from "zod";
 
 export const BASEURL = "https://api.srikandhagurufoundation.org";
+// export const BASEURL = "http://localhost:3003";
 
 export const getImageVideoUrl = (data: string) => {
   if (data.startsWith("https") || data.startsWith("http")) {
@@ -27,7 +28,10 @@ export const isYouTubeUrl = (url: string | null) => {
   return url.includes("youtube") || url.includes("youtu.be");
 };
 
-export const getYouTubeEmbedUrl = (url: string | null, autoplay: boolean = true) => {
+export const getYouTubeEmbedUrl = (
+  url: string | null,
+  autoplay: boolean = true,
+) => {
   if (!url) return "";
 
   const regExp =
@@ -46,7 +50,8 @@ export const getYouTubeEmbedUrl = (url: string | null, autoplay: boolean = true)
 
 export const getYouTubeThumbnailUrl = (url: string | null) => {
   if (!url) return "";
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|youtubecomwatchv=|shorts\/)([^#&?]*).*/;
+  const regExp =
+    /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|youtubecomwatchv=|shorts\/)([^#&?]*).*/;
   const match = url.match(regExp);
   if (match && match[2]) {
     const videoId = match[2].substring(0, 11);
@@ -64,18 +69,84 @@ const api = axios.create({
   },
 });
 
+let isSessionExpired = false;
+
+const handleSessionExpired = () => {
+  if (typeof window === "undefined") return;
+
+  if (isSessionExpired) return;
+  isSessionExpired = true;
+
+  localStorage.removeItem("userToken");
+  localStorage.removeItem("userId");
+
+  window.dispatchEvent(new Event("sessionExpired"));
+  window.dispatchEvent(new Event("openLogin"));
+
+  // Allow future session expiration handling after login
+  setTimeout(() => {
+    isSessionExpired = false;
+  }, 1000);
+};
+
+// Request Interceptor
 api.interceptors.request.use(
   (config) => {
-    let token = null;
     if (typeof window !== "undefined") {
-      token = localStorage.getItem("userToken");
+      const token = localStorage.getItem("userToken");
+
+      if (token) {
+        config.headers.Authorization = token;
+      }
     }
-    if (token) {
-      config.headers.Authorization = `${token}`;
-    }
+
     return config;
   },
+  (error) => Promise.reject(error),
+);
+
+// Response Interceptor
+api.interceptors.response.use(
+  (response) => {
+    const message = response?.data?.message;
+
+    if (
+      response?.data?.success === false &&
+      (message === "Invalid or expired token" || message === "Token is expired")
+    ) {
+      handleSessionExpired();
+
+      return Promise.resolve({
+        ...response,
+        data: {
+          success: false,
+          message: "",
+        },
+      });
+    }
+
+    return response;
+  },
   (error) => {
+    const status = error?.response?.status;
+    const message = error?.response?.data?.message;
+
+    if (
+      status === 401 ||
+      status === 403 ||
+      message === "Invalid or expired token" ||
+      message === "Token is expired"
+    ) {
+      handleSessionExpired();
+
+      return Promise.resolve({
+        data: {
+          success: false,
+          message: "",
+        },
+      });
+    }
+
     return Promise.reject(error);
   },
 );
@@ -261,15 +332,26 @@ export const getUser = async () => {
   }
 };
 
-export const requestLogin = async (data: {
-  username: string;
-  email: string;
-}) => {
+export const requestLogin = async (data: { email: string }) => {
   try {
     const response = await api.post("/user/login", data);
     return response.data;
   } catch (error) {
     console.error("Error logging in:", error);
+    throw error;
+  }
+};
+
+export const registerUser = async (data: {
+  username: string;
+  email: string;
+  mobile: string;
+}) => {
+  try {
+    const response = await api.post("/user/register", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error registering user:", error);
     throw error;
   }
 };
@@ -383,15 +465,11 @@ export const uploadPaymentScreenshot = async (imageFile: File) => {
   try {
     const formData = new FormData();
     formData.append("image", imageFile);
-    const response = await api.post(
-      "/screenshot/upload-payment",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+    const response = await api.post("/screenshot/upload-payment", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
       },
-    );
+    });
     return response.data;
   } catch (error) {
     console.error("Error uploading payment screenshot:", error);
@@ -399,7 +477,10 @@ export const uploadPaymentScreenshot = async (imageFile: File) => {
   }
 };
 
-export const updatePaymentScreenshot = async (data: { id: number; screenshot: string }) => {
+export const updatePaymentScreenshot = async (data: {
+  id: number;
+  screenshot: string;
+}) => {
   try {
     const response = await api.post("/order/update-payment-screenshot", data);
     return response.data;
@@ -523,7 +604,10 @@ export const uploadBookingPaymentScreenshot = async (imageFile: File) => {
   }
 };
 
-export const updateBookingPaymentScreenshot = async (data: { id: number; screenshot: string }) => {
+export const updateBookingPaymentScreenshot = async (data: {
+  id: number;
+  screenshot: string;
+}) => {
   try {
     const response = await api.post("/booking/update-payment-screenshot", data);
     return response.data;

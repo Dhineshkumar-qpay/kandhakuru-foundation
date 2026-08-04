@@ -6,10 +6,12 @@ import { usePathname } from "next/navigation";
 import { Mail, Phone, MapPin, ArrowRight, Send } from "lucide-react";
 import { getEvents } from "../services/api";
 import { EventModel } from "../models/event_model";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function Footer() {
   const [programs, setPrograms] = useState<EventModel[]>([]);
   const pathname = usePathname();
+  const { t } = useLanguage();
   const isShopSection =
     pathname?.startsWith("/shop") ||
     pathname?.startsWith("/my-account") ||
@@ -105,9 +107,7 @@ export default function Footer() {
                 </div>
               </Link>
               <p className="text-slate-600 text-base leading-relaxed pr-4 font-light text-justify">
-                Guiding individuals toward inner peace, self-realization, and
-                holistic well-being through the timeless wisdom of Shiva Kriya
-                Yogam.
+                {t("footer.description")}
               </p>
             </div>
 
@@ -121,49 +121,30 @@ export default function Footer() {
             >
               <h4 className="text-sm font-bold text-slate-800 uppercase tracking-widest flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${theme.bgDot}`}></div>
-                Quick Links
+                {t("footer.quick_links")}
               </h4>
               <ul className="space-y-4 text-slate-500 font-medium">
-                <li>
-                  <Link
-                    href="/"
-                    className={`${theme.textHover} hover:translate-x-1 inline-block transition-all duration-300`}
-                  >
-                    Home
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/about"
-                    className={`${theme.textHover} hover:translate-x-1 inline-block transition-all duration-300`}
-                  >
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/benefits"
-                    className={`${theme.textHover} hover:translate-x-1 inline-block transition-all duration-300`}
-                  >
-                    Benefits
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/gallery"
-                    className={`${theme.textHover} hover:translate-x-1 inline-block transition-all duration-300`}
-                  >
-                    Gallery
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/siddhargal"
-                    className={`${theme.textHover} hover:translate-x-1 inline-block transition-all duration-300`}
-                  >
-                    Siddhargal
-                  </Link>
-                </li>
+                {[
+                  { name: t("navbar.home"), href: "/" },
+                  { name: t("navbar.about"), href: "/about" },
+                  { name: t("navbar.gallery"), href: "/gallery" },
+                  { name: t("navbar.benefits"), href: "/benefits" },
+                  { name: t("navbar.siddhargal"), href: "/siddhargal" },
+                ].map((link) => {
+                  const isActive = pathname === link.href;
+                  return (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className={`${
+                          isActive ? theme.textPrimary + " font-bold" : ""
+                        } ${theme.textHover} hover:translate-x-1 inline-block transition-all duration-300`}
+                      >
+                        {link.name}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
 
@@ -171,7 +152,7 @@ export default function Footer() {
               <div className="md:col-span-4 lg:col-span-3 space-y-6">
                 <h4 className="text-sm font-bold text-slate-800 uppercase tracking-widest flex items-center gap-2">
                   <div className={`w-2 h-2 rounded-full ${theme.bgDot}`}></div>
-                  Programs
+                  {t("navbar.programs")}
                 </h4>
                 <ul className="space-y-4 text-slate-500 font-medium">
                   {programs.map((program) => (
@@ -189,7 +170,7 @@ export default function Footer() {
                       href="/programs"
                       className={`${theme.textPrimary} font-bold hover:opacity-80 transition-opacity inline-flex items-center gap-1.5 group`}
                     >
-                      View all programs{" "}
+                      {t("home.prog_btn")}{" "}
                       <ArrowRight
                         size={16}
                         className="group-hover:translate-x-1 transition-transform"
@@ -210,7 +191,7 @@ export default function Footer() {
             >
               <h4 className="text-sm font-bold text-slate-800 uppercase tracking-widest flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${theme.bgDot}`}></div>
-                Contact Us
+                {t("footer.contact_us")}
               </h4>
               <ul className="space-y-5 text-slate-500 font-medium">
                 <li className="flex gap-4 items-start group">
@@ -220,8 +201,7 @@ export default function Footer() {
                     <MapPin size={18} />
                   </div>
                   <span className="leading-relaxed text-sm pt-0.5">
-                    211, Kandhaguru Garden, Koothampatti, Sanniyasipatti Post,
-                    Bhavani, Erode, 638311
+                    {t("footer.address")}
                   </span>
                 </li>
                 <li className="flex gap-4 items-start group">
@@ -251,14 +231,13 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-slate-500 font-medium tracking-wide">
-          <p className="text-center md:text-left">
-            &copy; {new Date().getFullYear()} Sri Kandhaguru Foundation. All
-            rights reserved.
+        <div className="flex flex-col xl:flex-row justify-between items-center gap-6 text-sm text-slate-500 font-medium tracking-wide">
+          <p className="text-center xl:text-left shrink-0 max-w-full px-2">
+            &copy; {new Date().getFullYear()} Sri Kandhaguru Foundation. {t("footer.rights")}
           </p>
 
           {/* Social Icons */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 shrink-0">
             <a
               href="https://www.instagram.com/sri_kandhaguru/"
               target="_blank"
@@ -300,26 +279,40 @@ export default function Footer() {
             </a>
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4 xl:gap-6 px-4 text-center">
             <Link
               href="/privacy-policy"
-              className={`${theme.textHover} transition-colors`}
+              className={`${theme.textHover} transition-colors break-words`}
             >
-              Privacy Policy
+              {t("footer.privacy_policy")}
             </Link>
-            <div className="w-1 h-1 bg-slate-300 rounded-full"></div>
+            <div className="w-1 h-1 bg-slate-300 rounded-full shrink-0"></div>
             <Link
               href="/terms-and-conditions"
-              className={`${theme.textHover} transition-colors`}
+              className={`${theme.textHover} transition-colors break-words`}
             >
-              Terms and Conditions
+              {t("footer.terms_conditions")}
             </Link>
-            <div className="w-1 h-1 bg-slate-300 rounded-full"></div>
+            <div className="w-1 h-1 bg-slate-300 rounded-full shrink-0"></div>
             <Link
-              href="/faq"
-              className={`${theme.textHover} transition-colors`}
+              href="/shipping-policy"
+              className={`${theme.textHover} transition-colors break-words`}
             >
-              FAQ
+              {t("footer.shipping_policy")}
+            </Link>
+            <div className="w-1 h-1 bg-slate-300 rounded-full shrink-0"></div>
+            <Link
+              href="/refund-policy"
+              className={`${theme.textHover} transition-colors break-words`}
+            >
+              {t("footer.refund_policy")}
+            </Link>
+            <div className="w-1 h-1 bg-slate-300 rounded-full shrink-0"></div>
+            <Link
+              href="/disclaimer"
+              className={`${theme.textHover} transition-colors break-words`}
+            >
+              {t("footer.disclaimer")}
             </Link>
           </div>
         </div>

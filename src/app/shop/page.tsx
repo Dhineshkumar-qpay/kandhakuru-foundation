@@ -19,10 +19,12 @@ import { getProducts, getImageVideoUrl, addToCart } from "../../services/api";
 import { ProductModel } from "../../models/product_model";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 const categories = ["All Products", "spiritual", "accessories", "book"];
 
 export default function ShopPage() {
+  const { t } = useLanguage();
   const { isLoggedIn, openLogin } = useAuth();
   const router = useRouter();
 
@@ -58,119 +60,115 @@ export default function ShopPage() {
   }, [activeCategory]);
 
   return (
-    <div className="bg-gray-50 min-h-screen pt-0  text-[var(--foreground)]">
+    <div className="bg-gray-50 min-h-screen pt-15 md:pt-15 text-[var(--foreground)]">
       {/* Premium Hero Section */}
       <section className="relative pt-8 pb-8 lg:pt-12 lg:pb-12 bg-gray-50">
         <div className="container mx-auto px-4 max-w-7xl">
-          <div className="bg-white rounded-3xl p-8 md:p-12 lg:p-16 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 flex flex-col md:flex-row items-center gap-12 relative overflow-hidden">
-            {/* Background Accent */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-[var(--color-deepgreen)]/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+          <div className="relative rounded-[2rem] md:rounded-[3rem] p-8 md:p-14 lg:p-20 overflow-hidden bg-white text-gray-900 shadow-[0_8px_40px_rgb(0,0,0,0.06)] flex flex-col md:flex-row items-center gap-12 border border-gray-100/50">
+            {/* Background glowing elements */}
+            <div className="absolute -top-40 -right-40 w-96 h-96 bg-emerald-400/20 rounded-full blur-[100px] pointer-events-none"></div>
+            <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-amber-300/20 rounded-full blur-[100px] pointer-events-none"></div>
 
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="flex-1 space-y-8 relative z-10"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="flex-1 space-y-6 relative z-10"
             >
-              <div className="inline-block">
-                <span className="bg-[var(--color-deepgreen)]/10 text-[var(--color-deepgreen)] font-bold px-4 py-1.5 rounded-full text-xs uppercase tracking-widest border border-[var(--color-deepgreen)]/20">
-                  Official Store
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-deepgreen)]/5 border border-[var(--color-deepgreen)]/10 backdrop-blur-sm">
+                <span className="text-[var(--color-deepgreen)] font-extrabold text-xs uppercase tracking-widest">
+                  {t("shop.official_store")}
                 </span>
               </div>
-              <h1 className="text-4xl lg:text-5xl font-black tracking-tight leading-tight text-gray-900">
-                Premium Spiritual Resources <br />
+
+              <h1 className="text-3xl lg:text-4xl xl:text-5xl font-black font-semibold tracking-tight leading-[1.15] text-gray-900">
+                {t("shop.premium_res")} <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-deepgreen)] to-emerald-500">
-                  Curated for Your Journey
+                  {t("shop.curated")}
                 </span>
               </h1>
+
               <p className="text-lg text-gray-600 max-w-xl leading-relaxed font-medium">
-                Explore our official selection of authentic spiritual tools,
-                literature, and wellness items. Every purchase supports the
-                foundation's global initiatives.
+                {t("shop.shop_desc")}
               </p>
-              <div className="pt-2 flex items-center gap-6">
+
+              <div className="pt-4 flex flex-wrap items-center gap-4">
                 <button
                   onClick={() =>
                     document
                       .getElementById("products-section")
                       ?.scrollIntoView({ behavior: "smooth" })
                   }
-                  className="bg-[var(--color-deepgreen)] text-white px-8 py-4 font-bold tracking-wide shadow-[0_10px_20px_rgba(6,95,70,0.2)] hover:bg-[var(--color-deepgreen)]/90 transition-all hover:shadow-[0_10px_25px_rgba(6,95,70,0.3)] hover:-translate-y-1 rounded-xl cursor-pointer flex items-center gap-3 group"
+                  className="bg-[var(--color-deepgreen)] text-white px-8 py-4 font-bold tracking-wide shadow-[0_10px_20px_rgba(6,95,70,0.2)] hover:bg-[var(--color-deepgreen)] transition-all hover:-translate-y-1 hover:shadow-[0_10px_25px_rgba(6,95,70,0.3)] rounded-[0px] cursor-pointer flex items-center gap-3 group"
                 >
-                  Shop Collection <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+                  {t("shop.shop_col")}{" "}
+                  <ArrowRight
+                    className="group-hover:translate-x-1 transition-transform"
+                    size={20}
+                  />
                 </button>
               </div>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
               className="flex-1 w-full hidden md:flex justify-end relative z-10"
             >
               {products.length > 0 ? (
                 <div
-                  className="relative w-full max-w-md h-[450px] rounded-[2rem] overflow-hidden cursor-pointer group shadow-2xl border border-white"
+                  className="relative w-full max-w-md h-[450px] rounded-[2rem] overflow-hidden cursor-pointer group shadow-2xl border-[6px] border-white transform rotate-2 hover:rotate-0 transition-transform duration-500"
                   onClick={() => setSelectedProduct(products[0])}
                 >
                   {/* Background Image */}
                   <img
                     src={getImageVideoUrl(products[0].image)}
                     alt={products[0].productname}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
 
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent opacity-90" />
+                  {/* Deep Overlay to make text pop */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/95 via-gray-900/40 to-transparent" />
 
-                  {/* Category Badge */}
-                  <div className="absolute top-6 left-6 flex items-center gap-2">
-                    <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider border border-white/30 shadow-sm">
-                       <Star size={12} className="fill-white" /> Featured
+                  {/* Floating price badge */}
+                  <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-md px-4 py-2 rounded-2xl shadow-xl flex items-center gap-2 transform -translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                    <span className="text-sm font-black text-gray-900">
+                      ₹{products[0].sellingprice || products[0].price}
                     </span>
                   </div>
 
                   {/* Content */}
                   <div className="absolute inset-0 flex flex-col justify-end p-8 text-white">
-                    <p className="text-emerald-400 font-semibold text-sm uppercase tracking-widest mb-2">
+                    <p className="text-emerald-400 font-bold text-xs uppercase tracking-widest mb-2 shadow-sm drop-shadow-md">
                       {products[0].category}
                     </p>
-                    <h2 className="text-3xl font-extrabold leading-tight mb-4 drop-shadow-md">
+                    <h2 className="text-3xl font-extrabold leading-tight mb-4 drop-shadow-lg text-white">
                       {products[0].productname}
                     </h2>
 
-                    <div className="flex items-end justify-between mt-2 pt-6 border-t border-white/20">
-                      <div>
-                        <p className="text-xs uppercase tracking-widest text-gray-300 mb-1.5 font-medium">
-                          Starting From
-                        </p>
-                        <div className="flex items-center gap-3">
-                          {products[0].sellingprice &&
-                            products[0].sellingprice < products[0].price ? (
-                            <span className="text-gray-400 line-through text-lg font-semibold">
-                              ₹{products[0].price}
-                            </span>
-                          ) : (
-                            <></>
-                          )}
-                          <span className="text-3xl font-black text-white drop-shadow-sm">
-                            ₹{products[0].sellingprice || products[0].price}
-                          </span>
-                        </div>
+                    <div className="flex items-center justify-between mt-2 pt-4 border-t border-white/20">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs uppercase tracking-widest text-gray-300 font-medium">
+                          {t("shop.starting_from")}
+                        </span>
+                        <span className="text-2xl font-black text-white drop-shadow-sm">
+                          ₹{products[0].sellingprice || products[0].price}
+                        </span>
                       </div>
 
-                      <button className="w-14 h-14 rounded-2xl bg-white text-gray-900 flex items-center justify-center transition-all duration-300 group-hover:bg-[var(--color-deepgreen)] group-hover:text-white shadow-lg group-hover:scale-105">
-                        <ArrowRight className="w-6 h-6 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
+                      <button className="w-12 h-12 rounded-full bg-white text-gray-900 flex items-center justify-center transition-all duration-300 group-hover:bg-[var(--color-deepgreen)] group-hover:text-white shadow-lg group-hover:scale-110">
+                        <ArrowRight className="w-5 h-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
                       </button>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="relative w-full max-w-md h-[450px] bg-gray-50 rounded-[2rem] overflow-hidden border border-gray-100 shadow-inner">
-                  <div className="absolute inset-0 flex items-center justify-center flex-col gap-4">
-                    <Loader2 className="w-10 h-10 text-[var(--color-deepgreen)] animate-spin" />
-                    <span className="text-sm font-medium text-gray-400 uppercase tracking-widest">Loading Featured</span>
-                  </div>
+                <div className="relative w-full max-w-md h-[450px] bg-gray-50 rounded-[2rem] overflow-hidden border-[6px] border-white shadow-inner flex items-center justify-center flex-col gap-4 transform rotate-2">
+                  <Loader2 className="w-10 h-10 text-[var(--color-deepgreen)] animate-spin" />
+                  <span className="text-sm font-medium text-gray-400 uppercase tracking-widest">
+                    {t("shop.loading_feat")}
+                  </span>
                 </div>
               )}
             </motion.div>
@@ -185,19 +183,22 @@ export default function ShopPage() {
           <div className="w-full md:w-64 shrink-0">
             <div className="bg-white border border-gray-200 rounded-md p-6 sticky top-28 shadow-sm">
               <h3 className="text-sm font-extrabold text-gray-900 uppercase tracking-widest mb-6">
-                Categories
+                {t("shop.categories")}
               </h3>
               <ul className="space-y-2">
                 {categories.map((category) => (
                   <li key={category}>
                     <button
                       onClick={() => setActiveCategory(category)}
-                      className={`w-full text-left px-4 py-2.5 rounded-sm text-sm font-medium transition-colors capitalize ${activeCategory === category
+                      className={`w-full text-left px-4 py-2.5 rounded-sm text-sm font-medium transition-colors capitalize ${
+                        activeCategory === category
                           ? "bg-[var(--color-deepgreen)]/10 text-[var(--color-deepgreen)] border-l-2 border-[var(--color-deepgreen)]"
                           : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-l-2 border-transparent"
-                        }`}
+                      }`}
                     >
-                      {category}
+                      {category === "All Products"
+                        ? t("shop.all_products")
+                        : category}
                     </button>
                   </li>
                 ))}
@@ -210,7 +211,9 @@ export default function ShopPage() {
             <div className="flex flex-col sm:flex-row justify-between items-center mb-8 pb-4 border-b border-gray-200 gap-4">
               <div className="flex items-center gap-4">
                 <h2 className="text-2xl font-bold text-gray-900 capitalize">
-                  {activeCategory}
+                  {activeCategory === "All Products"
+                    ? t("shop.all_products")
+                    : activeCategory}
                 </h2>
                 <span className="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
                   {
@@ -220,13 +223,13 @@ export default function ShopPage() {
                         .includes(searchQuery.toLowerCase()),
                     ).length
                   }{" "}
-                  Results
+                  {t("shop.results")}
                 </span>
               </div>
               <div className="relative w-full sm:w-64">
                 <input
                   type="text"
-                  placeholder="Search products..."
+                  placeholder={t("shop.search_ph")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-deepgreen)] focus:border-transparent transition-all"
@@ -262,7 +265,7 @@ export default function ShopPage() {
                       />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                         <span className="bg-white text-gray-900 font-bold px-4 py-2 rounded-full text-sm shadow-md transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                          View Details
+                          {t("shop.view_details")}
                         </span>
                       </div>
                     </div>
@@ -356,10 +359,10 @@ export default function ShopPage() {
                             {buyingNowId === product.id ? (
                               <>
                                 <Loader2 size={16} className="animate-spin" />{" "}
-                                Processing...
+                                {t("shop.processing")}
                               </>
                             ) : (
-                              "Buy Now"
+                              t("shop.buy_now")
                             )}
                           </button>
                         </div>
@@ -456,7 +459,7 @@ export default function ShopPage() {
               <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
                 <div className="flex flex-col">
                   {selectedProduct.sellingprice &&
-                    selectedProduct.sellingprice > 0 ? (
+                  selectedProduct.sellingprice > 0 ? (
                     <div className="flex items-baseline gap-3">
                       <span className="text-3xl font-black text-gray-900">
                         ₹{selectedProduct.sellingprice}
@@ -472,13 +475,13 @@ export default function ShopPage() {
                   )}
                 </div>
                 {selectedProduct.sellingprice &&
-                  selectedProduct.sellingprice > 0 &&
-                  selectedProduct.price > selectedProduct.sellingprice ? (
+                selectedProduct.sellingprice > 0 &&
+                selectedProduct.price > selectedProduct.sellingprice ? (
                   <span className="bg-red-50 text-red-600 font-bold px-2 py-1 rounded text-sm">
                     {Math.round(
                       ((selectedProduct.price - selectedProduct.sellingprice) /
                         selectedProduct.price) *
-                      100,
+                        100,
                     )}
                     % OFF
                   </span>
@@ -554,8 +557,8 @@ export default function ShopPage() {
                     <ShoppingCart size={20} />
                   )}
                   {addingToCartId === selectedProduct.id
-                    ? "Adding..."
-                    : "Add to Cart"}
+                    ? t("shop.adding")
+                    : t("shop.add_to_cart")}
                 </button>
                 <button
                   disabled={buyingNowId === selectedProduct.id}
@@ -580,8 +583,8 @@ export default function ShopPage() {
                     <Loader2 size={20} className="animate-spin" />
                   ) : null}
                   {buyingNowId === selectedProduct.id
-                    ? "Processing..."
-                    : "Buy Now"}
+                    ? t("shop.processing")
+                    : t("shop.buy_now")}
                   {!buyingNowId || buyingNowId !== selectedProduct.id ? (
                     <ArrowRight size={20} />
                   ) : null}

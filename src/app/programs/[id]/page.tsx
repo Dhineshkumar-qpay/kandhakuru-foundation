@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useLanguage } from "@/i18n/LanguageContext";
 import {
   Calendar,
   MapPin,
@@ -78,6 +79,7 @@ export default function ProgramDetailsPage() {
   const params = useParams();
   const id = params.id as string;
   const { isLoggedIn, openLogin } = useAuth();
+  const { t } = useLanguage();
   const [program, setProgram] = useState<EventDetailData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -118,7 +120,6 @@ export default function ProgramDetailsPage() {
   const amount = program
     ? Number(program.registrationfee) * Number(participantsCount)
     : 0;
-
 
   const onSubmit = async (data: FormValues) => {
     if (isOnline && (!data.bookingdate || !data.bookingtime)) {
@@ -166,7 +167,9 @@ export default function ProgramDetailsPage() {
       setIsPaymentSidebarOpen(true);
     } catch (error: any) {
       console.error(error);
-      setToastMessage(error.message || "An error occurred during booking. Please try again.");
+      setToastMessage(
+        error.message || "An error occurred during booking. Please try again.",
+      );
       setTimeout(() => setToastMessage(null), 3000);
     } finally {
       setIsSubmitting(false);
@@ -200,7 +203,9 @@ export default function ProgramDetailsPage() {
       });
 
       if (!updateRes.success) {
-        throw new Error(updateRes.message || "Failed to update payment screenshot");
+        throw new Error(
+          updateRes.message || "Failed to update payment screenshot",
+        );
       }
 
       setIsSuccess(true);
@@ -243,7 +248,7 @@ export default function ProgramDetailsPage() {
           transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
           className="w-12 h-12 border-4 border-brand-primary/20 border-t-brand-primary rounded-full mb-4"
         ></motion.div>
-        <p className="animate-pulse">Loading Event Details...</p>
+        <p className="animate-pulse">{t("program_details.loading")}</p>
       </div>
     );
   }
@@ -252,17 +257,16 @@ export default function ProgramDetailsPage() {
     return (
       <div className="min-h-screen pt-32 flex flex-col items-center justify-center text-center bg-gray-50">
         <h1 className="text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">
-          Program Not Found
+          {t("program_details.not_found")}
         </h1>
         <p className="text-lg text-gray-600 mb-8 max-w-md mx-auto">
-          The sacred gathering you are looking for does not exist or has been
-          removed.
+          {t("program_details.not_found_desc")}
         </p>
         <Link
           href="/programs"
           className="px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full hover:shadow-lg hover:shadow-amber-500/30 transition-all font-semibold transform hover:-translate-y-1"
         >
-          Return to Programs
+          {t("program_details.return_btn")}
         </Link>
       </div>
     );
@@ -277,44 +281,78 @@ export default function ProgramDetailsPage() {
       </div>
 
       {/* Hero Section */}
-      <div className="w-full h-[55vh] md:h-[65vh] relative overflow-hidden">
+      <div className="w-full min-h-[60vh] md:min-h-[75vh] relative overflow-hidden flex items-end pb-24 md:pb-32 bg-[#0a0a0a]">
+        {/* Animated Background Image */}
         <motion.div
-          initial={{ scale: 1.1 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-          className="absolute inset-0 bg-cover bg-center"
+          initial={{ scale: 1.1, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 1.8, ease: "easeOut" }}
+          className="absolute inset-0 bg-center bg-no-repeat bg-contain bg-orange-100"
           style={{
             backgroundImage: `url('${getImageVideoUrl(program.image)}')`,
           }}
-        ></motion.div>
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent mix-blend-multiply"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent"></div>
+        />
 
-        <div className="absolute inset-0 flex flex-col justify-end pb-24">
-          <div className="container mx-auto px-4 max-w-6xl relative z-10">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="max-w-3xl"
-              >
-                <div className="flex flex-wrap items-center gap-3 mb-4">
-                  <span className="bg-amber-500/20 text-amber-300 border border-amber-400/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md">
-                    {program.category}
-                  </span>
-                </div>
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight drop-shadow-2xl">
-                  {program.title}
-                </h1>
-              </motion.div>
-            </div>
+        {/* Cinematic Gradients & Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#FAFAF9] via-[#FAFAF9]/20 to-transparent z-10 md:hidden"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent mix-blend-multiply"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255, 255, 255, 0.05)_0%,transparent_70%)] pointer-events-none"></div>
+
+        {/* Content Container */}
+        <div className="container mx-auto px-4 max-w-6xl relative z-10 w-full mb-12 md:mb-0">
+          <div className="flex flex-col gap-6">
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+              className="max-w-4xl"
+            >
+              {/* Top Meta Area */}
+              <div className="flex flex-wrap items-center gap-4 mb-6">
+                <Link
+                  href="/programs"
+                  className="text-white/70 hover:text-white transition-colors text-sm font-medium flex items-center gap-1 group"
+                >
+                  <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />{" "}
+                  {t("program_details.return_btn")}
+                </Link>
+                <div className="w-1.5 h-1.5 rounded-full bg-white/20"></div>
+              </div>
+
+              {/* Title */}
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black  font-semibold text-white tracking-tight leading-[1.1] drop-shadow-2xl mb-6">
+                {program.title}
+              </h1>
+
+              {/* Quick Info Bar */}
+              <div className="flex flex-wrap items-center gap-4 text-white/80 text-sm md:text-base font-medium">
+                {program.eventdate && (
+                  <div className="flex items-center gap-2 bg-black/20 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-white/5">
+                    <Calendar className="w-4 h-4 text-amber-400" />
+                    {new Date(program.eventdate).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </div>
+                )}
+                {(program.city || program.state) && (
+                  <div className="flex items-center gap-2 bg-black/20 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-white/5">
+                    <MapPin className="w-4 h-4 text-amber-400" />
+                    {program.city
+                      ? `${program.city}, ${program.state}`
+                      : program.state}
+                  </div>
+                )}
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>
 
       {/* Content Container */}
-      <div className="container mx-auto px-4 max-w-6xl -mt-10 relative z-20">
+      <div className="container mx-auto px-4 max-w-6xl mt-10 relative z-20">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Details (Left) */}
           <div className="lg:col-span-2 space-y-8">
@@ -329,7 +367,7 @@ export default function ProgramDetailsPage() {
               <div className="flex items-center gap-4 mb-8">
                 <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
                 <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
-                  About the Event
+                  {t("program_details.about_event")}
                 </h2>
               </div>
 
@@ -347,7 +385,7 @@ export default function ProgramDetailsPage() {
               <div className="flex items-center gap-4 mb-8">
                 <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
                 <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight">
-                  Key Information
+                  {t("program_details.key_info")}
                 </h3>
               </div>
 
@@ -355,7 +393,7 @@ export default function ProgramDetailsPage() {
                 <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
                   <Tag className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
                   <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
-                    Category
+                    {t("program_details.category")}
                   </h4>
                   <p className="text-lg font-semibold text-gray-900">
                     {program.category}
@@ -365,7 +403,7 @@ export default function ProgramDetailsPage() {
                 <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
                   <CreditCard className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
                   <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
-                    Registration
+                    {t("program_details.registration")}
                   </h4>
                   <p className="text-lg font-semibold text-gray-900">
                     ₹{program.registrationfee}
@@ -387,10 +425,10 @@ export default function ProgramDetailsPage() {
                   <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
                     <Info className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
                     <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
-                      Program Type
+                      {t("program_details.program_type")}
                     </h4>
                     <p className="text-lg font-semibold text-gray-900 capitalize">
-                      {program.programtype || "General"}
+                      {program.programtype || t("program_details.general")}
                     </p>
                   </div>
                 )}
@@ -408,7 +446,7 @@ export default function ProgramDetailsPage() {
                   <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
                   <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
                     <ClipboardList className="text-amber-500 w-8 h-8" />
-                    Event Schedule
+                    {t("program_details.schedule")}
                   </h3>
                 </div>
 
@@ -448,7 +486,7 @@ export default function ProgramDetailsPage() {
                   <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
                   <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
                     <Info className="text-amber-500 w-8 h-8" />
-                    Instructions
+                    {t("program_details.instructions")}
                   </h3>
                 </div>
                 <div className="bg-amber-50/50 border border-amber-100/50 p-6 rounded-2xl">
@@ -469,7 +507,7 @@ export default function ProgramDetailsPage() {
                 <div className="flex items-center gap-4 mb-6">
                   <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
                   <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
-                    Benefits
+                    {t("program_details.benefits")}
                   </h3>
                 </div>
                 <ul className="list-disc pl-6 space-y-2 text-gray-700 leading-relaxed font-medium">
@@ -490,7 +528,7 @@ export default function ProgramDetailsPage() {
                 <div className="flex items-center gap-4 mb-6">
                   <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
                   <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
-                    Things To Bring
+                    {t("program_details.things_to_bring")}
                   </h3>
                 </div>
                 <ul className="list-disc pl-6 space-y-2 text-gray-700 leading-relaxed font-medium">
@@ -511,7 +549,7 @@ export default function ProgramDetailsPage() {
                 <div className="flex items-center gap-4 mb-8">
                   <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
                   <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight">
-                    Event Location
+                    {t("program_details.location")}
                   </h3>
                 </div>
 
@@ -545,13 +583,13 @@ export default function ProgramDetailsPage() {
                 program.registrationactive ? (
                   <div className="flex justify-center mb-8">
                     <div className="bg-green-100 text-green-700 text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider text-center border border-green-200 shadow-sm">
-                      Registration is Active
+                      {t("program_details.reg_active")}
                     </div>
                   </div>
                 ) : (
                   <div className="flex justify-center mb-8">
                     <div className="bg-gray-100 text-gray-500 text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider text-center border border-gray-200 shadow-sm">
-                      Registration Closed
+                      {t("program_details.reg_closed")}
                     </div>
                   </div>
                 )}
@@ -566,8 +604,8 @@ export default function ProgramDetailsPage() {
                       <div>
                         <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
                           {program.leveltype === "level2"
-                            ? "From Date"
-                            : "Date"}
+                            ? t("program_details.from_date")
+                            : t("program_details.date")}
                         </h5>
                         <p className="font-semibold text-gray-900">
                           {new Date(program.eventdate ?? "").toLocaleDateString(
@@ -584,7 +622,7 @@ export default function ProgramDetailsPage() {
                       {program.leveltype === "level2" && (
                         <div>
                           <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
-                            To Date
+                            {t("program_details.to_date")}
                           </h5>
                           <p className="font-semibold text-gray-900">
                             {new Date(
@@ -609,7 +647,9 @@ export default function ProgramDetailsPage() {
                       </div>
                       <div>
                         <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
-                          {program.starttime ? "Time" : "Duration"}
+                          {program.starttime
+                            ? t("program_details.time")
+                            : t("program_details.duration")}
                         </h5>
                         {program.starttime && (
                           <p className="font-semibold text-gray-900">
@@ -634,7 +674,7 @@ export default function ProgramDetailsPage() {
                       </div>
                       <div>
                         <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
-                          Location
+                          {t("program_details.location")}
                         </h5>
                         <p className="font-medium text-gray-600 leading-relaxed text-sm">
                           {program.venuename && (
@@ -678,7 +718,7 @@ export default function ProgramDetailsPage() {
                       </div>
                       <div>
                         <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
-                          Eligibility
+                          {t("program_details.eligibility")}
                         </h5>
                         <p className="font-medium text-gray-600 leading-relaxed text-sm">
                           {program.eligibility}
@@ -694,7 +734,7 @@ export default function ProgramDetailsPage() {
                       </div>
                       <div>
                         <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
-                          Dress Code
+                          {t("program_details.dress_code")}
                         </h5>
                         <p className="font-medium text-gray-600 leading-relaxed text-sm">
                           {program.dresscode}
@@ -720,7 +760,7 @@ export default function ProgramDetailsPage() {
                       className="relative flex items-center justify-center w-full py-3 font-bold text-white rounded-[0px] bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 transition-all shadow-[0_8px_25px_-8px_rgba(245,158,11,0.6)] hover:shadow-[0_12px_30px_-8px_rgba(245,158,11,0.8)] overflow-hidden group/btn cursor-pointer"
                     >
                       <span className="relative z-10 text-lg">
-                        Register Now
+                        {t("program_details.register_now")}
                       </span>
                       <div className="absolute inset-0 h-full w-full bg-white/20 scale-x-0 group-hover/btn:scale-x-100 transition-transform origin-left ease-out duration-300"></div>
                     </button>
@@ -729,17 +769,17 @@ export default function ProgramDetailsPage() {
                       disabled
                       className="block w-full py-5 text-center bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed text-lg"
                     >
-                      Coming Soon...
+                      {t("program_details.coming_soon")}
                     </button>
                   )}
 
                   <p className="text-sm text-center text-gray-500 mt-6 font-light">
-                    Have questions?{" "}
+                    {t("program_details.have_questions")}
                     <Link
                       href="/contact"
                       className="text-amber-500 hover:text-orange-600 font-medium underline underline-offset-4 decoration-amber-500/30"
                     >
-                      Contact us
+                      {t("program_details.contact_us")}
                     </Link>
                     .
                   </p>
@@ -776,14 +816,14 @@ export default function ProgramDetailsPage() {
               <div className="mb-6 border-b border-gray-100 pb-4 flex justify-between items-start">
                 <div>
                   <h4 className="text-xl font-bold text-gray-900 tracking-tight">
-                    Program Registration Application
+                    {t("program_details.form_title")}
                   </h4>
                   <p className="text-sm text-gray-500 mt-1">{program.title}</p>
                 </div>
                 {!isSuccess && (
                   <div className="text-right mr-8">
                     <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">
-                      Amount
+                      {t("program_details.amount")}
                     </p>
                     <p className="text-2xl font-bold text-amber-500">
                       ₹{amount}
@@ -798,11 +838,10 @@ export default function ProgramDetailsPage() {
                     <Send className="w-6 h-6 text-green-600" />
                   </div>
                   <h5 className="text-2xl font-bold mb-3 tracking-tight">
-                    Registration Submitted
+                    {t("program_details.reg_submitted")}
                   </h5>
                   <p className="text-gray-600 font-light max-w-md">
-                    Your registration has been securely logged in our system. A
-                    foundation representative will contact you shortly.
+                    {t("program_details.reg_success_msg")}
                   </p>
                 </div>
               ) : (
@@ -810,13 +849,14 @@ export default function ProgramDetailsPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                        Full Name <span className="text-brand-primary">*</span>
+                        {t("program_details.full_name")}{" "}
+                        <span className="text-brand-primary">*</span>
                       </label>
                       <input
                         {...register("name")}
                         type="text"
                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.name ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
-                        placeholder="Enter your full name"
+                        placeholder={t("program_details.enter_name")}
                       />
                       {errors.name && (
                         <p className="mt-1 text-xs text-red-500">
@@ -826,13 +866,14 @@ export default function ProgramDetailsPage() {
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                        Age <span className="text-brand-primary">*</span>
+                        {t("program_details.age")}{" "}
+                        <span className="text-brand-primary">*</span>
                       </label>
                       <input
                         {...register("age")}
                         type="number"
                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.age ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
-                        placeholder="Enter your age"
+                        placeholder={t("program_details.enter_age")}
                       />
                       {errors.age && (
                         <p className="mt-1 text-xs text-red-500">
@@ -845,14 +886,14 @@ export default function ProgramDetailsPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                        Phone Number{" "}
+                        {t("program_details.phone")}{" "}
                         <span className="text-brand-primary">*</span>
                       </label>
                       <input
                         {...register("phone")}
                         type="tel"
                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.phone ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
-                        placeholder="Enter phone number"
+                        placeholder={t("program_details.enter_phone")}
                       />
                       {errors.phone && (
                         <p className="mt-1 text-xs text-red-500">
@@ -862,14 +903,14 @@ export default function ProgramDetailsPage() {
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                        WhatsApp Number{" "}
+                        {t("program_details.whatsapp")}{" "}
                         <span className="text-brand-primary">*</span>
                       </label>
                       <input
                         {...register("whatsapp")}
                         type="tel"
                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.whatsapp ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
-                        placeholder="Enter WhatsApp number"
+                        placeholder={t("program_details.enter_whatsapp")}
                       />
                       {errors.whatsapp && (
                         <p className="mt-1 text-xs text-red-500">
@@ -882,26 +923,32 @@ export default function ProgramDetailsPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                        Gender
+                        {t("program_details.gender")}
                       </label>
                       <select
                         {...register("gender")}
                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.gender ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
                       >
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
+                        <option value="Male">
+                          {t("program_details.male")}
+                        </option>
+                        <option value="Female">
+                          {t("program_details.female")}
+                        </option>
+                        <option value="Other">
+                          {t("program_details.other")}
+                        </option>
                       </select>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                        Occupation
+                        {t("program_details.occupation")}
                       </label>
                       <input
                         {...register("occupation")}
                         type="text"
                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.occupation ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
-                        placeholder="Enter your occupation"
+                        placeholder={t("program_details.enter_occupation")}
                       />
                     </div>
                   </div>
@@ -909,14 +956,14 @@ export default function ProgramDetailsPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                        Email Address{" "}
+                        {t("program_details.email")}{" "}
                         <span className="text-brand-primary">*</span>
                       </label>
                       <input
                         {...register("email")}
                         type="email"
                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.email ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
-                        placeholder="Enter email address"
+                        placeholder={t("program_details.enter_email")}
                       />
                       {errors.email && (
                         <p className="mt-1 text-xs text-red-500">
@@ -926,13 +973,14 @@ export default function ProgramDetailsPage() {
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                        District <span className="text-brand-primary">*</span>
+                        {t("program_details.district")}{" "}
+                        <span className="text-brand-primary">*</span>
                       </label>
                       <input
                         {...register("district")}
                         type="text"
                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.district ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
-                        placeholder="Enter your district"
+                        placeholder={t("program_details.enter_district")}
                       />
                       {errors.district && (
                         <p className="mt-1 text-xs text-red-500">
@@ -945,13 +993,14 @@ export default function ProgramDetailsPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                        State <span className="text-brand-primary">*</span>
+                        {t("program_details.state")}{" "}
+                        <span className="text-brand-primary">*</span>
                       </label>
                       <input
                         {...register("state")}
                         type="text"
                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.state ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
-                        placeholder="Enter your state"
+                        placeholder={t("program_details.enter_state")}
                       />
                       {errors.state && (
                         <p className="mt-1 text-xs text-red-500">
@@ -961,13 +1010,14 @@ export default function ProgramDetailsPage() {
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                        Country <span className="text-brand-primary">*</span>
+                        {t("program_details.country")}{" "}
+                        <span className="text-brand-primary">*</span>
                       </label>
                       <input
                         {...register("country")}
                         type="text"
                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.country ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
-                        placeholder="Enter your country"
+                        placeholder={t("program_details.enter_country")}
                       />
                       {errors.country && (
                         <p className="mt-1 text-xs text-red-500">
@@ -981,7 +1031,7 @@ export default function ProgramDetailsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                          Participants{" "}
+                          {t("program_details.participants")}{" "}
                           <span className="text-brand-primary">*</span>
                         </label>
                         <input
@@ -998,7 +1048,8 @@ export default function ProgramDetailsPage() {
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                          Adults <span className="text-brand-primary">*</span>
+                          {t("program_details.adults")}{" "}
+                          <span className="text-brand-primary">*</span>
                         </label>
                         <input
                           {...register("adultcount")}
@@ -1014,7 +1065,8 @@ export default function ProgramDetailsPage() {
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                          Children <span className="text-brand-primary">*</span>
+                          {t("program_details.children")}{" "}
+                          <span className="text-brand-primary">*</span>
                         </label>
                         <input
                           {...register("childrencount")}
@@ -1035,19 +1087,19 @@ export default function ProgramDetailsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                          Booking Date{" "}
+                          {t("program_details.booking_date")}{" "}
                           <span className="text-brand-primary">*</span>
                         </label>
                         <input
                           {...register("bookingdate")}
                           type="date"
-                          min={new Date().toISOString().split('T')[0]}
+                          min={new Date().toISOString().split("T")[0]}
                           className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm"
                         />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                          Booking Time{" "}
+                          {t("program_details.booking_time")}{" "}
                           <span className="text-brand-primary">*</span>
                         </label>
                         <input
@@ -1066,7 +1118,7 @@ export default function ProgramDetailsPage() {
                         {...register("ishealthissue")}
                         className="w-4 h-4 accent-brand-primary"
                       />
-                      Is anyone having health issues?
+                      {t("program_details.health_issue_q")}
                     </label>
                   </div>
 
@@ -1083,7 +1135,7 @@ export default function ProgramDetailsPage() {
                           <div>
                             <input
                               {...register(`healthissues.${index}.name`)}
-                              placeholder="Name"
+                              placeholder={t("program_details.name_ph")}
                               className="w-full px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm"
                             />
                             {errors.healthissues?.[index]?.name && (
@@ -1096,7 +1148,7 @@ export default function ProgramDetailsPage() {
                             <div className="flex-1">
                               <input
                                 {...register(`healthissues.${index}.issue`)}
-                                placeholder="Issue"
+                                placeholder={t("program_details.issue_ph")}
                                 className="w-full px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm"
                               />
                               {errors.healthissues?.[index]?.issue && (
@@ -1129,13 +1181,13 @@ export default function ProgramDetailsPage() {
 
                   <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
-                      Remarks
+                      {t("program_details.remarks")}
                     </label>
                     <textarea
                       {...register("remarks")}
                       rows={2}
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm resize-none"
-                      placeholder="Any additional remarks..."
+                      placeholder={t("program_details.remarks_ph")}
                     ></textarea>
                   </div>
 
@@ -1149,7 +1201,7 @@ export default function ProgramDetailsPage() {
                         <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
                       ) : (
                         <>
-                          Submit Application <Send size={16} />
+                          {t("program_details.submit_app")} <Send size={16} />
                         </>
                       )}
                     </button>
@@ -1198,7 +1250,7 @@ export default function ProgramDetailsPage() {
                   </p>
                   <div className="bg-gray-50 rounded-xl border-2 border-gray-100 inline-block">
                     <img
-                      src="/payment-qr.jpeg"
+                      src="/booking-qr.jpeg"
                       alt="Payment QR"
                       className="w-48 h-full object-contain rounded-xl shadow-sm"
                     />
@@ -1253,7 +1305,9 @@ export default function ProgramDetailsPage() {
                   disabled={isSubmitting}
                   className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold py-4 rounded-[0px] hover:from-amber-600 hover:to-orange-600 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
-                  {isSubmitting ? "Submitting..." : "Submit Booking"}
+                  {isSubmitting
+                    ? t("program_details.submitting")
+                    : t("program_details.submit_booking")}
                 </button>
               </div>
             </motion.div>

@@ -21,8 +21,10 @@ import {
   getYouTubeThumbnailUrl,
 } from "../../services/api";
 import { CategoryModel, VideoModel } from "../../models/image_video_model";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 export default function VideosPage() {
+  const { t } = useLanguage();
   const [categories, setCategories] = useState<CategoryModel[]>([]);
   const [activeCategory, setActiveCategory] = useState<number | null>(null);
   const [videos, setVideos] = useState<VideoModel[]>([]);
@@ -103,7 +105,7 @@ export default function VideosPage() {
                 <div className="flex items-center">
                   <ChevronRight className="w-4 h-4 mx-1" />
                   <span className="text-slate-900 font-semibold">
-                    Video Library
+                    {t("videos.video_library")}
                   </span>
                 </div>
               </li>
@@ -115,19 +117,17 @@ export default function VideosPage() {
               <div className="flex items-center gap-3 mb-4">
                 <span className="w-12 h-px bg-amber-600"></span>
                 <span className="text-sm font-bold tracking-widest text-amber-600 uppercase">
-                  Spiritual Wisdom
+                  {t("videos.spiritual_wisdom")}
                 </span>
               </div>
               <h1 className="text-2xl md:text-3xl lg:text-4xl font-light text-slate-900 tracking-tight">
-                Video{" "}
+                {t("videos.video")}
                 <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500">
-                  Library
+                  {t("videos.library")}
                 </span>
               </h1>
               <p className="mt-6 text-slate-600 text-sm leading-relaxed font-light">
-                Explore our comprehensive collection of talks, guided
-                meditations, and spiritual discourses designed to elevate your
-                consciousness and bring inner peace.
+                {t("videos.desc")}
               </p>
             </div>
 
@@ -139,7 +139,7 @@ export default function VideosPage() {
                 </div>
                 <input
                   type="text"
-                  placeholder="Search teachings..."
+                  placeholder={t("videos.search_ph")}
                   className="bg-transparent border-none focus:ring-0 text-slate-700 w-full md:w-64 placeholder:text-slate-400 text-sm"
                 />
                 <button className="bg-amber-500 hover:bg-amber-600 text-white rounded-full p-2.5 transition-colors shadow-md">
@@ -158,7 +158,7 @@ export default function VideosPage() {
                   : "bg-white text-slate-600 hover:bg-amber-50"
               }`}
             >
-              All
+              {t("videos.all")}
             </button>
             {categories.map((category) => (
               <button
@@ -238,7 +238,7 @@ export default function VideosPage() {
                       </div>
                     </div>
                     <span className="text-amber-600 font-semibold text-sm group-hover:translate-x-1 transition-transform flex items-center gap-1">
-                      Watch <ArrowRight size={14} />
+                      {t("videos.watch")} <ArrowRight size={14} />
                     </span>
                   </div>
                 </div>
@@ -253,7 +253,7 @@ export default function VideosPage() {
               onClick={loadMore}
               className="px-8 py-3 bg-amber-500 text-white font-semibold rounded-full hover:bg-amber-600 transition-colors shadow-lg"
             >
-              Load More
+              {t("videos.load_more")}
             </button>
           </div>
         )}

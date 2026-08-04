@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ShoppingBag, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/i18n/LanguageContext";
 import {
   getCart,
   updateCartQuantity,
@@ -16,6 +17,7 @@ interface CartSidebarProps {
 }
 
 export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
+  const { t } = useLanguage();
   const [cart, setCart] = useState<CartModel | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -93,7 +95,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
             <div className="flex items-center justify-between p-6 border-b border-gray-100">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-[var(--color-deepgreen)]" />
-                <h2 className="text-xl font-bold text-gray-900">Your Cart</h2>
+                <h2 className="text-xl font-bold text-gray-900">{t("cart.your_cart")}</h2>
               </div>
               <button
                 onClick={onClose}
@@ -107,7 +109,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
             <div className="flex-grow overflow-y-auto p-6 flex flex-col gap-6">
               {loading ? (
                 <div className="flex items-center justify-center h-full">
-                  <p className="text-gray-500">Loading your cart...</p>
+                  <p className="text-gray-500">{t("cart.loading_cart")}</p>
                 </div>
               ) : cartItems.length > 0 ? (
                 cartItems.map((item) => (
@@ -175,16 +177,16 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                 <div className="flex flex-col items-center justify-center h-full text-gray-500">
                   <ShoppingBag className="w-16 h-16 text-gray-200 mb-4" />
                   <p className="font-medium text-lg text-gray-900">
-                    Your cart is empty
+                    {t("cart.empty_cart")}
                   </p>
                   <p className="text-sm mt-1 mb-6 text-center">
-                    Looks like you haven't added any items to your cart yet.
+                    {t("cart.no_items")}
                   </p>
                   <button
                     onClick={onClose}
                     className="px-6 py-2 bg-[var(--color-deepgreen)] text-white font-bold rounded-[0px] hover:bg-[var(--color-deepgreen)]/90 transition-colors cursor-pointer"
                   >
-                    Continue Shopping
+                    {t("cart.continue_shopping")}
                   </button>
                 </div>
               )}
@@ -194,20 +196,20 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
             {cartItems.length > 0 && (
               <div className="border-t border-gray-100 p-6 bg-gray-50/50">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-gray-600 font-medium">Subtotal</span>
+                  <span className="text-gray-600 font-medium">{t("cart.subtotal")}</span>
                   <span className="text-xl font-black text-gray-900">
                     ₹{subtotal.toLocaleString()}
                   </span>
                 </div>
                 <p className="text-xs text-gray-500 mb-6 text-center">
-                  Shipping and taxes calculated at checkout.
+                  {t("cart.shipping_taxes_calc")}
                 </p>
                 <Link
                   href="/checkout"
                   onClick={onClose}
                   className="w-full bg-[var(--color-deepgreen)] text-white font-bold py-4 rounded-[0px] flex justify-center items-center gap-2 hover:bg-[var(--color-deepgreen)]/90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
                 >
-                  Proceed to Checkout
+                  {t("cart.proceed_checkout")}
                 </Link>
               </div>
             )}

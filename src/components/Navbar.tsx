@@ -3,18 +3,21 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, ShoppingCart, User } from "lucide-react";
+import { Menu, X, ShoppingCart, User, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CartSidebar from "./CartSidebar";
 import { getCartCount } from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import { useLanguage, Language } from "@/i18n/LanguageContext";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const { isLoggedIn, openLogin } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
   const pathname = usePathname();
   const router = useRouter();
   const isHomePage = pathname === "/";
@@ -60,13 +63,19 @@ export default function Navbar() {
   }, [isLoggedIn]);
 
   const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "About Us", href: "/about" },
-    { name: "Programs", href: "/programs" },
-    { name: "Events", href: "/events" },
-    { name: "Donate", href: "/donate" },
-    { name: "Shop", href: "/shop" },
-    { name: "Contact Us", href: "/contact" },
+    { name: t("navbar.home"), href: "/" },
+    { name: t("navbar.about"), href: "/about" },
+    { name: t("navbar.programs"), href: "/programs" },
+    { name: t("events.events_title"), href: "/events" },
+    { name: t("navbar.donate"), href: "/donate" },
+    { name: t("navbar.shop"), href: "/shop" },
+    { name: t("navbar.contact_us"), href: "/contact" },
+  ];
+
+  const languages: { code: Language; label: string }[] = [
+    { code: "en", label: "EN" },
+    { code: "ta", label: "தமிழ்" },
+    { code: "hi", label: "हिन्दी" },
   ];
 
   const navbarBg = isShopSection
@@ -121,11 +130,11 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`relative text-sm font-seminbold tracking-wider transition-colors ${isActive
-                    ? isShopSection
-                      ? "text-white"
-                      : "text-brand-primary"
-                    : `${textColor} ${isShopSection ? "hover:text-white/80" : "hover:text-brand-primary"}`
+                  className={`relative ${language === "en" || language === "hi" ? "text-sm" : "text-xs"} font-semibold tracking-wider transition-colors ${isActive
+                      ? isShopSection
+                        ? "text-white"
+                        : "text-brand-primary"
+                      : `${textColor} ${isShopSection ? "hover:text-white/80" : "hover:text-brand-primary"}`
                     }`}
                 >
                   {link.name}
@@ -141,10 +150,42 @@ export default function Navbar() {
           </nav>
 
           <div className="hidden lg:flex items-center gap-4">
+            {/* Language Switcher Desktop */}
+            <div className="relative">
+              <button
+                onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-colors cursor-pointer hover:bg-white/10 ${isShopSection ? "border-white/30 text-white hover:bg-white/10" : "border-gray-200 hover:border-brand-primary hover:bg-gray-50"} ${textColor}`}
+              >
+                <Globe size={16} />
+                <span className="text-xs font-bold uppercase">
+                  {languages.find((l) => l.code === language)?.label}
+                </span>
+              </button>
+
+              {isLangMenuOpen && (
+                <div className="absolute top-full right-0 mt-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-2 flex flex-col z-50">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => {
+                        setLanguage(lang.code);
+                        setIsLangMenuOpen(false);
+                      }}
+                      className={`text-left px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${language === lang.code ? "text-brand-primary bg-brand-primary/5" : "text-gray-700 hover:bg-gray-50"}`}
+                    >
+                      {lang.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {isShopSection && (
               <div className={`flex items-center gap-4 mr-2 ${textColor}`}>
                 <button
-                  onClick={() => isLoggedIn ? setIsCartOpen(true) : openLogin()}
+                  onClick={() =>
+                    isLoggedIn ? setIsCartOpen(true) : openLogin()
+                  }
                   className={`transition-colors relative cursor-pointer ${isShopSection ? "hover:text-white/80" : "hover:text-brand-primary"}`}
                 >
                   <ShoppingCart size={24} />
@@ -157,37 +198,66 @@ export default function Navbar() {
                   )}
                 </button>
                 <button
-                  onClick={() => isLoggedIn ? router.push("/my-account") : openLogin()}
+                  onClick={() =>
+                    isLoggedIn ? router.push("/my-account") : openLogin()
+                  }
                   className={`transition-colors cursor-pointer ${isShopSection ? "hover:text-white/80" : "hover:text-brand-primary"}`}
                 >
                   <User size={24} />
                 </button>
               </div>
             )}
-            
+
             {!isShopSection && (
               <button
-                onClick={() => isLoggedIn ? router.push("/profile") : openLogin()}
+                onClick={() =>
+                  isLoggedIn ? router.push("/profile") : openLogin()
+                }
                 className={`transition-colors cursor-pointer mr-2 hover:text-brand-primary ${textColor}`}
               >
                 <User size={24} />
               </button>
             )}
-
-            <Link
-              href="/contact"
-              className={`${isShopSection ? "bg-white text-[var(--color-deepgreen)] hover:bg-white/90" : "bg-brand-primary text-white hover:bg-brand-primary"} px-7 py-2.5 rounded-[0px] text-sm font-bold uppercase tracking-wider transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5`}
-            >
-              Join Us
-            </Link>
           </div>
 
           {/* Mobile Nav Actions */}
           <div className="flex items-center gap-3 lg:hidden ">
+            {/* Language Switcher Mobile */}
+            <div className="relative">
+              <button
+                onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                className={`flex items-center gap-1.5 px-2 py-1.5 rounded-md border transition-colors ${isShopSection ? "border-white/30 text-white bg-white/10" : "border-gray-200 bg-white/20"} ${textColor}`}
+              >
+                <Globe size={16} />
+                <span className="text-[10px] font-bold uppercase">
+                  {languages.find((l) => l.code === language)?.label}
+                </span>
+              </button>
+
+              {isLangMenuOpen && (
+                <div className="absolute top-full right-0 mt-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-2 flex flex-col z-50">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => {
+                        setLanguage(lang.code);
+                        setIsLangMenuOpen(false);
+                      }}
+                      className={`text-left px-4 py-2 text-sm font-medium transition-colors ${language === lang.code ? "text-brand-primary bg-brand-primary/5" : "text-gray-700 hover:bg-gray-50"}`}
+                    >
+                      {lang.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {isShopSection && (
               <div className={`flex items-center gap-3 mr-1 ${textColor}`}>
                 <button
-                  onClick={() => isLoggedIn ? setIsCartOpen(true) : openLogin()}
+                  onClick={() =>
+                    isLoggedIn ? setIsCartOpen(true) : openLogin()
+                  }
                   className={`transition-colors relative cursor-pointer ${isShopSection ? "hover:text-white/80" : "hover:text-brand-primary"}`}
                 >
                   <ShoppingCart size={20} />
@@ -200,7 +270,9 @@ export default function Navbar() {
                   )}
                 </button>
                 <button
-                  onClick={() => isLoggedIn ? router.push("/my-account") : openLogin()}
+                  onClick={() =>
+                    isLoggedIn ? router.push("/my-account") : openLogin()
+                  }
                   className={`transition-colors cursor-pointer ${isShopSection ? "hover:text-white/80" : "hover:text-brand-primary"}`}
                 >
                   <User size={20} />
@@ -210,7 +282,9 @@ export default function Navbar() {
 
             {!isShopSection && (
               <button
-                onClick={() => isLoggedIn ? router.push("/profile") : openLogin()}
+                onClick={() =>
+                  isLoggedIn ? router.push("/profile") : openLogin()
+                }
                 className={`transition-colors cursor-pointer mr-1 hover:text-brand-primary ${textColor}`}
               >
                 <User size={20} />
@@ -237,19 +311,12 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-foreground hover:text-brand-primary font-medium py-2 border-b border-gray-100"
+                className="text-sm text-gray-800 hover:text-brand-primary font-medium py-2 border-b border-gray-100"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {link.name}
               </Link>
             ))}
-            <Link
-              href="/contact"
-              className="bg-brand-primary text-white text-center px-6 py-3 rounded-full font-medium mt-2"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Join Us
-            </Link>
           </motion.div>
         )}
       </header>

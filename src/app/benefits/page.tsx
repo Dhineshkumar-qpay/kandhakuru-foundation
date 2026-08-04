@@ -12,123 +12,34 @@ import {
   Ban,
   ChevronRight,
 } from "lucide-react";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 export default function BenefitsPage() {
   const [activeTab, setActiveTab] = useState(0);
 
+  const { t } = useLanguage();
+
   const benefitsList = [
-    {
-      title: "Mental Clarity",
-      icon: Brain,
-      intro:
-        "Modern life often fills the mind with constant thoughts, stress, distractions, and emotional overload. Kriya Yogam helps calm the mind through controlled breathing and meditation.",
-      points: [
-        "Improved concentration and focus",
-        "Better decision-making abilities",
-        "Enhanced memory and mental alertness",
-        "Reduced stress and mental fatigue",
-        "Greater emotional stability",
-        "Increased mindfulness and awareness of the present moment",
-      ],
-      outro:
-        "A clear mind allows individuals to approach personal and professional challenges with confidence and balance.",
-    },
-    {
-      title: "Physical Health",
-      icon: HeartPulse,
-      intro:
-        "Kriya Yogam promotes harmony between the body and mind by encouraging proper breathing, relaxation, and balanced living.",
-      points: [
-        "Improve overall energy levels",
-        "Enhance breathing efficiency",
-        "Promote better posture and body awareness",
-        "Support healthy sleep patterns",
-        "Reduce physical tension caused by stress",
-        "Encourage healthier lifestyle habits",
-      ],
-      outro:
-        "While Kriya Yogam can support general wellness, it is not intended to replace professional medical treatment.",
-    },
-    {
-      title: "Disease-Resistant Immunity",
-      icon: Shield,
-      intro:
-        "Chronic stress can weaken the body's natural defense mechanisms. Meditation and mindful breathing may help the body manage stress more effectively.",
-      points: [
-        "Help reduce stress-related hormonal imbalance",
-        "Support the body's natural healing processes",
-        "Promote relaxation and recovery",
-        "Encourage a healthier immune response as part of an overall healthy lifestyle",
-      ],
-      outro:
-        "A strong immune system depends on many factors, including nutrition, exercise, sleep, and medical care. Kriya Yogam should be considered a supportive practice rather than a guaranteed method of preventing illness.",
-    },
-    {
-      title: "Progress in Profession",
-      icon: Briefcase,
-      intro:
-        "Kriya Yogam does not directly create career success, but it can help develop qualities that contribute to professional growth.",
-      points: [
-        "Focus and productivity",
-        "Leadership qualities",
-        "Emotional intelligence",
-        "Communication skills",
-        "Problem-solving ability",
-        "Patience during difficult situations",
-        "Confidence and self-discipline",
-      ],
-      outro:
-        "These personal qualities can positively influence career development and workplace performance.",
-    },
-    {
-      title: "Increase in Income",
-      icon: TrendingUp,
-      intro:
-        "Kriya Yogam does not directly increase financial income. However, by improving clarity, discipline, and decision-making, it may help individuals perform more effectively in their careers or businesses.",
-      points: [
-        "Better work performance",
-        "Increased motivation",
-        "Improved time management",
-        "Enhanced creativity",
-        "Smarter financial and career decisions",
-        "Greater consistency in achieving personal goals",
-      ],
-      outro:
-        "Financial growth ultimately depends on many external factors, including skills, opportunities, and effort.",
-    },
-    {
-      title: "Awakening of the Soul",
-      icon: Sparkles,
-      intro:
-        "One of the primary goals of Kriya Yogam is spiritual awakening and self-realization.",
-      points: [
-        "Develop deeper self-awareness",
-        "Experience inner peace",
-        "Discover greater purpose in life",
-        "Strengthen compassion and kindness",
-        "Feel a deeper connection with themselves and the universe",
-        "Explore higher states of consciousness",
-      ],
-      outro:
-        "Many spiritual traditions describe this journey as moving beyond the limitations of the ego toward a more profound understanding of one's true nature.",
-    },
-    {
-      title: "Removal of Unwanted Thoughts & Negative Energy",
-      icon: Ban,
-      intro:
-        'In spiritual traditions, "negative energy" often refers to negative emotional and mental patterns such as fear, anger, anxiety, stress, resentment, and excessive worry.',
-      points: [
-        "Reduce mental restlessness",
-        "Manage anxiety and stress",
-        "Improve emotional balance",
-        "Let go of negative thinking patterns",
-        "Develop a more positive outlook on life",
-        "Cultivate inner calm and resilience",
-      ],
-      outro:
-        "This process supports emotional well-being and helps create a more peaceful and balanced mind.",
-    },
-  ];
+    { icon: Brain, pointsCount: 6 },
+    { icon: HeartPulse, pointsCount: 6 },
+    { icon: Shield, pointsCount: 4 },
+    { icon: Briefcase, pointsCount: 7 },
+    { icon: TrendingUp, pointsCount: 6 },
+    { icon: Sparkles, pointsCount: 6 },
+    { icon: Ban, pointsCount: 6 }
+  ].map((item, index) => {
+    const points = [];
+    for (let i = 0; i < item.pointsCount; i++) {
+      points.push(t(`benefits.list.${index}.points.${i}`));
+    }
+    return {
+      title: t(`benefits.list.${index}.title`),
+      icon: item.icon,
+      intro: t(`benefits.list.${index}.intro`),
+      points,
+      outro: t(`benefits.list.${index}.outro`),
+    };
+  });
 
   return (
     <div className="bg-white">
@@ -150,7 +61,7 @@ export default function BenefitsPage() {
           >
             <span className="w-12 h-[2px] bg-gradient-to-r from-transparent to-amber-500"></span>
             <span className="inline-block py-1 px-3 rounded-full bg-amber-500/10 text-amber-700 text-xs font-normal tracking-[0.2em] uppercase border border-amber-200/50 shadow-sm">
-              Benefits
+              {t("benefits.label")}
             </span>
             <span className="w-12 h-[2px] bg-gradient-to-l from-transparent to-amber-500"></span>
           </motion.div>
@@ -161,10 +72,9 @@ export default function BenefitsPage() {
             transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
             className="text-4xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight text-center font-normal"
           >
-            Kriya{" "}
+            {t("benefits.title_prefix")}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600 font-normal">
-              {" "}
-              Yogam
+              {t("benefits.title_suffix")}
             </span>
           </motion.h1>
         </div>
@@ -208,10 +118,10 @@ export default function BenefitsPage() {
                 </div>
                 <div>
                   <p className="text-sm font-bold text-gray-900 uppercase tracking-widest">
-                    Inner Peace
+                    {t("benefits.floating_title")}
                   </p>
                   <p className="text-xs text-gray-500 font-medium">
-                    Holistic well-being
+                    {t("benefits.floating_subtitle")}
                   </p>
                 </div>
               </motion.div>
@@ -223,35 +133,24 @@ export default function BenefitsPage() {
               viewport={{ once: true, margin: "-50px" }}
               className="w-full lg:w-7/12"
             >
-              <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-8 leading-tight">
-                An Integrated Approach to{" "}
+              <h2 className="text-3xl md:text-5xl font-semibold text-gray-900 mb-8 leading-tight">
+                {t("benefits.heading_prefix")}
                 <span className="text-brand-primary text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-orange-400">
-                  Wellness
+                  {t("benefits.heading_highlight")}
                 </span>
               </h2>
 
               <div className="space-y-6 text-lg md:text-xl text-gray-600 font-light leading-relaxed text-justify">
-                <p>
-                  When practiced regularly under proper guidance, Kriya Yogam
-                  may contribute significantly to physical, mental, emotional,
-                  and spiritual well-being.
-                </p>
-                <p>
-                  Our methods allow you to systematically dismantle stress,
-                  optimize cognitive functions, and anchor yourself in profound
-                  peace—equipping you with the resilience needed to excel in
-                  today's fast-paced environment.
-                </p>
+                <p>{t("benefits.intro_1")}</p>
+                <p>{t("benefits.intro_2")}</p>
 
                 <div className="mt-12 p-8 bg-gray-50/80 backdrop-blur-sm border border-gray-100 rounded-2xl shadow-sm">
                   <p className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-3 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-brand-primary"></span>
-                    Disclaimer
+                    {t("benefits.disclaimer_title")}
                   </p>
                   <p className="text-gray-500 text-base leading-relaxed">
-                    Individual experiences vary. This should be viewed as a
-                    complementary wellness practice rather than a replacement
-                    for medical care.
+                    {t("benefits.disclaimer_text")}
                   </p>
                 </div>
               </div>
@@ -265,10 +164,10 @@ export default function BenefitsPage() {
         <div className="container mx-auto px-4 max-w-7xl relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-sm font-bold tracking-widest text-brand-primary uppercase mb-3">
-              Holistic Benefits
+              {t("benefits.tabs_subtitle")}
             </h2>
-            <h3 className="text-3xl md:text-5xl font-bold text-gray-900 tracking-tight">
-              7 Pillars of Transformation
+            <h3 className="text-3xl md:text-5xl font-semibold text-gray-900 tracking-tight">
+              {t("benefits.tabs_title")}
             </h3>
             <div className="w-16 h-1 bg-brand-primary/20 mx-auto mt-6 rounded-full"></div>
           </div>
@@ -349,7 +248,7 @@ export default function BenefitsPage() {
                     <div className="bg-gray-50/80 rounded-2xl p-8 mb-10 border border-gray-100 flex-grow">
                       <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-6 flex items-center gap-2">
                         <span className="w-1.5 h-1.5 rounded-full bg-brand-primary"></span>
-                        Key Outcomes
+                        {t("benefits.key_outcomes")}
                       </h4>
                       <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
                         {benefitsList[activeTab].points.map((point, i) => (

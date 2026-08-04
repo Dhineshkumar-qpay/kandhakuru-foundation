@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, X, Leaf, Star, Sparkles, BookOpen } from "lucide-react";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 interface Siddhar {
   id: string;
@@ -14,249 +15,72 @@ interface Siddhar {
   contributions: string[];
 }
 
-const babaji: Siddhar = {
-  id: "babaji",
-  name: "Mahavatar Babaji",
-  title: "The Supreme Guru & Deathless Master",
-  shortDesc:
-    "The ageless master of Kriya Yoga who has maintained a physical form for centuries to guide humanity's spiritual evolution.",
-  fullDesc:
-    "Mahavatar Babaji is an immortal yogi who revived the ancient science of Kriya Yoga in the modern age. He is considered a Mahasiddha, one who has transcended the limitations of the physical body. Remaining ever-youthful, he works silently behind the scenes, guiding sincere seekers, saints, and assisting in the spiritual upliftment of the entire world.",
-  image:
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3xip5F1mdZiliGwP6TaHmkKlEMfQQdv_03H6RqYAzqA&s=10",
-  contributions: [
-    "Revival of the ancient Kriya Yoga",
-    "Guidance to Lahiri Mahasaya and other masters",
-    "Silent spiritual upliftment of humanity",
-    "Mastery over physical laws and immortality",
-  ],
-};
 
-const siddhargalList: Siddhar[] = [
-  {
-    id: "1",
-    name: "Agastyar (Agastya)",
-    title: "Father of Siddha medicine and grammar",
-    shortDesc:
-      "The foremost of the 18 Siddhars, known for his vast contributions to Tamil grammar and Siddha medicine.",
-    fullDesc:
-      "Agathiyar is revered as the first Siddhar and the guru of many other Siddhars. He is credited with the creation of the Tamil language, early grammar (Agathiyam), and profound works in alchemy, medicine, and mysticism.",
-    image:
-      "https://babajiskriyayogastore.in/images/medium/siddha-agastyar_MED.jpg",
-    contributions: ["Siddha Medicine", "Tamil Grammar", "Alchemy", "Astrology"],
-  },
-  {
-    id: "2",
-    name: "Thirumular",
-    title: "Author of Thirumandiram",
-    shortDesc:
-      "Author of the 'Thirumandhiram', a masterpiece of Shaiva Siddhanta and Tantra.",
-    fullDesc:
-      "Thirumular was a great mystic and yogi. His work, Thirumandhiram, consists of 3000 verses that detail the path of yoga, tantra, and devotion, forming a core text of Shaiva philosophy.",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeRt7a8B1cf8A7GxJ4pZC3AICJmuFhxZtj_Lmn-iS2PQ&s=10",
-    contributions: ["Thirumandhiram", "Ashtanga Yoga", "Shaiva Siddhanta"],
-  },
-  {
-    id: "3",
-    name: "Bogar",
-    title: "Master alchemist of Palani",
-    shortDesc:
-      "Known for creating the navapashanam idol of Lord Murugan at Palani.",
-    fullDesc:
-      "Bogar was a master of alchemy and medicine. He is most famous for creating the idol of Lord Murugan at Palani out of Navapashanam (nine poisonous herbs combined to form a master medicine).",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEqEV2yDNFbuXwXIdL-1SCbvTXJx_XyQK5IMeQkmnPuA&s",
-    contributions: ["Navapashanam Idol", "Alchemy", "Pharmacognosy"],
-  },
-  {
-    id: "4",
-    name: "Nandeeswarar (Nandi)",
-    title: "First disciple of Lord Shiva",
-    shortDesc:
-      "The foremost disciple of Lord Shiva and the gatekeeper of Kailash.",
-    fullDesc:
-      "Nandi Devar (Nandeeswarar) is considered a direct disciple of Lord Shiva. He passed on the divine knowledge to many Siddhars including Thirumular.",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHMuLzacP_eClrfiqILkBU2z5jiQX3UxaPYlAn3gqUZq7-N2Kt4Qi060jE&s=10",
-    contributions: ["Transmission of Shaiva Agamas", "Yogic Physiology"],
-  },
-  {
-    id: "5",
-    name: "Konganar (Konganavar)",
-    title: "Expert in alchemy",
-    shortDesc:
-      "A disciple of Bogar, renowned for his expertise in alchemy and philosophy.",
-    fullDesc:
-      "Konganar contributed extensively to alchemy, philosophy, and medicine. He is known for his works on extracting gold and creating powerful medicinal formulations.",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3N4AQ5Fu6mpWhR-1IamyB6V1RvYVQTj8YFufrJYjAyg&s=10",
-    contributions: ["Alchemy", "Philosophy", "Medicine"],
-  },
-  {
-    id: "6",
-    name: "Macchamuni (Machamuni)",
-    title: "Disciple of Agastya",
-    shortDesc:
-      "A great yogi associated with the Nath tradition and profound mystical powers.",
-    fullDesc:
-      "Machamuni (Matsyendranath in the North) was born from a fish. He is a primary figure in Hatha Yoga and the Nath sampradaya.",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdcUQAwcIqWjsX2nWQS65HC_Odq5TtWUQnqlQwXjhwbw&s=10",
-    contributions: ["Hatha Yoga", "Tantra", "Nath Sampradaya"],
-  },
-  {
-    id: "7",
-    name: "Gorakkar (Gorakhnath)",
-    title: "Master of Kundalini Yoga",
-    shortDesc: "Disciple of Machamuni, a supreme master of Hatha Yoga.",
-    fullDesc:
-      "Gorakkar (Gorakhnath) systematized Hatha Yoga. His teachings focus on physical mastery as a stepping stone to spiritual liberation.",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRtVEIuNpAyKUIkhfvOQhvnpaSDW0cCbE8nUk6finlUA&s=10",
-    contributions: [
-      "Goraksha Samhita",
-      "Hatha Yoga Pradipika basis",
-      "Alchemy",
-    ],
-  },
-  {
-    id: "8",
-    name: "Sattaimuni",
-    title: "Known for spiritual philosophy",
-    shortDesc:
-      "Known for his straightforwardness and critique of superficial rituals.",
-    fullDesc:
-      "Sattaimuni wore a simple sackcloth (sattai) and openly criticized hypocrisy. He wrote on medicine, alchemy, and inner spiritual realization.",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3GibNk4FXwspCb1r05MhIAWcqVmeah10_3fUC0zhiUA&s=10",
-    contributions: ["Sattaimuni Vatham", "Medicine", "Critique of caste"],
-  },
-  {
-    id: "9",
-    name: "Sundaranandar",
-    title: "Expert in medicine and pooja rituals",
-    shortDesc: "A disciple of Sattaimuni, expert in astrology and medicine.",
-    fullDesc:
-      "Sundaranandar was known for his physical beauty and profound spiritual depth. He contributed significantly to Siddha medicine and astrological predictions.",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUjNczMJ8B8f3gKEBLED9Aohvw6nQ5JbjtLHLQoyT7t263S9dJo395sDS7&s=10",
-    contributions: ["Astrology", "Siddha Medicine", "Yogic texts"],
-  },
-  {
-    id: "10",
-    name: "Ramadevar",
-    title: "Also known as Yacob",
-    shortDesc:
-      "A Siddhar who mastered both Hindu and Islamic mystical traditions.",
-    fullDesc:
-      "Ramadevar travelled widely and studied various mystical traditions. He is also known as Yacob in Islamic mysticism, bridging different spiritual paths.",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRTJwGR7oFy5nGv-F_rafr-n3qB9ziZNlam5B7Rs_asg&s=10",
-    contributions: ["Mystical poetry", "Universal spirituality", "Alchemy"],
-  },
-  {
-    id: "11",
-    name: "Idaikadar (Idaikaadar)",
-    title: "Renowned for astronomy connection",
-    shortDesc:
-      "An incarnation of Lord Vishnu's grace, known for his prophetic wisdom.",
-    fullDesc:
-      "Born as a shepherd, Idaikaadar possessed immense cosmic knowledge. He predicted cosmic events and composed songs on the nature of reality.",
-    image:
-      "https://www.tknsiddha.com/medicine/wp-content/uploads/2016/03/idaikkadar-siddhar-songs-temple.png",
-    contributions: ["Prophecies", "Poetry", "Cosmology"],
-  },
-  {
-    id: "12",
-    name: "Kambalyamuni (Kamalamuni)",
-    title: "Meditative ascetic",
-    shortDesc: "Known for his contributions to medicine and philosophy.",
-    fullDesc:
-      "Kamalamuni was a profound sage whose teachings integrated deep philosophical insights with practical medical remedies for the masses.",
-    image:
-      "https://sannidhi.net/wp-content/uploads/2023/04/kamalamuni_siddhar0.png",
-    contributions: ["Medicine", "Philosophy"],
-  },
-  {
-    id: "13",
-    name: "Valmiki (Vanmikar)",
-    title: "Author of the Ramayana",
-    shortDesc: "Revered in both Sanskrit and Siddha traditions.",
-    fullDesc:
-      "Known as Vanmikar in Tamil, he is equated with the author of the Ramayana. In Siddha tradition, he is a master of medicine, astrology, and yoga.",
-    image:
-      "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhCNOEOH9zPKw0LtZIMXaA085-vXc9wV3Fe8Y-B_bxf2HjPdYZJTZZ-voKh-gNobKmz3J5bwirErIa92lRU_SzE7bpG_cvo2-MbMEgP6LHRBBKHTIvQPWLBbVpFb9P7_nzXA-pEJ2_tBZiq/s1600/images.jpg",
-    contributions: ["Epic Poetry", "Astrology", "Siddha Texts"],
-  },
-  {
-    id: "14",
-    name: "Patanjali",
-    title: "Father of Yoga Sutras",
-    shortDesc:
-      "Compiler of the Yoga Sutras and a master of grammar and medicine.",
-    fullDesc:
-      "Considered an incarnation of Adisesha, Patanjali codified the ancient teachings of Yoga into the Yoga Sutras, outlining the eightfold path (Ashtanga).",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3OwVSroeFogXpIWYJ5A5cc0BxP7E9QRqSTW7n7UX_SHb_nqclmpTC5zKN&s=10",
-    contributions: ["Yoga Sutras", "Mahabhashya", "Ayurveda"],
-  },
-  {
-    id: "15",
-    name: "Dhanvantari",
-    title: "Divine physician of Ayurveda",
-    shortDesc: "The father of Ayurveda and medical science.",
-    fullDesc:
-      "While primarily known as an avatar of Vishnu and the source of Ayurveda, in the Tamil Siddha tradition, he is revered as a supreme healer and alchemist.",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQr3LP8DeMK52hZ7fZIsDdwOho5cUwsTfwipNYtIYfmNtsd29BFmelPcWME&s=10",
-    contributions: ["Ayurveda", "Surgery", "Herbology"],
-  },
-  {
-    id: "16",
-    name: "Pambatti Siddhar",
-    title: "Known for snake-dance poems",
-    shortDesc: "Used the snake as a metaphor for the Kundalini energy.",
-    fullDesc:
-      "His poems address the 'Snake' (Pambu), symbolizing the awakening of Kundalini energy. He emphasized the realization of the inner self over worldly attachments.",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROQApKe7hK8hcmptTsCEkbCgPC_M53Rf0CGF2GsM6nROeji9RBMJV0zUw&s=10",
-    contributions: ["Kundalini Yoga", "Mystical Poetry", "Medicine"],
-  },
-  {
-    id: "17",
-    name: "Kuthambai Siddhar (Kudambai)",
-    title: "Named after ear-ring ornaments",
-    shortDesc:
-      "Known for addressing his soul as 'Kudambai' (a woman wearing earrings).",
-    fullDesc:
-      "His songs are deeply philosophical and advise detachment from worldly illusions. He used simple, direct language to convey ultimate truths.",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnkA4nOtWATmEpDQNVMFVmOPo74K6LIEHwpnrt1EGeTqhF2m73xvtG57k&s=10",
-    contributions: ["Philosophical poetry", "Advaita Vedanta"],
-  },
-  {
-    id: "18",
-    name: "Azhukanni Siddhar",
-    title: "Known for detachment and tearful devotion",
-    shortDesc:
-      "A revered Siddhar whose devotional songs emphasize detachment from worldly desires and complete surrender to the Divine.",
-    fullDesc:
-      "Azhukanni Siddhar is celebrated for his deeply emotional and spiritually profound verses that express unwavering devotion to God. His teachings encourage seekers to overcome ego, material attachments, and worldly illusions through self-realization and inner purity. His poems, often filled with compassion and longing for divine union, continue to inspire devotees on the path of spiritual awakening.",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy7-efPP_NkWxakO3B33Ckrk1nzxic9_JIVwoTaqWNCe4U3vse",
-    contributions: [
-      "Devotional Poetry",
-      "Spiritual Detachment",
-      "Self-Realization",
-      "Bhakti Philosophy",
-    ],
-  },
-];
+
+
 
 export default function SiddhargalPage() {
   const [selectedSiddhar, setSelectedSiddhar] = useState<Siddhar | null>(null);
+  const { t } = useLanguage();
 
+  const babaji: Siddhar = {
+    id: "babaji",
+    name: t("siddhargal.babaji.name"),
+    title: t("siddhargal.babaji.title"),
+    shortDesc: t("siddhargal.babaji.shortDesc"),
+    fullDesc: t("siddhargal.babaji.fullDesc"),
+    image:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3xip5F1mdZiliGwP6TaHmkKlEMfQQdv_03H6RqYAzqA&s=10",
+    contributions: [
+      t("siddhargal.babaji.c1"),
+      t("siddhargal.babaji.c2"),
+      t("siddhargal.babaji.c3"),
+      t("siddhargal.babaji.c4")
+    ],
+  };
+  const imageMap: Record<string, string> = {
+    "1": "https://babajiskriyayogastore.in/images/medium/siddha-agastyar_MED.jpg",
+    "2": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeRt7a8B1cf8A7GxJ4pZC3AICJmuFhxZtj_Lmn-iS2PQ&s=10",
+    "3": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEqEV2yDNFbuXwXIdL-1SCbvTXJx_XyQK5IMeQkmnPuA&s",
+    "4": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHMuLzacP_eClrfiqILkBU2z5jiQX3UxaPYlAn3gqUZq7-N2Kt4Qi060jE&s=10",
+    "5": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3N4AQ5Fu6mpWhR-1IamyB6V1RvYVQTj8YFufrJYjAyg&s=10",
+    "6": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdcUQAwcIqWjsX2nWQS65HC_Odq5TtWUQnqlQwXjhwbw&s=10",
+    "7": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRtVEIuNpAyKUIkhfvOQhvnpaSDW0cCbE8nUk6finlUA&s=10",
+    "8": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3GibNk4FXwspCb1r05MhIAWcqVmeah10_3fUC0zhiUA&s=10",
+    "9": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUjNczMJ8B8f3gKEBLED9Aohvw6nQ5JbjtLHLQoyT7t263S9dJo395sDS7&s=10",
+    "10": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRTJwGR7oFy5nGv-F_rafr-n3qB9ziZNlam5B7Rs_asg&s=10",
+    "11": "https://www.tknsiddha.com/medicine/wp-content/uploads/2016/03/idaikkadar-siddhar-songs-temple.png",
+    "12": "https://sannidhi.net/wp-content/uploads/2023/04/kamalamuni_siddhar0.png",
+    "13": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhCNOEOH9zPKw0LtZIMXaA085-vXc9wV3Fe8Y-B_bxf2HjPdYZJTZZ-voKh-gNobKmz3J5bwirErIa92lRU_SzE7bpG_cvo2-MbMEgP6LHRBBKHTIvQPWLBbVpFb9P7_nzXA-pEJ2_tBZiq/s1600/images.jpg",
+    "14": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3OwVSroeFogXpIWYJ5A5cc0BxP7E9QRqSTW7n7UX_SHb_nqclmpTC5zKN&s=10",
+    "15": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQr3LP8DeMK52hZ7fZIsDdwOho5cUwsTfwipNYtIYfmNtsd29BFmelPcWME&s=10",
+    "16": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROQApKe7hK8hcmptTsCEkbCgPC_M53Rf0CGF2GsM6nROeji9RBMJV0zUw&s=10",
+    "17": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnkA4nOtWATmEpDQNVMFVmOPo74K6LIEHwpnrt1EGeTqhF2m73xvtG57k&s=10",
+    "18": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy7-efPP_NkWxakO3B33Ckrk1nzxic9_JIVwoTaqWNCe4U3vse"
+  };
+
+  const siddhargalList: Siddhar[] = Array.from({ length: 18 }, (_, i) => {
+    const id = (i + 1).toString();
+    const getCount = (id: string) => {
+      if (id === "1" || id === "18") return 4;
+      if (id === "4" || id === "12" || id === "17") return 2;
+      return 3;
+    };
+    const count = getCount(id);
+    const contributions = [];
+    for (let j = 0; j < count; j++) {
+      contributions.push(t(`siddhargal.list.id${id}.contributions.${j}`));
+    }
+    return {
+      id,
+      name: t(`siddhargal.list.id${id}.name`),
+      title: t(`siddhargal.list.id${id}.title`),
+      shortDesc: t(`siddhargal.list.id${id}.shortDesc`),
+      fullDesc: t(`siddhargal.list.id${id}.fullDesc`),
+      image: imageMap[id],
+      contributions,
+    };
+  });
   return (
     <main className="min-h-screen bg-slate-50 pt-24 pb-20 relative overflow-hidden font-sans">
       {/* Decorative Background Elements */}
@@ -274,15 +98,13 @@ export default function SiddhargalPage() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-4xl md:text-5xl font-black font-semibold text-slate-900 mb-6 tracking-tight">
-              The{" "}
+              {t("siddhargal.page_title_prefix")}{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600">
-                Siddhar Parampara
+                {t("siddhargal.page_title")}
               </span>
             </h1>
             <p className="text-slate-600 font-medium text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
-              Discover the wisdom of the immortal masters and the revered 18
-              Siddhargal who unlocked the ultimate secrets of the universe,
-              medicine, and spiritual liberation.
+              {t("siddhargal.page_subtitle")}
             </p>
           </motion.div>
         </div>
@@ -321,7 +143,7 @@ export default function SiddhargalPage() {
               {babaji.shortDesc}
             </p>
             <div className="flex items-center text-amber-600 font-bold gap-3 group-hover:gap-5 transition-all uppercase tracking-widest text-sm bg-amber-50 w-fit px-6 py-3 rounded-[0px] group-hover:bg-amber-100">
-              Read Full Lore <ArrowRight size={18} />
+              {t("siddhargal.read_lore")} <ArrowRight size={18} />
             </div>
           </div>
         </motion.div>
@@ -330,19 +152,15 @@ export default function SiddhargalPage() {
         <div>
           <div className="flex items-center justify-center mb-16 relative">
             <div className="absolute w-full h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent"></div>
-            <h2 className="text-3xl md:text-4xl font-black text-slate-900 bg-slate-50 px-8 relative z-10 tracking-tight">
-              The 18 Siddhargal
+            <h2 className="text-3xl md:text-4xl font-black font-semibold text-slate-900 bg-slate-50 px-8 relative z-10 tracking-tight">
+              {t("siddhargal.section_title")}
             </h2>
           </div>
 
           <div className="max-w-6xl mx-auto space-y-8">
             {siddhargalList.map((siddhar, index) => (
-              <motion.div
+              <div
                 key={siddhar.id}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.08 }}
                 onClick={() => setSelectedSiddhar(siddhar)}
                 className="group cursor-pointer"
               >
@@ -389,7 +207,7 @@ export default function SiddhargalPage() {
 
                       <div className="mt-10 flex items-center justify-between">
                         <button className="inline-flex items-center gap-3 rounded-[0px] border border-slate-200 bg-white px-6 py-3 font-semibold text-slate-700 transition-all duration-300 hover:border-bg-brand-primary hover:bg-brand-primary hover:text-white cursor-pointer">
-                          Read Biography
+                          {t("siddhargal.read_bio")}
                           <ArrowRight
                             size={18}
                             className="transition-transform duration-300 group-hover:translate-x-1"
@@ -405,7 +223,7 @@ export default function SiddhargalPage() {
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -448,8 +266,8 @@ export default function SiddhargalPage() {
                 <div className="absolute bottom-8 left-8 right-8">
                   <span className="inline-block px-3 py-1.5 bg-amber-500/90 backdrop-blur-sm text-white text-xs font-black uppercase tracking-widest rounded-lg mb-4 shadow-lg border border-amber-400">
                     {selectedSiddhar.id === "babaji"
-                      ? "Supreme Guru"
-                      : `Siddhar #${selectedSiddhar.id}`}
+                      ? t("siddhargal.supreme_guru")
+                      : `${t("siddhargal.siddhar_num")}${selectedSiddhar.id}`}
                   </span>
                   <h2 className="text-4xl font-black text-white mb-2 tracking-tight">
                     {selectedSiddhar.name}
@@ -462,15 +280,14 @@ export default function SiddhargalPage() {
 
               <div className="p-8 flex-grow bg-slate-50">
                 <div className="prose prose-slate max-w-none">
-                  <p className="text-slate-700 text-lg leading-relaxed font-medium mb-10 text-justify">
+                  <div className="text-slate-700 text-lg leading-relaxed font-medium mb-10 text-justify whitespace-pre-wrap">
                     {selectedSiddhar.fullDesc}
-                  </p>
+                  </div>
 
                   <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-1 h-full bg-amber-400"></div>
                     <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 flex items-center gap-2">
-                      <BookOpen size={18} className="text-amber-500" /> Key
-                      Contributions
+                      <BookOpen size={18} className="text-amber-500" /> {t("siddhargal.key_contributions")}
                     </h4>
                     <ul className="space-y-4">
                       {selectedSiddhar.contributions.map(
@@ -495,7 +312,7 @@ export default function SiddhargalPage() {
                   onClick={() => setSelectedSiddhar(null)}
                   className="w-full py-4 rounded-[0px] bg-brand-primary text-white font-bold tracking-wide hover:bg-brand-primary transition-colors shadow-lg shadow-slate-900/20 cursor-pointer"
                 >
-                  Close Profile
+                  {t("siddhargal.close_profile")}
                 </button>
               </div>
             </motion.div>
