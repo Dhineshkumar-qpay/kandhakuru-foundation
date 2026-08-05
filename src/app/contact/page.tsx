@@ -2,7 +2,14 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Phone, Mail, MapPin, Send, MessageCircle } from "lucide-react";
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Send,
+  MessageCircle,
+  ArrowRight,
+} from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -90,7 +97,10 @@ export default function Contact() {
             transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
             className="text-4xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight text-center font-normal"
           >
-            {t("contact.contact")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600 font-normal">{t("contact.us")}</span>
+            {t("contact.contact")}{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600 font-normal">
+              {t("contact.us")}
+            </span>
           </motion.h1>
         </div>
       </section>
@@ -159,6 +169,52 @@ export default function Contact() {
                         srikandhagurufoundation@gmail.com
                       </p>
                     </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* WhatsApp Group Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ delay: 0.1, duration: 0.5 }}
+                whileHover={{ y: -4, scale: 1.01 }}
+                onClick={() =>
+                  window.open(
+                    "https://chat.whatsapp.com/C0XyWeTYlIHIeCNIXFcAfn?s=sh&p=a&ilr=0",
+                    "_blank",
+                  )
+                }
+                className="group relative mt-6 overflow-hidden rounded-3xl border border-green-200/80 bg-gradient-to-r from-green-50 via-white to-green-100/60 p-6 md:p-8 shadow-[0_10px_35px_rgba(0,0,0,0.06)] cursor-pointer transition-all duration-300 hover:shadow-[0_12px_40px_rgba(34,197,94,0.18)]"
+              >
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.12),transparent_40%),radial-gradient(circle_at_bottom_left,rgba(34,197,94,0.08),transparent_35%)] pointer-events-none" />
+
+                <div className="relative flex items-center justify-between gap-5">
+                  <div className="flex items-center gap-4 md:gap-5">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-green-100 transition-all duration-300 group-hover:bg-green-600 group-hover:scale-105">
+                      <img
+                        src="https://cdn-icons-png.flaticon.com/128/3670/3670051.png"
+                        alt="WhatsApp"
+                        className="h-10 w-10 object-contain transition-all duration-300"
+                      />
+                    </div>
+
+                    <div>
+                      <div className="mb-2 inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                       {t("contact.whatsapp_community")}
+                      </div>
+                      <h4 className="text-xl md:text-xl font-extrabold tracking-tight text-green-950 group-hover:text-green-700 transition-colors">
+                        {t("contact.join_whatsapp")}
+                      </h4>
+                      <p className="mt-1 text-sm md:text-base text-green-800/70">
+                        {t("contact.whatsapp_desc")}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-600 text-white shadow-md transition-all duration-300 group-hover:scale-110 group-hover:bg-green-700">
+                    <ArrowRight size={20} strokeWidth={2.6} />
                   </div>
                 </div>
               </motion.div>
@@ -294,7 +350,8 @@ export default function Contact() {
 
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                        {t("contact.message")} <span className="text-brand-primary">*</span>
+                        {t("contact.message")}{" "}
+                        <span className="text-brand-primary">*</span>
                       </label>
                       <textarea
                         {...register("message")}

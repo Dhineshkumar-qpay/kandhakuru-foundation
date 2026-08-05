@@ -21,31 +21,31 @@ export default function Footer() {
   // Dynamic theme colors
   const theme = isShopSection
     ? {
-        grad1:
-          "from-[var(--color-deepgreen)]/50 to-[var(--color-deepgreen)]/40",
-        grad2:
-          "from-[var(--color-deepgreen)]/50 to-[var(--color-deepgreen)]/40",
-        textPrimary: "text-[var(--color-deepgreen)]",
-        textSecondary: "text-[var(--color-deepgreen)]",
-        textHover: "hover:text-[var(--color-deepgreen)]",
-        bgDot: "bg-[var(--color-deepgreen)]",
-        bgLight: "bg-[var(--color-deepgreen)]/10",
-        bgHover: "hover:bg-[var(--color-deepgreen)]/20",
-        borderLight: "border-[var(--color-deepgreen)]/20",
-        borderHover: "hover:border-[var(--color-deepgreen)]/40",
-      }
+      grad1:
+        "from-[var(--color-deepgreen)]/50 to-[var(--color-deepgreen)]/40",
+      grad2:
+        "from-[var(--color-deepgreen)]/50 to-[var(--color-deepgreen)]/40",
+      textPrimary: "text-[var(--color-deepgreen)]",
+      textSecondary: "text-[var(--color-deepgreen)]",
+      textHover: "hover:text-[var(--color-deepgreen)]",
+      bgDot: "bg-[var(--color-deepgreen)]",
+      bgLight: "bg-[var(--color-deepgreen)]/10",
+      bgHover: "hover:bg-[var(--color-deepgreen)]/20",
+      borderLight: "border-[var(--color-deepgreen)]/20",
+      borderHover: "hover:border-[var(--color-deepgreen)]/40",
+    }
     : {
-        grad1: "from-amber-300/50 to-orange-200/40",
-        grad2: "from-orange-300/50 to-amber-200/40",
-        textPrimary: "text-amber-600",
-        textSecondary: "text-amber-500",
-        textHover: "hover:text-amber-600",
-        bgDot: "bg-amber-400",
-        bgLight: "bg-amber-50",
-        bgHover: "hover:bg-amber-100",
-        borderLight: "border-amber-100",
-        borderHover: "hover:border-amber-200",
-      };
+      grad1: "from-amber-300/50 to-orange-200/40",
+      grad2: "from-orange-300/50 to-amber-200/40",
+      textPrimary: "text-amber-600",
+      textSecondary: "text-amber-500",
+      textHover: "hover:text-amber-600",
+      bgDot: "bg-amber-400",
+      bgLight: "bg-amber-50",
+      bgHover: "hover:bg-amber-100",
+      borderLight: "border-amber-100",
+      borderHover: "hover:border-amber-200",
+    };
 
   useEffect(() => {
     const fetchPrograms = async () => {
@@ -136,9 +136,8 @@ export default function Footer() {
                     <li key={link.href}>
                       <Link
                         href={link.href}
-                        className={`${
-                          isActive ? theme.textPrimary + " font-bold" : ""
-                        } ${theme.textHover} hover:translate-x-1 inline-block transition-all duration-300`}
+                        className={`${isActive ? theme.textPrimary + " font-bold" : ""
+                          } ${theme.textHover} hover:translate-x-1 inline-block transition-all duration-300`}
                       >
                         {link.name}
                       </Link>

@@ -236,7 +236,7 @@ function KriyaYogam() {
   return (
     <section
       id="kriya-yogam"
-      className="py-24 bg-brand-primary/5 relative overflow-hidden"
+      className="py-24 bg-white relative overflow-hidden"
     >
       {/* Decorative circles */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-brand-primary/10 rounded-full blur-3xl -z-10 translate-x-1/2 -translate-y-1/2"></div>
@@ -326,17 +326,17 @@ function SpiritualPhilosophy() {
      {
       name: t("home.rel_hinduism"),
       desc: t("home.rel_hinduism_desc"),
-      icon: <Flame className="w-7 h-7" strokeWidth={1.6} />,
+      icon: "https://cdn-icons-png.flaticon.com/128/9670/9670246.png",
     },
     {
       name: t("home.rel_christianity"),
       desc: t("home.rel_christianity_desc"),
-      icon: <Bird className="w-7 h-7" strokeWidth={1.6} />,
+      icon: "https://cdn-icons-png.flaticon.com/128/510/510075.png",
     },
     {
       name: t("home.rel_islam"),
       desc: t("home.rel_islam_desc"),
-      icon: <Moon className="w-7 h-7" strokeWidth={1.6} />,
+      icon: "https://cdn-icons-png.flaticon.com/128/4250/4250535.png",
     },
    
   ];
@@ -430,7 +430,7 @@ function SpiritualPhilosophy() {
               <div className="relative flex h-full flex-col items-center overflow-hidden rounded-3xl border border-white/20 bg-white/10 px-7 py-10 text-center backdrop-blur-xl shadow-[0_16px_40px_rgba(0,0,0,0.25)] transition-all duration-500 hover:-translate-y-2 hover:border-white/40 hover:bg-white/20 group">
                 <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none" />
                 <div className="relative mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 text-brand-primary shadow-sm border border-white/20 group-hover:scale-110 group-hover:bg-white/30 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-                  {religion.icon}
+                 <img src={religion.icon} alt={religion.name} className="h-10 w-10 object-contain" />
                 </div>
                 <h3 className="relative text-xl font-bold tracking-tight text-white transition-colors">
                   {religion.name}

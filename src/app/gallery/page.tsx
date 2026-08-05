@@ -92,7 +92,7 @@ export default function GalleryPage() {
                 {t("gallery.visual_journey")}
               </span>
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6 tracking-tight leading-tight">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-black font-semibold text-gray-900 mb-6 tracking-tight leading-tight">
               {t("gallery.captured")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-orange-500">{t("gallery.moments")}</span>
             </h1>
             <p className="text-lg text-gray-600 mx-auto leading-relaxed font-medium">

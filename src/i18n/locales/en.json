@@ -215,7 +215,10 @@
     "your_msg": "Your Message...",
     "terms": "By submitting this application, you agree to the foundation's terms and privacy directives.",
     "btn_send": "Send Message",
-    "btn_sending": "Sending..."
+    "btn_sending": "Sending...",
+    "whatsapp_community": "Kandhaguru Spiritual Community",
+    "join_whatsapp": "Join Our WhatsApp Group",
+    "whatsapp_desc": "Get updates, announcements, and community support in one place."
   },
   "donate": {
     "sacred_offerings": "Sacred Offerings",
@@ -306,7 +309,7 @@
     "page_title_prefix": "The ",
     "page_title": "Siddhar Parampara",
     "page_subtitle": "Discover the wisdom of the immortal masters and the revered 18 Siddhargal who unlocked the ultimate secrets of the universe, medicine, and spiritual liberation.",
-    "read_lore": "Read Full Lore",
+    "read_lore": "Read More",
     "section_title": "The 18 Siddhargal",
     "read_bio": "Read Biography",
     "supreme_guru": "Supreme Guru",
