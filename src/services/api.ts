@@ -147,6 +147,12 @@ api.interceptors.response.use(
       });
     }
 
+    // If any other API error occurs, clear local storage and reload the page
+    if (typeof window !== "undefined") {
+      localStorage.clear();
+      window.location.reload();
+    }
+
     return Promise.reject(error);
   },
 );
@@ -337,7 +343,7 @@ export const requestLogin = async (data: { email: string }) => {
     console.log(`-----------------------${data}`);
     const response = await api.post("/user/login", data);
     console.log(`-----------------------${response.data}`);
-    
+
     return response.data;
   } catch (error) {
     console.error("Error logging in:", error);
@@ -601,7 +607,7 @@ export const uploadBookingPaymentScreenshot = async (imageFile: File) => {
       },
     });
     console.log(response.data);
-    
+
     return response.data;
   } catch (error) {
     console.error("Error uploading booking payment screenshot:", error);

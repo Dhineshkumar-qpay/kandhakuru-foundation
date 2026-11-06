@@ -1,3 +1,1413 @@
+// "use client";
+
+// import { useState, useEffect } from "react";
+// import { motion, AnimatePresence } from "framer-motion";
+// import Link from "next/link";
+// import { useParams } from "next/navigation";
+// import { useAuth } from "@/context/AuthContext";
+// import { useLanguage } from "@/i18n/LanguageContext";
+// import {
+//   Calendar,
+//   MapPin,
+//   Clock,
+//   Users,
+//   ArrowLeft,
+//   Tag,
+//   CreditCard,
+//   X,
+//   Send,
+//   ClipboardList,
+//   Info,
+//   Upload,
+//   Loader2,
+// } from "lucide-react";
+// import {
+//   getEventDetails,
+//   getImageVideoUrl,
+//   addBooking,
+//   uploadBookingPaymentScreenshot,
+//   updateBookingPaymentScreenshot,
+// } from "../../../services/api";
+// import { EventDetailData } from "../../../models/event_model";
+// import { useForm, useFieldArray } from "react-hook-form";
+// import type { Resolver } from "react-hook-form";
+// import { z } from "zod";
+// import { zodResolver } from "@hookform/resolvers/zod";
+
+// const formSchema = z.object({
+//   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+//   age: z.string().min(1, { message: "Age is required" }),
+//   phone: z.string().min(10, { message: "Valid phone number is required" }),
+//   email: z.string().email({ message: "Invalid email address" }),
+//   whatsapp: z
+//     .string()
+//     .min(10, { message: "Valid WhatsApp number is required" }),
+//   gender: z.string().optional(),
+//   occupation: z.string().optional(),
+//   district: z.string().min(2, { message: "District is required" }),
+//   state: z.string().min(2, { message: "State is required" }),
+//   country: z.string().min(2, { message: "Country is required" }),
+//   participants: z.string().min(1, { message: "Required" }),
+//   adultcount: z.string().min(1, { message: "Required" }),
+//   childrencount: z.string().min(1, { message: "Required" }),
+//   remarks: z.string().optional(),
+//   ishealthissue: z.boolean().default(false),
+//   healthissues: z
+//     .array(
+//       z.object({
+//         name: z.string().optional(),
+//         issue: z.string().optional(),
+//       }),
+//     )
+//     .optional(),
+//   bookingdate: z.string().optional(),
+//   bookingtime: z.string().optional(),
+// });
+
+// type FormValues = z.infer<typeof formSchema>;
+
+// const getMapEmbedUrl = (link: string) => {
+//   if (!link) return "";
+//   if (link.includes("?q=")) {
+//     const query = link.split("?q=")[1];
+//     return `https://maps.google.com/maps?q=${query}&hl=en&z=14&output=embed`;
+//   }
+//   return link;
+// };
+
+// export default function ProgramDetailsPage() {
+//   const params = useParams();
+//   const id = params.id as string;
+//   const { isLoggedIn, openLogin } = useAuth();
+//   const { t } = useLanguage();
+//   const [program, setProgram] = useState<EventDetailData | null>(null);
+//   const [loading, setLoading] = useState(true);
+//   const [isDialogOpen, setIsDialogOpen] = useState(false);
+//   const [isSubmitting, setIsSubmitting] = useState(false);
+//   const [isSuccess, setIsSuccess] = useState(false);
+//   const [toastMessage, setToastMessage] = useState<string | null>(null);
+//   const [isPaymentSidebarOpen, setIsPaymentSidebarOpen] = useState(false);
+//   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
+//   const [bookingId, setBookingId] = useState<number | null>(null);
+
+//   const {
+//     register,
+//     control,
+//     handleSubmit,
+//     reset,
+//     watch,
+//     formState: { errors },
+//   } = useForm<FormValues>({
+//     resolver: zodResolver(formSchema) as Resolver<FormValues>,
+//     defaultValues: {
+//       participants: "1",
+//       adultcount: "1",
+//       childrencount: "0",
+//       ishealthissue: false,
+//       healthissues: [{ name: "", issue: "" }],
+//     },
+//   });
+
+//   const { fields, append, remove } = useFieldArray({
+//     control,
+//     name: "healthissues",
+//   });
+
+//   const isHealthIssue = watch("ishealthissue");
+//   const bookingdateValue = watch("bookingdate");
+//   const isOnline = program?.deliverymode?.toLowerCase() === "online";
+//   const participantsCount = isOnline ? "1" : watch("participants") || "1";
+//   const amount = program
+//     ? Number(program.registrationfee) * Number(participantsCount)
+//     : 0;
+
+//   const loadRazorpay = () => {
+//     return new Promise((resolve) => {
+//       const script = document.createElement("script");
+//       script.src = "https://checkout.razorpay.com/v1/checkout.js";
+//       script.onload = () => resolve(true);
+//       script.onerror = () => resolve(false);
+//       document.body.appendChild(script);
+//     });
+//   };
+
+//   const onSubmit = async (data: FormValues) => {
+//     if (isOnline && (!data.bookingdate || !data.bookingtime)) {
+//       setToastMessage(
+//         "Booking date and time are required for online programs.",
+//       );
+//       setTimeout(() => setToastMessage(null), 3000);
+//       return;
+//     }
+//     const payload = {
+//       eventid: Number(id),
+//       fullname: data.name,
+//       phone: data.phone,
+//       whatsapp: data.whatsapp,
+//       email: data.email,
+//       occupation: data.occupation || "",
+//       gender: data.gender || "Male",
+//       age: Number(data.age),
+//       city: data.district,
+//       state: data.state,
+//       country: data.country,
+//       ishealthissue: data.ishealthissue,
+//       healthissues: data.ishealthissue ? data.healthissues : null,
+//       deliverymode: program?.deliverymode || "offline",
+//       participants: isOnline ? 1 : Number(data.participants),
+//       adultcount: isOnline ? 1 : Number(data.adultcount),
+//       childrencount: isOnline ? 0 : Number(data.childrencount),
+//       totalamount: amount,
+//       remarks: data.remarks || "",
+//       bookingdate: isOnline ? data.bookingdate : null,
+//       bookingtime: isOnline ? data.bookingtime : null,
+//     };
+
+//     setIsSubmitting(true);
+//     try {
+//       const bookingRes = await addBooking(payload);
+//       if (!bookingRes.success) {
+//         throw new Error(bookingRes.message || "Booking failed");
+//       }
+//       const newBookingId = bookingRes.data?.bookingid;
+//       if (!newBookingId) {
+//         throw new Error("No booking ID received from server.");
+//       }
+//       setBookingId(newBookingId);
+
+//       const res = await loadRazorpay();
+//       if (!res) {
+//         setToastMessage("Razorpay SDK failed to load. Are you online?");
+//         setTimeout(() => setToastMessage(null), 3000);
+//         return;
+//       }
+
+//       const options = {
+//         key: "rzp_test_TOP1xWTgy7L6M2",
+//         amount: amount * 100, // Amount in paise
+//         currency: "INR",
+//         name: "Sri KandhaGuru Foundation",
+//         description: "Event Booking",
+//         handler: async function (response: any) {
+//           try {
+//             setIsSubmitting(true);
+//             const dummyFile = new File(["dummy"], "success.png", { type: "image/png" });
+//             const uploadRes = await uploadBookingPaymentScreenshot(dummyFile);
+
+//             if (!uploadRes.success || !uploadRes.data) {
+//               throw new Error(uploadRes.message || "Failed to upload screenshot");
+//             }
+
+//             const updateRes = await updateBookingPaymentScreenshot({
+//               id: newBookingId,
+//               screenshot: uploadRes.data,
+//             });
+
+//             if (!updateRes.success) {
+//               throw new Error(
+//                 updateRes.message || "Failed to update payment screenshot",
+//               );
+//             }
+
+//             setIsSuccess(true);
+//             setBookingId(null);
+//             reset();
+//             setTimeout(() => {
+//               setIsSuccess(false);
+//               setIsDialogOpen(false);
+//             }, 3000);
+//           } catch (error: any) {
+//             console.error(error);
+//             setToastMessage(error.message || "An error occurred. Please try again.");
+//             setTimeout(() => setToastMessage(null), 3000);
+//           } finally {
+//             setIsSubmitting(false);
+//           }
+//         },
+//         prefill: {
+//           name: data.name,
+//           email: data.email,
+//           contact: data.phone
+//         },
+//         theme: {
+//           color: "#f59e0b"
+//         }
+//       };
+
+//       const rzp = new (window as any).Razorpay(options);
+//       rzp.on("payment.failed", function (response: any) {
+//         setToastMessage("Payment Failed. Please try again.");
+//         setTimeout(() => setToastMessage(null), 3000);
+//       });
+//       rzp.open();
+
+//     } catch (error: any) {
+//       console.error(error);
+//       setToastMessage(
+//         error.message || "An error occurred during booking. Please try again.",
+//       );
+//       setTimeout(() => setToastMessage(null), 3000);
+//     } finally {
+//       setIsSubmitting(false);
+//     }
+//   };
+
+//   const handlePaymentSubmit = async () => {
+//     if (!paymentScreenshot) {
+//       setToastMessage("Please upload your payment screenshot");
+//       setTimeout(() => setToastMessage(null), 3000);
+//       return;
+//     }
+//     if (!bookingId) {
+//       setToastMessage("Booking ID missing. Please submit the form again.");
+//       setTimeout(() => setToastMessage(null), 3000);
+//       return;
+//     }
+//     setIsSubmitting(true);
+//     try {
+//       // 1. Upload screenshot
+//       const uploadRes = await uploadBookingPaymentScreenshot(paymentScreenshot);
+
+//       if (!uploadRes.success || !uploadRes.data) {
+//         throw new Error(uploadRes.message || "Failed to upload screenshot");
+//       }
+
+//       // 2. Update payment screenshot
+//       const updateRes = await updateBookingPaymentScreenshot({
+//         id: bookingId,
+//         screenshot: uploadRes.data,
+//       });
+
+//       if (!updateRes.success) {
+//         throw new Error(
+//           updateRes.message || "Failed to update payment screenshot",
+//         );
+//       }
+
+//       setIsSuccess(true);
+//       setIsPaymentSidebarOpen(false);
+//       setPaymentScreenshot(null);
+//       setBookingId(null);
+//       reset();
+//       setTimeout(() => {
+//         setIsSuccess(false);
+//         setIsDialogOpen(false);
+//       }, 3000);
+//     } catch (error: any) {
+//       console.error(error);
+//       setToastMessage(error.message || "An error occurred. Please try again.");
+//       setTimeout(() => setToastMessage(null), 3000);
+//     } finally {
+//       setIsSubmitting(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     const fetchDetail = async () => {
+//       try {
+//         const data = await getEventDetails(Number(id));
+//         setProgram(data);
+//       } catch (error) {
+//         console.error(error);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     if (id) fetchDetail();
+//   }, [id]);
+
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen pt-32 flex flex-col justify-center items-center text-brand-primary font-medium bg-brand-primary/5">
+//         <motion.div
+//           animate={{ rotate: 360 }}
+//           transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+//           className="w-12 h-12 border-4 border-brand-primary/20 border-t-brand-primary rounded-full mb-4"
+//         ></motion.div>
+//         <p className="animate-pulse">{t("program_details.loading")}</p>
+//       </div>
+//     );
+//   }
+
+//   if (!program) {
+//     return (
+//       <div className="min-h-screen pt-32 flex flex-col items-center justify-center text-center bg-gray-50">
+//         <h1 className="text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">
+//           {t("program_details.not_found")}
+//         </h1>
+//         <p className="text-lg text-gray-600 mb-8 max-w-md mx-auto">
+//           {t("program_details.not_found_desc")}
+//         </p>
+//         <Link
+//           href="/programs"
+//           className="px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full hover:shadow-lg hover:shadow-amber-500/30 transition-all font-semibold transform hover:-translate-y-1"
+//         >
+//           {t("program_details.return_btn")}
+//         </Link>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <main className="bg-[#FAFAF9] min-h-screen pt-20 pb-24 relative">
+//       {/* Background Decorative Elements */}
+//       <div className="absolute inset-0 overflow-hidden pointer-events-none">
+//         <div className="absolute top-0 right-0 w-[40vw] h-[40vw] bg-amber-200/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
+//         <div className="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-orange-200/20 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2"></div>
+//       </div>
+
+//       {/* Hero Section */}
+//       <div className="w-full min-h-[60vh] md:min-h-[75vh] relative overflow-hidden flex items-end pb-24 md:pb-32 bg-[#0a0a0a]">
+//         {/* Animated Background Image */}
+//         <motion.div
+//           initial={{ scale: 1.1, opacity: 0 }}
+//           animate={{ scale: 1, opacity: 1 }}
+//           transition={{ duration: 1.8, ease: "easeOut" }}
+//           className="absolute inset-0 bg-center bg-no-repeat bg-contain bg-orange-100"
+//           style={{
+//             backgroundImage: `url('${getImageVideoUrl(program.image)}')`,
+//           }}
+//         />
+
+//         {/* Cinematic Gradients & Overlays */}
+//         <div className="absolute inset-0 bg-gradient-to-t from-[#FAFAF9] via-[#FAFAF9]/20 to-transparent z-10 md:hidden"></div>
+//         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent mix-blend-multiply"></div>
+//         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent"></div>
+//         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255, 255, 255, 0.05)_0%,transparent_70%)] pointer-events-none"></div>
+
+//         {/* Content Container */}
+//         <div className="container mx-auto px-4 max-w-6xl relative z-10 w-full mb-12 md:mb-0">
+//           <div className="flex flex-col gap-6">
+//             <motion.div
+//               initial={{ opacity: 0, y: 40 }}
+//               animate={{ opacity: 1, y: 0 }}
+//               transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+//               className="max-w-4xl"
+//             >
+//               {/* Top Meta Area */}
+//               <div className="flex flex-wrap items-center gap-4 mb-6">
+//                 <Link
+//                   href="/programs"
+//                   className="text-white/70 hover:text-white transition-colors text-sm font-medium flex items-center gap-1 group"
+//                 >
+//                   <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />{" "}
+//                   {t("program_details.return_btn")}
+//                 </Link>
+//                 <div className="w-1.5 h-1.5 rounded-full bg-white/20"></div>
+//               </div>
+
+//               {/* Title */}
+//               <h1 className="text-3xl md:text-4xl lg:text-5xl font-black  font-semibold text-white tracking-tight leading-[1.1] drop-shadow-2xl mb-6">
+//                 {program.title}
+//               </h1>
+
+//               {/* Quick Info Bar */}
+//               <div className="flex flex-wrap items-center gap-4 text-white/80 text-sm md:text-base font-medium">
+//                 {program.eventdate && (
+//                   <div className="flex items-center gap-2 bg-black/20 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-white/5">
+//                     <Calendar className="w-4 h-4 text-amber-400" />
+//                     {new Date(program.eventdate).toLocaleDateString("en-US", {
+//                       month: "short",
+//                       day: "numeric",
+//                       year: "numeric",
+//                     })}
+//                   </div>
+//                 )}
+//                 {(program.city || program.state) && (
+//                   <div className="flex items-center gap-2 bg-black/20 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-white/5">
+//                     <MapPin className="w-4 h-4 text-amber-400" />
+//                     {program.city
+//                       ? `${program.city}, ${program.state}`
+//                       : program.state}
+//                   </div>
+//                 )}
+//               </div>
+//             </motion.div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Content Container */}
+//       <div className="container mx-auto px-4 max-w-6xl mt-10 relative z-20">
+//         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+//           {/* Main Details (Left) */}
+//           <div className="lg:col-span-2 space-y-8">
+//             <motion.div
+//               initial={{ opacity: 0, y: 30 }}
+//               animate={{ opacity: 1, y: 0 }}
+//               transition={{ delay: 0.4 }}
+//               className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white relative overflow-hidden"
+//             >
+//               <div className="absolute top-0 right-0 w-32 h-32 bg-amber-100/50 rounded-bl-full -z-10 blur-2xl"></div>
+
+//               <div className="flex items-center gap-4 mb-8">
+//                 <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
+//                 <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+//                   {t("program_details.about_event")}
+//                 </h2>
+//               </div>
+
+//               <div className="prose prose-lg text-gray-600 font-light leading-relaxed max-w-none">
+//                 <p>{program.description}</p>
+//               </div>
+//             </motion.div>
+
+//             <motion.div
+//               initial={{ opacity: 0, y: 30 }}
+//               animate={{ opacity: 1, y: 0 }}
+//               transition={{ delay: 0.5 }}
+//               className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white"
+//             >
+//               <div className="flex items-center gap-4 mb-8">
+//                 <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
+//                 <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight">
+//                   {t("program_details.key_info")}
+//                 </h3>
+//               </div>
+
+//               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+//                 <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+//                   <Tag className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
+//                   <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
+//                     {t("program_details.category")}
+//                   </h4>
+//                   <p className="text-lg font-semibold text-gray-900">
+//                     {program.category}
+//                   </p>
+//                 </div>
+
+//                 <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+//                   <CreditCard className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
+//                   <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
+//                     {t("program_details.registration")}
+//                   </h4>
+//                   <p className="text-lg font-semibold text-gray-900">
+//                     ₹{program.registrationfee}
+//                   </p>
+//                 </div>
+
+//                 {program.participants !== null &&
+//                 program.participants !== undefined ? (
+//                   <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+//                     <Users className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
+//                     <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
+//                       Capacity
+//                     </h4>
+//                     <p className="text-lg font-semibold text-gray-900">
+//                       {program.participants} Max
+//                     </p>
+//                   </div>
+//                 ) : (
+//                   <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+//                     <Info className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
+//                     <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
+//                       {t("program_details.program_type")}
+//                     </h4>
+//                     <p className="text-lg font-semibold text-gray-900 capitalize">
+//                       {program.programtype || t("program_details.general")}
+//                     </p>
+//                   </div>
+//                 )}
+//               </div>
+//             </motion.div>
+
+//             {program.agenda && program.agenda.length > 0 && (
+//               <motion.div
+//                 initial={{ opacity: 0, y: 30 }}
+//                 animate={{ opacity: 1, y: 0 }}
+//                 transition={{ delay: 0.52 }}
+//                 className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white mt-8"
+//               >
+//                 <div className="flex items-center gap-4 mb-8">
+//                   <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
+//                   <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
+//                     <ClipboardList className="text-amber-500 w-8 h-8" />
+//                     {t("program_details.schedule")}
+//                   </h3>
+//                 </div>
+
+//                 <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-amber-200 before:to-transparent">
+//                   {program.agenda.map((item: any, idx: number) => (
+//                     <div
+//                       key={idx}
+//                       className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active"
+//                     >
+//                       <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-amber-100 text-amber-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300">
+//                         <Clock size={16} />
+//                       </div>
+//                       <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white p-4 rounded-xl border border-gray-100 shadow-sm group-hover:shadow-md group-hover:-translate-y-1 transition-all duration-300">
+//                         <div className="flex flex-col gap-1">
+//                           <span className="text-sm font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded w-fit">
+//                             {item.starttime} - {item.endtime}
+//                           </span>
+//                           <h4 className="font-semibold text-gray-900">
+//                             {item.title}
+//                           </h4>
+//                         </div>
+//                       </div>
+//                     </div>
+//                   ))}
+//                 </div>
+//               </motion.div>
+//             )}
+
+//             {program.instructions && (
+//               <motion.div
+//                 initial={{ opacity: 0, y: 30 }}
+//                 animate={{ opacity: 1, y: 0 }}
+//                 transition={{ delay: 0.54 }}
+//                 className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white"
+//               >
+//                 <div className="flex items-center gap-4 mb-6">
+//                   <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
+//                   <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
+//                     <Info className="text-amber-500 w-8 h-8" />
+//                     {t("program_details.instructions")}
+//                   </h3>
+//                 </div>
+//                 <div className="bg-amber-50/50 border border-amber-100/50 p-6 rounded-2xl">
+//                   <p className="text-gray-700 leading-relaxed font-medium">
+//                     {program.instructions}
+//                   </p>
+//                 </div>
+//               </motion.div>
+//             )}
+
+//             {program.benefits && program.benefits.length > 0 && (
+//               <motion.div
+//                 initial={{ opacity: 0, y: 30 }}
+//                 animate={{ opacity: 1, y: 0 }}
+//                 transition={{ delay: 0.53 }}
+//                 className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white mt-8"
+//               >
+//                 <div className="flex items-center gap-4 mb-6">
+//                   <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
+//                   <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
+//                     {t("program_details.benefits")}
+//                   </h3>
+//                 </div>
+//                 <ul className="list-disc pl-6 space-y-2 text-gray-700 leading-relaxed font-medium">
+//                   {program.benefits.map((b, i) => (
+//                     <li key={i}>{b}</li>
+//                   ))}
+//                 </ul>
+//               </motion.div>
+//             )}
+
+//             {program.thingstobring && program.thingstobring.length > 0 && (
+//               <motion.div
+//                 initial={{ opacity: 0, y: 30 }}
+//                 animate={{ opacity: 1, y: 0 }}
+//                 transition={{ delay: 0.54 }}
+//                 className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white mt-8"
+//               >
+//                 <div className="flex items-center gap-4 mb-6">
+//                   <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
+//                   <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
+//                     {t("program_details.things_to_bring")}
+//                   </h3>
+//                 </div>
+//                 <ul className="list-disc pl-6 space-y-2 text-gray-700 leading-relaxed font-medium">
+//                   {program.thingstobring.map((item, i) => (
+//                     <li key={i}>{item}</li>
+//                   ))}
+//                 </ul>
+//               </motion.div>
+//             )}
+
+//             {program.maplink && (
+//               <motion.div
+//                 initial={{ opacity: 0, y: 30 }}
+//                 animate={{ opacity: 1, y: 0 }}
+//                 transition={{ delay: 0.55 }}
+//                 className="bg-white/80 backdrop-blur-xl p-8 md:p-12 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white mt-8"
+//               >
+//                 <div className="flex items-center gap-4 mb-8">
+//                   <div className="h-10 w-1.5 bg-gradient-to-b from-amber-400 to-orange-500 rounded-full"></div>
+//                   <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight">
+//                     {t("program_details.location")}
+//                   </h3>
+//                 </div>
+
+//                 <div className="w-full h-50 rounded-2xl overflow-hidden border border-gray-200 shadow-inner">
+//                   <iframe
+//                     src={getMapEmbedUrl(program.maplink)}
+//                     width="100%"
+//                     height="100%"
+//                     style={{ border: 0 }}
+//                     allowFullScreen
+//                     loading="lazy"
+//                     referrerPolicy="no-referrer-when-downgrade"
+//                   ></iframe>
+//                 </div>
+//               </motion.div>
+//             )}
+//           </div>
+
+//           {/* Sidebar / Info Card (Right) */}
+//           <div className="lg:col-span-1">
+//             <motion.div
+//               initial={{ opacity: 0, y: 30 }}
+//               animate={{ opacity: 1, y: 0 }}
+//               transition={{ delay: 0.6 }}
+//               className="bg-white p-1 rounded-xl shadow-2xl sticky top-28 bg-gradient-to-b from-amber-400 to-orange-500"
+//             >
+//               <div className="bg-white rounded-[10px] p-8 h-full">
+//                 {program.status === "active" &&
+//                 program.eventtype?.toLowerCase() !== "completed" &&
+//                 program.eventtype?.toLowerCase() !== "cancelled" &&
+//                 program.registrationactive ? (
+//                   <div className="flex justify-center mb-8">
+//                     <div className="bg-green-100 text-green-700 text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider text-center border border-green-200 shadow-sm">
+//                       {t("program_details.reg_active")}
+//                     </div>
+//                   </div>
+//                 ) : (
+//                   <div className="flex justify-center mb-8">
+//                     <div className="bg-gray-100 text-gray-500 text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider text-center border border-gray-200 shadow-sm">
+//                       {t("program_details.reg_closed")}
+//                     </div>
+//                   </div>
+//                 )}
+
+//                 <div className="space-y-8 mb-10">
+//                   {program.deliverymode === "offline" && (
+//                     <div className="flex gap-5 group">
+//                       <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
+//                         <Calendar size={22} />
+//                       </div>
+
+//                       <div>
+//                         <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+//                           {program.leveltype === "level2"
+//                             ? t("program_details.from_date")
+//                             : t("program_details.date")}
+//                         </h5>
+//                         <p className="font-semibold text-gray-900">
+//                           {new Date(program.eventdate ?? "").toLocaleDateString(
+//                             "en-US",
+//                             {
+//                               month: "short",
+//                               day: "numeric",
+//                               year: "numeric",
+//                             },
+//                           )}
+//                         </p>
+//                       </div>
+
+//                       {program.leveltype === "level2" && (
+//                         <div>
+//                           <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+//                             {t("program_details.to_date")}
+//                           </h5>
+//                           <p className="font-semibold text-gray-900">
+//                             {new Date(
+//                               program.eventtodate ?? "",
+//                             ).toLocaleDateString("en-US", {
+//                               month: "short",
+//                               day: "numeric",
+//                               year: "numeric",
+//                             })}
+//                           </p>
+//                         </div>
+//                       )}
+//                     </div>
+//                   )}
+
+//                   {(program.starttime ||
+//                     program.endtime ||
+//                     program.duration) && (
+//                     <div className="flex gap-5 group">
+//                       <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
+//                         <Clock size={22} />
+//                       </div>
+//                       <div>
+//                         <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+//                           {program.starttime
+//                             ? t("program_details.time")
+//                             : t("program_details.duration")}
+//                         </h5>
+//                         {program.starttime && (
+//                           <p className="font-semibold text-gray-900">
+//                             {program.starttime} - {program.endtime}
+//                           </p>
+//                         )}
+//                         {program.duration && (
+//                           <p className="font-medium text-gray-600 text-sm mt-0.5">
+//                             {program.starttime
+//                               ? `Duration: ${program.duration}`
+//                               : program.duration}
+//                           </p>
+//                         )}
+//                       </div>
+//                     </div>
+//                   )}
+
+//                   {program.venuename || program.address ? (
+//                     <div className="flex gap-5 group">
+//                       <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
+//                         <MapPin size={22} />
+//                       </div>
+//                       <div>
+//                         <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+//                           {t("program_details.location")}
+//                         </h5>
+//                         <p className="font-medium text-gray-600 leading-relaxed text-sm">
+//                           {program.venuename && (
+//                             <span className="font-bold text-gray-900 block mb-0.5 text-base">
+//                               {program.venuename}
+//                             </span>
+//                           )}
+//                           {program.address && (
+//                             <>
+//                               {program.address},<br />
+//                             </>
+//                           )}
+//                           {program.city && (
+//                             <>
+//                               {program.city}, {program.state}
+//                             </>
+//                           )}
+//                         </p>
+//                       </div>
+//                     </div>
+//                   ) : (
+//                     <div className="flex gap-5 group">
+//                       <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
+//                         <MapPin size={22} />
+//                       </div>
+//                       <div>
+//                         <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+//                           Location
+//                         </h5>
+//                         <p className="font-bold text-gray-900 block mb-0.5 text-base">
+//                           Online Event
+//                         </p>
+//                       </div>
+//                     </div>
+//                   )}
+
+//                   {program.eligibility && (
+//                     <div className="flex gap-5 group">
+//                       <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
+//                         <Users size={22} />
+//                       </div>
+//                       <div>
+//                         <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+//                           {t("program_details.eligibility")}
+//                         </h5>
+//                         <p className="font-medium text-gray-600 leading-relaxed text-sm">
+//                           {program.eligibility}
+//                         </p>
+//                       </div>
+//                     </div>
+//                   )}
+
+//                   {program.dresscode && (
+//                     <div className="flex gap-5 group">
+//                       <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 shadow-sm border border-amber-100">
+//                         <Tag size={22} />
+//                       </div>
+//                       <div>
+//                         <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
+//                           {t("program_details.dress_code")}
+//                         </h5>
+//                         <p className="font-medium text-gray-600 leading-relaxed text-sm">
+//                           {program.dresscode}
+//                         </p>
+//                       </div>
+//                     </div>
+//                   )}
+//                 </div>
+
+//                 <div className="pt-8 border-t border-gray-100">
+//                   {program.status === "active" &&
+//                   program.eventtype?.toLowerCase() !== "completed" &&
+//                   program.eventtype?.toLowerCase() !== "cancelled" &&
+//                   program.registrationactive ? (
+//                     <button
+//                       onClick={() => {
+//                         if (!isLoggedIn) {
+//                           openLogin();
+//                         } else {
+//                           setIsDialogOpen(true);
+//                         }
+//                       }}
+//                       className="relative flex items-center justify-center w-full py-3 font-bold text-white rounded-[0px] bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 transition-all shadow-[0_8px_25px_-8px_rgba(245,158,11,0.6)] hover:shadow-[0_12px_30px_-8px_rgba(245,158,11,0.8)] overflow-hidden group/btn cursor-pointer"
+//                     >
+//                       <span className="relative z-10 text-lg">
+//                         {t("program_details.register_now")}
+//                       </span>
+//                       <div className="absolute inset-0 h-full w-full bg-white/20 scale-x-0 group-hover/btn:scale-x-100 transition-transform origin-left ease-out duration-300"></div>
+//                     </button>
+//                   ) : (
+//                     <button
+//                       disabled
+//                       className="block w-full py-5 text-center bg-gray-100 text-gray-400 font-bold rounded-2xl cursor-not-allowed text-lg"
+//                     >
+//                       {t("program_details.coming_soon")}
+//                     </button>
+//                   )}
+
+//                   <p className="text-sm text-center text-gray-500 mt-6 font-light">
+//                     {t("program_details.have_questions")}
+//                     <Link
+//                       href="/contact"
+//                       className="text-amber-500 hover:text-orange-600 font-medium underline underline-offset-4 decoration-amber-500/30"
+//                     >
+//                       {t("program_details.contact_us")}
+//                     </Link>
+//                     .
+//                   </p>
+//                 </div>
+//               </div>
+//             </motion.div>
+//           </div>
+//         </div>
+//       </div>
+//       {/* Registration Dialog */}
+//       <AnimatePresence>
+//         {isDialogOpen && (
+//           <motion.div
+//             initial={{ opacity: 0 }}
+//             animate={{ opacity: 1 }}
+//             exit={{ opacity: 0 }}
+//             className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/80 backdrop-blur-md p-4 overflow-y-auto"
+//             onClick={() => setIsDialogOpen(false)}
+//           >
+//             <motion.div
+//               initial={{ scale: 0.95, opacity: 0 }}
+//               animate={{ scale: 1, opacity: 1 }}
+//               exit={{ scale: 0.95, opacity: 0 }}
+//               onClick={(e) => e.stopPropagation()}
+//               className="bg-white rounded-[0px] p-6 md:p-8 max-w-3xl w-full relative shadow-2xl overflow-y-auto max-h-[90vh]"
+//             >
+//               <button
+//                 onClick={() => setIsDialogOpen(false)}
+//                 className="absolute top-4 right-4 text-gray-400 hover:text-gray-900 transition-colors bg-gray-100 p-2 rounded-full hover:bg-gray-200"
+//               >
+//                 <X size={20} />
+//               </button>
+
+//               <div className="mb-6 border-b border-gray-100 pb-4 flex justify-between items-start">
+//                 <div>
+//                   <h4 className="text-xl font-bold text-gray-900 tracking-tight">
+//                     {t("program_details.form_title")}
+//                   </h4>
+//                   <p className="text-sm text-gray-500 mt-1">{program.title}</p>
+//                 </div>
+//                 {!isSuccess && (
+//                   <div className="text-right mr-8">
+//                     <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">
+//                       {t("program_details.amount")}
+//                     </p>
+//                     <p className="text-2xl font-bold text-amber-500">
+//                       ₹{amount}
+//                     </p>
+//                   </div>
+//                 )}
+//               </div>
+
+//               {isSuccess ? (
+//                 <div className="bg-green-50 border border-green-200 text-green-800 p-10 flex flex-col items-center justify-center text-center rounded-2xl py-12">
+//                   <div className="w-16 h-16 bg-white border border-green-200 rounded-full flex items-center justify-center mb-6 shadow-sm">
+//                     <Send className="w-6 h-6 text-green-600" />
+//                   </div>
+//                   <h5 className="text-2xl font-bold mb-3 tracking-tight">
+//                     {t("program_details.reg_submitted")}
+//                   </h5>
+//                   <p className="text-gray-600 font-light max-w-md">
+//                     {t("program_details.reg_success_msg")}
+//                   </p>
+//                 </div>
+//               ) : (
+//                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+//                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                     <div>
+//                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+//                         {t("program_details.full_name")}{" "}
+//                         <span className="text-brand-primary">*</span>
+//                       </label>
+//                       <input
+//                         {...register("name")}
+//                         type="text"
+//                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.name ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
+//                         placeholder={t("program_details.enter_name")}
+//                       />
+//                       {errors.name && (
+//                         <p className="mt-1 text-xs text-red-500">
+//                           {errors.name.message}
+//                         </p>
+//                       )}
+//                     </div>
+//                     <div>
+//                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+//                         {t("program_details.age")}{" "}
+//                         <span className="text-brand-primary">*</span>
+//                       </label>
+//                       <input
+//                         {...register("age")}
+//                         type="number"
+//                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.age ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
+//                         placeholder={t("program_details.enter_age")}
+//                       />
+//                       {errors.age && (
+//                         <p className="mt-1 text-xs text-red-500">
+//                           {errors.age.message}
+//                         </p>
+//                       )}
+//                     </div>
+//                   </div>
+
+//                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                     <div>
+//                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+//                         {t("program_details.phone")}{" "}
+//                         <span className="text-brand-primary">*</span>
+//                       </label>
+//                       <input
+//                         {...register("phone")}
+//                         type="tel"
+//                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.phone ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
+//                         placeholder={t("program_details.enter_phone")}
+//                       />
+//                       {errors.phone && (
+//                         <p className="mt-1 text-xs text-red-500">
+//                           {errors.phone.message}
+//                         </p>
+//                       )}
+//                     </div>
+//                     <div>
+//                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+//                         {t("program_details.whatsapp")}{" "}
+//                         <span className="text-brand-primary">*</span>
+//                       </label>
+//                       <input
+//                         {...register("whatsapp")}
+//                         type="tel"
+//                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.whatsapp ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
+//                         placeholder={t("program_details.enter_whatsapp")}
+//                       />
+//                       {errors.whatsapp && (
+//                         <p className="mt-1 text-xs text-red-500">
+//                           {errors.whatsapp.message}
+//                         </p>
+//                       )}
+//                     </div>
+//                   </div>
+
+//                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                     <div>
+//                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+//                         {t("program_details.gender")}
+//                       </label>
+//                       <select
+//                         {...register("gender")}
+//                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.gender ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
+//                       >
+//                         <option value="Male">
+//                           {t("program_details.male")}
+//                         </option>
+//                         <option value="Female">
+//                           {t("program_details.female")}
+//                         </option>
+//                         <option value="Other">
+//                           {t("program_details.other")}
+//                         </option>
+//                       </select>
+//                     </div>
+//                     <div>
+//                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+//                         {t("program_details.occupation")}
+//                       </label>
+//                       <input
+//                         {...register("occupation")}
+//                         type="text"
+//                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.occupation ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
+//                         placeholder={t("program_details.enter_occupation")}
+//                       />
+//                     </div>
+//                   </div>
+
+//                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                     <div>
+//                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+//                         {t("program_details.email")}{" "}
+//                         <span className="text-brand-primary">*</span>
+//                       </label>
+//                       <input
+//                         {...register("email")}
+//                         type="email"
+//                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.email ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
+//                         placeholder={t("program_details.enter_email")}
+//                       />
+//                       {errors.email && (
+//                         <p className="mt-1 text-xs text-red-500">
+//                           {errors.email.message}
+//                         </p>
+//                       )}
+//                     </div>
+//                     <div>
+//                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+//                         {t("program_details.district")}{" "}
+//                         <span className="text-brand-primary">*</span>
+//                       </label>
+//                       <input
+//                         {...register("district")}
+//                         type="text"
+//                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.district ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
+//                         placeholder={t("program_details.enter_district")}
+//                       />
+//                       {errors.district && (
+//                         <p className="mt-1 text-xs text-red-500">
+//                           {errors.district.message}
+//                         </p>
+//                       )}
+//                     </div>
+//                   </div>
+
+//                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                     <div>
+//                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+//                         {t("program_details.state")}{" "}
+//                         <span className="text-brand-primary">*</span>
+//                       </label>
+//                       <input
+//                         {...register("state")}
+//                         type="text"
+//                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.state ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
+//                         placeholder={t("program_details.enter_state")}
+//                       />
+//                       {errors.state && (
+//                         <p className="mt-1 text-xs text-red-500">
+//                           {errors.state.message}
+//                         </p>
+//                       )}
+//                     </div>
+//                     <div>
+//                       <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+//                         {t("program_details.country")}{" "}
+//                         <span className="text-brand-primary">*</span>
+//                       </label>
+//                       <input
+//                         {...register("country")}
+//                         type="text"
+//                         className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.country ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
+//                         placeholder={t("program_details.enter_country")}
+//                       />
+//                       {errors.country && (
+//                         <p className="mt-1 text-xs text-red-500">
+//                           {errors.country.message}
+//                         </p>
+//                       )}
+//                     </div>
+//                   </div>
+
+//                   {!isOnline && (
+//                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+//                       <div>
+//                         <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+//                           {t("program_details.participants")}{" "}
+//                           <span className="text-brand-primary">*</span>
+//                         </label>
+//                         <input
+//                           {...register("participants")}
+//                           type="number"
+//                           min="1"
+//                           className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.participants ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
+//                         />
+//                         {errors.participants && (
+//                           <p className="mt-1 text-xs text-red-500">
+//                             {errors.participants.message}
+//                           </p>
+//                         )}
+//                       </div>
+//                       <div>
+//                         <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+//                           {t("program_details.adults")}{" "}
+//                           <span className="text-brand-primary">*</span>
+//                         </label>
+//                         <input
+//                           {...register("adultcount")}
+//                           type="number"
+//                           min="0"
+//                           className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.adultcount ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
+//                         />
+//                         {errors.adultcount && (
+//                           <p className="mt-1 text-xs text-red-500">
+//                             {errors.adultcount.message}
+//                           </p>
+//                         )}
+//                       </div>
+//                       <div>
+//                         <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+//                           {t("program_details.children")}{" "}
+//                           <span className="text-brand-primary">*</span>
+//                         </label>
+//                         <input
+//                           {...register("childrencount")}
+//                           type="number"
+//                           min="0"
+//                           className={`w-full px-4 py-3 rounded-md border focus:outline-none focus:ring-1 transition-colors font-medium text-gray-900 placeholder:text-gray-400 text-sm ${errors.childrencount ? "border-red-400 bg-red-50 focus:ring-red-500 focus:border-red-500" : "border-gray-300 bg-white focus:ring-brand-primary focus:border-brand-primary"}`}
+//                         />
+//                         {errors.childrencount && (
+//                           <p className="mt-1 text-xs text-red-500">
+//                             {errors.childrencount.message}
+//                           </p>
+//                         )}
+//                       </div>
+//                     </div>
+//                   )}
+
+//                   {isOnline && (
+//                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                       <div>
+//                         <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+//                           {t("program_details.booking_date")}{" "}
+//                           <span className="text-brand-primary">*</span>
+//                         </label>
+//                         <input
+//                           {...register("bookingdate")}
+//                           type="date"
+//                           min={new Date().toISOString().split("T")[0]}
+//                           className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm"
+//                         />
+//                       </div>
+//                       <div>
+//                         <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+//                           {t("program_details.booking_time")}{" "}
+//                           <span className="text-brand-primary">*</span>
+//                         </label>
+//                         <input
+//                           {...register("bookingtime")}
+//                           type="time"
+//                           className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm"
+//                         />
+//                       </div>
+//                     </div>
+//                   )}
+
+//                   <div className="mt-4">
+//                     <label className="flex items-center gap-3 text-sm font-bold text-gray-700 uppercase tracking-wide">
+//                       <input
+//                         type="checkbox"
+//                         {...register("ishealthissue")}
+//                         className="w-4 h-4 accent-brand-primary"
+//                       />
+//                       {t("program_details.health_issue_q")}
+//                     </label>
+//                   </div>
+
+//                   {isHealthIssue && (
+//                     <div className="mt-4 p-4 border border-gray-200 rounded-xl bg-gray-50/30">
+//                       <h5 className="text-sm font-bold text-gray-900 mb-4">
+//                         Health Issues Detail
+//                       </h5>
+//                       {fields.map((field, index) => (
+//                         <div
+//                           key={field.id}
+//                           className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 relative"
+//                         >
+//                           <div>
+//                             <input
+//                               {...register(`healthissues.${index}.name`)}
+//                               placeholder={t("program_details.name_ph")}
+//                               className="w-full px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm"
+//                             />
+//                             {errors.healthissues?.[index]?.name && (
+//                               <p className="text-xs text-red-500 mt-1">
+//                                 {errors.healthissues[index]?.name?.message}
+//                               </p>
+//                             )}
+//                           </div>
+//                           <div className="flex gap-2 items-start">
+//                             <div className="flex-1">
+//                               <input
+//                                 {...register(`healthissues.${index}.issue`)}
+//                                 placeholder={t("program_details.issue_ph")}
+//                                 className="w-full px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm"
+//                               />
+//                               {errors.healthissues?.[index]?.issue && (
+//                                 <p className="text-xs text-red-500 mt-1">
+//                                   {errors.healthissues[index]?.issue?.message}
+//                                 </p>
+//                               )}
+//                             </div>
+//                             {index > 0 && (
+//                               <button
+//                                 type="button"
+//                                 onClick={() => remove(index)}
+//                                 className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
+//                               >
+//                                 <X size={16} />
+//                               </button>
+//                             )}
+//                           </div>
+//                         </div>
+//                       ))}
+//                       <button
+//                         type="button"
+//                         onClick={() => append({ name: "", issue: "" })}
+//                         className="text-xs font-bold text-brand-primary mt-2"
+//                       >
+//                         + Add Another
+//                       </button>
+//                     </div>
+//                   )}
+
+//                   <div>
+//                     <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase tracking-wide">
+//                       {t("program_details.remarks")}
+//                     </label>
+//                     <textarea
+//                       {...register("remarks")}
+//                       rows={2}
+//                       className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary focus:bg-white transition-all text-sm resize-none"
+//                       placeholder={t("program_details.remarks_ph")}
+//                     ></textarea>
+//                   </div>
+
+//                   <div className="pt-4 mt-2 border-t border-gray-100 flex justify-end">
+//                     <button
+//                       type="submit"
+//                       disabled={isSubmitting}
+//                       className="group/btn relative flex w-full md:w-auto items-center justify-center overflow-hidden rounded-[0px] bg-gradient-to-r from-amber-500 to-orange-500 px-8 py-4 font-bold text-white shadow-[0_8px_25px_-8px_rgba(245,158,11,0.6)] transition-all duration-300 hover:from-amber-600 hover:to-orange-600 hover:shadow-[0_12px_30px_-8px_rgba(245,158,11,0.8)] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+//                     >
+//                       {isSubmitting ? (
+//                         <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
+//                       ) : (
+//                         <>
+//                           {t("program_details.submit_app")} <Send size={16} />
+//                         </>
+//                       )}
+//                     </button>
+//                   </div>
+//                 </form>
+//               )}
+//             </motion.div>
+//           </motion.div>
+//         )}
+//       </AnimatePresence>
+
+//       {/* Payment Right Sidebar */}
+//       <AnimatePresence>
+//         {isPaymentSidebarOpen && (
+//           <>
+//             <motion.div
+//               initial={{ opacity: 0 }}
+//               animate={{ opacity: 1 }}
+//               exit={{ opacity: 0 }}
+//               onClick={() => setIsPaymentSidebarOpen(false)}
+//               className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60]"
+//             />
+//             <motion.div
+//               initial={{ x: "100%" }}
+//               animate={{ x: 0 }}
+//               exit={{ x: "100%" }}
+//               transition={{ type: "spring", damping: 25, stiffness: 200 }}
+//               className="fixed top-0 right-0 h-full w-full sm:w-[450px] bg-white shadow-2xl z-[70] flex flex-col overflow-y-auto"
+//             >
+//               <div className="flex items-center justify-between p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
+//                 <h2 className="text-xl font-bold text-gray-900">
+//                   Make Payment
+//                 </h2>
+//                 <button
+//                   onClick={() => setIsPaymentSidebarOpen(false)}
+//                   className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+//                 >
+//                   <X className="w-5 h-5 text-gray-500" />
+//                 </button>
+//               </div>
+
+//               <div className="p-6 flex-grow flex flex-col gap-8">
+//                 <div className="text-center space-y-4">
+//                   <p className="text-gray-600 font-medium">
+//                     Scan the QR Code below to pay
+//                   </p>
+//                   <div className="bg-gray-50 rounded-xl border-2 border-gray-100 inline-block">
+//                     <img
+//                       src="/booking-qr.jpeg"
+//                       alt="Payment QR"
+//                       className="w-48 h-full object-contain rounded-xl shadow-sm"
+//                     />
+//                   </div>
+//                   <p className="text-2xl font-black text-amber-500">
+//                     ₹{amount.toLocaleString()}
+//                   </p>
+//                 </div>
+
+//                 <div className="bg-blue-50/50 rounded-2xl p-6 border border-blue-100/50">
+//                   <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+//                     <Upload className="w-5 h-5 text-blue-500" /> Upload
+//                     Screenshot
+//                   </h3>
+//                   <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-blue-200 rounded-xl bg-white hover:bg-blue-50/50 transition-colors cursor-pointer relative overflow-hidden group">
+//                     {paymentScreenshot ? (
+//                       <div className="absolute inset-0 flex items-center justify-center bg-white">
+//                         <img
+//                           src={URL.createObjectURL(paymentScreenshot)}
+//                           alt="Screenshot"
+//                           className="w-full h-full object-contain p-2"
+//                         />
+//                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold">
+//                           Change
+//                         </div>
+//                       </div>
+//                     ) : (
+//                       <div className="flex flex-col items-center justify-center pt-5 pb-6 text-blue-500">
+//                         <Upload className="w-8 h-8 mb-2 opacity-50" />
+//                         <p className="text-sm font-medium">
+//                           Click to upload screenshot
+//                         </p>
+//                       </div>
+//                     )}
+//                     <input
+//                       type="file"
+//                       className="hidden"
+//                       accept="image/*"
+//                       onChange={(e) => {
+//                         if (e.target.files && e.target.files[0]) {
+//                           setPaymentScreenshot(e.target.files[0]);
+//                         }
+//                       }}
+//                     />
+//                   </label>
+//                 </div>
+//               </div>
+
+//               <div className="p-6 border-t border-gray-100 sticky bottom-0 bg-white">
+//                 <button
+//                   onClick={handlePaymentSubmit}
+//                   disabled={isSubmitting}
+//                   className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold py-4 rounded-[0px] hover:from-amber-600 hover:to-orange-600 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+//                 >
+//                   {isSubmitting
+//                     ? t("program_details.submitting")
+//                     : t("program_details.submit_booking")}
+//                 </button>
+//               </div>
+//             </motion.div>
+//           </>
+//         )}
+//       </AnimatePresence>
+
+//       {/* Error Toast */}
+//       <AnimatePresence>
+//         {toastMessage && (
+//           <motion.div
+//             initial={{ opacity: 0, y: 50 }}
+//             animate={{ opacity: 1, y: 0 }}
+//             exit={{ opacity: 0, y: 50 }}
+//             className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] bg-red-600 text-white px-6 py-3 rounded-full shadow-lg font-medium text-sm flex items-center gap-2"
+//           >
+//             {toastMessage}
+//           </motion.div>
+//         )}
+//       </AnimatePresence>
+//     </main>
+//   );
+// }
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -120,6 +1530,16 @@ export default function ProgramDetailsPage() {
   const amount = program
     ? Number(program.registrationfee) * Number(participantsCount)
     : 0;
+  const paymentIntent = new URLSearchParams({
+    pa: "9842023346-2@ibl",
+    pn: "Sri KandhaGuru Foundation",
+    am: amount.toFixed(2),
+    cu: "INR",
+    tn: `Program booking${bookingId ? ` #${bookingId}` : ""}`,
+  });
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(
+    `upi://pay?${paymentIntent.toString()}`,
+  )}`;
 
   const onSubmit = async (data: FormValues) => {
     if (isOnline && (!data.bookingdate || !data.bookingtime)) {
@@ -1243,48 +2663,105 @@ export default function ProgramDetailsPage() {
                 </button>
               </div>
 
-              <div className="p-6 flex-grow flex flex-col gap-8">
-                <div className="text-center space-y-4">
-                  <p className="text-gray-600 font-medium">
-                    Scan the QR Code below to pay
-                  </p>
-                  <div className="bg-gray-50 rounded-xl border-2 border-gray-100 inline-block">
+              <div className="p-6 flex-grow flex flex-col gap-6">
+                {/* UPI Payment Section */}
+                <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                  <div className="text-center">
+                    <span className="inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+                      <span className="h-2 w-2 rounded-full bg-green-500" />
+                      Secure UPI Payment
+                    </span>
+
+                    <h3 className="mt-3 text-xl font-bold text-gray-900">
+                      Scan & Pay
+                    </h3>
+
+                    <p className="mt-1 text-sm text-gray-500">
+                      Scan the QR code using any UPI payment app.
+                    </p>
+                  </div>
+
+                  {/* QR Code */}
+                  <div className="mx-auto mt-5 w-fit rounded-xl border border-gray-200 bg-gray-50 p-3">
                     <img
-                      src="/booking-qr.jpeg"
-                      alt="Payment QR"
-                      className="w-48 h-full object-contain rounded-xl shadow-sm"
+                      src={qrCodeUrl}
+                      alt={`UPI payment QR for ₹${amount.toLocaleString()}`}
+                      className="h-52 w-52 object-contain"
                     />
                   </div>
-                  <p className="text-2xl font-black text-amber-500">
-                    ₹{amount.toLocaleString()}
+
+                  {/* Payment Details */}
+                  <div className="mt-5 rounded-xl bg-gray-50 p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-xs font-medium text-gray-500">
+                          UPI ID
+                        </p>
+                        <p className="mt-1 truncate text-sm font-semibold text-gray-900">
+                          9842023346-2@ibl
+                        </p>
+                      </div>
+
+                      <div className="text-right">
+                        <p className="text-xs font-medium text-gray-500">
+                          Total Amount
+                        </p>
+                        <p className="mt-1 text-xl font-bold text-gray-900">
+                          ₹{amount.toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="mt-4 text-center text-xs text-gray-500">
+                    Amount is pre-filled. Please verify before completing
+                    payment.
                   </p>
                 </div>
 
-                <div className="bg-blue-50/50 rounded-2xl p-6 border border-blue-100/50">
-                  <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <Upload className="w-5 h-5 text-blue-500" /> Upload
-                    Screenshot
-                  </h3>
-                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-blue-200 rounded-xl bg-white hover:bg-blue-50/50 transition-colors cursor-pointer relative overflow-hidden group">
+                {/* Screenshot Upload Section */}
+                <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                  <div className="mb-4">
+                    <h3 className="flex items-center gap-2 text-base font-bold text-gray-900">
+                      <Upload className="h-5 w-5 text-gray-600" />
+                      Payment Screenshot
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Upload your payment confirmation screenshot.
+                    </p>
+                  </div>
+
+                  <label className="group relative flex h-36 w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 transition hover:border-blue-400 hover:bg-blue-50">
                     {paymentScreenshot ? (
-                      <div className="absolute inset-0 flex items-center justify-center bg-white">
-                        <img
-                          src={URL.createObjectURL(paymentScreenshot)}
-                          alt="Screenshot"
-                          className="w-full h-full object-contain p-2"
-                        />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold">
-                          Change
+                      <>
+                        <div className="absolute inset-0 flex items-center justify-center bg-white">
+                          <img
+                            src={URL.createObjectURL(paymentScreenshot)}
+                            alt="Payment Screenshot"
+                            className="h-full w-full object-contain p-2"
+                          />
                         </div>
-                      </div>
+
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition group-hover:opacity-100">
+                          <span className="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-gray-900">
+                            Change Screenshot
+                          </span>
+                        </div>
+                      </>
                     ) : (
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6 text-blue-500">
-                        <Upload className="w-8 h-8 mb-2 opacity-50" />
-                        <p className="text-sm font-medium">
+                      <div className="flex flex-col items-center text-center">
+                        <div className="mb-2 rounded-full bg-white p-3 shadow-sm">
+                          <Upload className="h-6 w-6 text-gray-500" />
+                        </div>
+                        <p className="text-sm font-semibold text-gray-700">
                           Click to upload screenshot
+                        </p>
+                        <p className="mt-1 text-xs text-gray-400">
+                          PNG, JPG or JPEG
                         </p>
                       </div>
                     )}
+
                     <input
                       type="file"
                       className="hidden"
@@ -1296,6 +2773,12 @@ export default function ProgramDetailsPage() {
                       }}
                     />
                   </label>
+
+                  {paymentScreenshot && (
+                    <p className="mt-3 text-sm font-medium text-green-600">
+                      ✓ Screenshot uploaded successfully
+                    </p>
+                  )}
                 </div>
               </div>
 
