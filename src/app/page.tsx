@@ -323,7 +323,7 @@ const floatingParticles = [
 function SpiritualPhilosophy() {
   const { t } = useLanguage();
   const religions = [
-     {
+    {
       name: t("home.rel_hinduism"),
       desc: t("home.rel_hinduism_desc"),
       icon: "https://cdn-icons-png.flaticon.com/128/9670/9670246.png",
@@ -338,7 +338,6 @@ function SpiritualPhilosophy() {
       desc: t("home.rel_islam_desc"),
       icon: "https://cdn-icons-png.flaticon.com/128/4250/4250535.png",
     },
-   
   ];
 
   return (
@@ -348,7 +347,7 @@ function SpiritualPhilosophy() {
         className="absolute inset-0 bg-cover bg-center"
         style={{
           backgroundImage: "url('about.jpeg')",
-          backgroundAttachment: "fixed"
+          backgroundAttachment: "fixed",
         }}
       />
 
@@ -430,7 +429,11 @@ function SpiritualPhilosophy() {
               <div className="relative flex h-full flex-col items-center overflow-hidden rounded-3xl border border-white/20 bg-white/10 px-7 py-10 text-center backdrop-blur-xl shadow-[0_16px_40px_rgba(0,0,0,0.25)] transition-all duration-500 hover:-translate-y-2 hover:border-white/40 hover:bg-white/20 group">
                 <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none" />
                 <div className="relative mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 text-brand-primary shadow-sm border border-white/20 group-hover:scale-110 group-hover:bg-white/30 transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]">
-                 <img src={religion.icon} alt={religion.name} className="h-10 w-10 object-contain" />
+                  <img
+                    src={religion.icon}
+                    alt={religion.name}
+                    className="h-10 w-10 object-contain"
+                  />
                 </div>
                 <h3 className="relative text-xl font-bold tracking-tight text-white transition-colors">
                   {religion.name}
@@ -580,9 +583,7 @@ function Programs() {
             <h3 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight mb-4">
               {t("home.prog_title")}
             </h3>
-            <p className="text-lg text-gray-600">
-              {t("home.prog_desc")}
-            </p>
+            <p className="text-lg text-gray-600">{t("home.prog_desc")}</p>
           </motion.div>
 
           <motion.div
@@ -859,7 +860,10 @@ function Gallery() {
   if (images.length === 0) return null;
 
   return (
-    <section id="gallery" className="py-24 bg-white border-t border-gray-100 overflow-hidden">
+    <section
+      id="gallery"
+      className="py-24 bg-white border-t border-gray-100 overflow-hidden"
+    >
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-8 border-b border-gray-100 pb-8">
           <div className="max-w-xl">
@@ -1018,40 +1022,40 @@ function Testimonials() {
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={testimonial.id}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "0px 0px -100px 0px" }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-300 relative group"
+              className="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 relative group"
             >
-              <Quote className="absolute top-8 right-8 w-10 h-10 text-gray-100 group-hover:text-brand-primary/10 transition-colors duration-300" />
+              <Quote className="absolute top-5 right-5 w-8 h-8 text-gray-100 group-hover:text-brand-primary/10 transition-colors duration-300" />
 
-              <div className="flex gap-1 mb-6">
+              <div className="flex gap-1 mb-4">
                 {[...Array(Math.floor(testimonial.rating) || 5)].map((_, i) => (
                   <Star
                     key={i}
-                    className="w-4 h-4 fill-amber-400 text-amber-400"
+                    className="w-3.5 h-3.5 fill-amber-400 text-amber-400"
                   />
                 ))}
               </div>
 
-              <p className="text-gray-600 leading-relaxed mb-8 relative z-10 min-h-[120px] text-justify">
+              <p className="text-gray-600 text-sm leading-relaxed mb-5 relative z-10 min-h-[90px] text-justify">
                 "{testimonial.message}"
               </p>
 
-              <div className="flex items-center gap-4 mt-auto pt-6 border-t border-gray-50">
-                <div className="w-12 h-12 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary font-bold text-lg">
+              <div className="flex items-center gap-3 mt-auto pt-4 border-t border-gray-50">
+                <div className="w-10 h-10 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary font-bold text-base">
                   {testimonial.name.charAt(0)}
                 </div>
                 <div>
-                  <h4 className="font-bold text-gray-900">
+                  <h4 className="font-bold text-gray-900 text-sm">
                     {testimonial.name}
                   </h4>
-                  <p className="text-sm text-brand-secondary">Reviewer</p>
+                  <p className="text-xs text-brand-secondary">Reviewer</p>
                 </div>
               </div>
             </motion.div>
@@ -1416,7 +1420,7 @@ function BookShopPreview() {
                 <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
                   <div className="flex flex-col">
                     {selectedProduct.sellingprice &&
-                      selectedProduct.sellingprice > 0 ? (
+                    selectedProduct.sellingprice > 0 ? (
                       <div className="flex items-baseline gap-3">
                         <span className="text-3xl font-black text-gray-900">
                           ₹{selectedProduct.sellingprice}
@@ -1432,14 +1436,14 @@ function BookShopPreview() {
                     )}
                   </div>
                   {selectedProduct.sellingprice &&
-                    selectedProduct.sellingprice > 0 &&
-                    selectedProduct.price > selectedProduct.sellingprice ? (
+                  selectedProduct.sellingprice > 0 &&
+                  selectedProduct.price > selectedProduct.sellingprice ? (
                     <span className="bg-red-50 text-red-600 font-bold px-2 py-1 rounded text-sm">
                       {Math.round(
                         ((selectedProduct.price -
                           selectedProduct.sellingprice) /
                           selectedProduct.price) *
-                        100,
+                          100,
                       )}
                       % OFF
                     </span>

@@ -636,7 +636,7 @@
 //                       }
 
 //                       const options = {
-//                         key: "rzp_test_TOP1xWTgy7L6M2",
+//                         key: "rzp_live_U1yBFqHCTDakxd",
 //                         amount: donationAmount * 100, // Amount in paise
 //                         currency: "INR",
 //                         name: "Sri KandhaGuru Foundation",
@@ -932,22 +932,6 @@
 //               </div>
 
 //               <div className="p-6 flex-grow flex flex-col gap-8">
-//                 <div className="text-center space-y-4">
-//                   <p className="text-gray-600 font-medium">
-//                     {t("donate.scan_qr")}
-//                   </p>
-//                   <div className="bg-gray-50 rounded-xl border-2 border-gray-100 inline-block">
-//                     <img
-//                       src="/payment-qr.jpeg"
-//                       alt="Payment QR"
-//                       className="w-48 h-full object-contain rounded-xl shadow-sm"
-//                     />
-//                   </div>
-//                   <p className="text-2xl font-black text-brand-primary">
-//                     ₹{amount || customAmount}
-//                   </p>
-//                 </div>
-
 //                 <div className="bg-blue-50/50 rounded-2xl p-6 border border-blue-100/50">
 //                   <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
 //                     <Upload className="w-5 h-5 text-blue-500" /> {t("donate.upload_ss")}
@@ -1217,17 +1201,15 @@ import {
   Leaf,
   Globe2,
   CheckCircle2,
-  CreditCard,
   Building,
   Smartphone,
   Quote,
   Users,
   BookOpen,
   X,
-  Upload,
   Loader2,
 } from "lucide-react";
-import { addDonor } from "../../services/api";
+import { addDonor, verifyDonorPayment } from "../../services/api";
 import { useLanguage } from "../../i18n/LanguageContext";
 
 const fadeUp: any = {
@@ -1241,6 +1223,34 @@ const staggerContainer: any = {
 };
 
 const predefinedAmounts = [100, 250, 500, 1000, 5000, 10000];
+
+type RazorpayPaymentResponse = {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+};
+
+type RazorpayOptions = {
+  key: string;
+  order_id: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  prefill: { name: string; email: string; contact: string };
+  theme: { color: string };
+  modal: { ondismiss: () => void };
+  handler: (response: RazorpayPaymentResponse) => Promise<void>;
+};
+
+type RazorpayWindow = Window & {
+  Razorpay?: new (options: RazorpayOptions) => {
+    on: (event: "payment.failed", handler: () => void) => void;
+    open: () => void;
+  };
+};
+
+let razorpayScriptPromise: Promise<boolean> | null = null;
 
 const faqs = [
   {
@@ -1281,8 +1291,6 @@ export default function DonatePage() {
   const [passportnumber, setPassportnumber] = useState("");
   const [donortype, setDonortype] = useState("domestic");
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
   const [showContactDialog, setShowContactDialog] = useState(false);
@@ -1298,16 +1306,6 @@ export default function DonatePage() {
   ];
   const formRef = useRef<HTMLDivElement>(null);
   const donationAmount = Number(amount || customAmount);
-  const paymentIntent = new URLSearchParams({
-    pa: "9842023346-2@ibl",
-    pn: "Sri KandhaGuru Foundation",
-    am: donationAmount.toFixed(2),
-    cu: "INR",
-    tn: "Donation",
-  });
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(
-    `upi://pay?${paymentIntent.toString()}`,
-  )}`;
 
   const handleAmountClick = (val: number) => {
     setAmount(val);
@@ -1322,6 +1320,150 @@ export default function DonatePage() {
   const scrollToForm = (causeId: string = "kovil") => {
     setSelectedCause(causeId);
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const loadRazorpay = () => {
+    if (typeof window === "undefined") return Promise.resolve(false);
+    if ((window as RazorpayWindow).Razorpay) return Promise.resolve(true);
+    if (razorpayScriptPromise) return razorpayScriptPromise;
+
+    const scriptPromise = new Promise<boolean>((resolve) => {
+      const existingScript = document.querySelector(
+        'script[src="https://checkout.razorpay.com/v1/checkout.js"]',
+      );
+      if (existingScript) {
+        existingScript.remove();
+      }
+
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      script.onload = () => {
+        const loaded = Boolean((window as RazorpayWindow).Razorpay);
+        if (!loaded) razorpayScriptPromise = null;
+        resolve(loaded);
+      };
+      script.onerror = () => {
+        razorpayScriptPromise = null;
+        resolve(false);
+      };
+      document.body.appendChild(script);
+    });
+    razorpayScriptPromise = scriptPromise;
+    return scriptPromise;
+  };
+
+  const handleDonationPayment = async () => {
+    setIsSubmitting(true);
+    try {
+      const scriptLoaded = await loadRazorpay();
+      if (!scriptLoaded) {
+        throw new Error("Razorpay SDK failed to load. Please try again.");
+      }
+
+      const donorResponse = await addDonor({
+        cause: selectedCause === "kovil" ? "temple" : "food",
+        fullname,
+        mobile,
+        email,
+        address,
+        country,
+        donortype,
+        amount: donationAmount,
+        pannumber: pannumber || null,
+        aadhaarnumber: aadhaarnumber || null,
+        passportnumber: passportnumber || null,
+      });
+
+      const donorId = donorResponse.data?.donorid;
+      const razorpayOrderId = donorResponse.data?.razorpay_order_id;
+      if (!donorResponse.success || !donorId || !razorpayOrderId) {
+        throw new Error(
+          donorResponse.message ||
+            "The server did not return the donor and Razorpay order details.",
+        );
+      }
+
+      const options = {
+        key: "rzp_live_U1yBFqHCTDakxd",
+        order_id: razorpayOrderId,
+        amount: donationAmount * 100,
+        currency: "INR",
+        name: "Sri KandhaGuru Foundation",
+        description: "Donation",
+        prefill: {
+          name: fullname,
+          email,
+          contact: mobile,
+        },
+        theme: {
+          color: "#f59e0b",
+        },
+        modal: {
+          ondismiss: () => setIsSubmitting(false),
+        },
+        handler: async (razorpayResponse: RazorpayPaymentResponse) => {
+          setIsSubmitting(true);
+          try {
+            const verification = await verifyDonorPayment({
+              donorid: donorId,
+              razorpay_order_id: razorpayResponse.razorpay_order_id,
+              razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+              razorpay_signature: razorpayResponse.razorpay_signature,
+            });
+
+            if (!verification.success) {
+              throw new Error(
+                verification.message || "Donation payment verification failed.",
+              );
+            }
+
+            setShowSuccessAnimation(true);
+            setTimeout(() => {
+              setShowSuccessAnimation(false);
+              setFullname("");
+              setMobile("");
+              setEmail("");
+              setAddress("");
+              setPannumber("");
+              setAadhaarnumber("");
+              setPassportnumber("");
+              setAmount("");
+              setCustomAmount("");
+            }, 3000);
+          } catch (error) {
+            console.error("Donation payment verification failed:", error);
+            alert(
+              error instanceof Error
+                ? error.message
+                : "Donation payment verification failed. Please contact support.",
+            );
+          } finally {
+            setIsSubmitting(false);
+          }
+        },
+      };
+
+      const RazorpayConstructor = (window as RazorpayWindow).Razorpay;
+      if (!RazorpayConstructor) {
+        throw new Error("Razorpay SDK is unavailable. Please try again.");
+      }
+
+      const razorpay = new RazorpayConstructor(options);
+      razorpay.on("payment.failed", () => {
+        setIsSubmitting(false);
+        alert("Payment failed. Please try again.");
+      });
+      razorpay.open();
+    } catch (error) {
+      setIsSubmitting(false);
+      console.error("Failed to start donation payment:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to start donation payment. Please try again.",
+      );
+    }
   };
 
   return (
@@ -1843,17 +1985,27 @@ export default function DonatePage() {
                         return;
                       }
 
-                      setIsSidebarOpen(true);
+                      void handleDonationPayment();
                     }}
-                    className="mt-2 flex w-full items-center justify-center gap-3 rounded-[0px] bg-gradient-to-r from-brand-primary to-orange-500 px-6 py-4 text-sm font-semibold uppercase tracking-[0.25em] text-white shadow-[0_16px_40px_-14px_rgba(245,158,11,0.65)] transition-all duration-300 hover:-translate-y-0.5 hover:from-orange-500 hover:to-brand-primary cursor-pointer"
+                    disabled={isSubmitting}
+                    className="mt-2 flex w-full items-center justify-center gap-3 rounded-[0px] bg-gradient-to-r from-brand-primary to-orange-500 px-6 py-4 text-sm font-semibold uppercase tracking-[0.25em] text-white shadow-[0_16px_40px_-14px_rgba(245,158,11,0.65)] transition-all duration-300 hover:-translate-y-0.5 hover:from-orange-500 hover:to-brand-primary disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
                   >
-                    <ShieldCheck size={22} />
-                    <span>
-                      {t("donate.donate_securely")}{" "}
-                      {amount || customAmount
-                        ? `| ₹${amount || customAmount}`
-                        : ""}
-                    </span>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 size={20} className="animate-spin" />
+                        <span>{t("donate.submitting")}</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShieldCheck size={22} />
+                        <span>
+                          {t("donate.donate_securely")}{" "}
+                          {amount || customAmount
+                            ? `| ₹${amount || customAmount}`
+                            : ""}
+                        </span>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
@@ -2036,185 +2188,6 @@ export default function DonatePage() {
           </div>
         </div>
       </section>
-
-      {/* Payment Right Sidebar */}
-      <AnimatePresence>
-        {isSidebarOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsSidebarOpen(false)}
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60]"
-            />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 h-full w-full sm:w-[450px] bg-white shadow-2xl z-[70] flex flex-col overflow-y-auto"
-            >
-              <div className="flex items-center justify-between p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
-                <h2 className="text-xl font-bold text-gray-900">
-                  {t("donate.complete_donation")}
-                </h2>
-                <button
-                  onClick={() => setIsSidebarOpen(false)}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
-                >
-                  <X className="w-5 h-5 text-gray-500" />
-                </button>
-              </div>
-
-              <div className="p-6 flex-grow flex flex-col gap-8">
-                <div className="rounded-2xl border border-gray-200 bg-white p-4 text-center shadow-sm">
-                  <h3 className="text-base font-bold text-gray-900">
-                    Scan to donate
-                  </h3>
-                  <p className="mt-1 text-xs text-gray-500">
-                    Scan with any UPI app. The amount is pre-filled.
-                  </p>
-                  <div className="mx-auto mt-3 w-fit rounded-xl border border-gray-100 bg-white p-2">
-                      <img
-                        src={qrCodeUrl}
-                        alt={`UPI donation QR for ₹${donationAmount.toLocaleString()}`}
-                        className="h-36 w-36 object-contain"
-                      />
-                  </div>
-                  <div className="mt-3 flex items-center justify-between gap-3 border-t border-gray-100 pt-3 text-left">
-                    <div className="min-w-0">
-                      <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-500">
-                        UPI ID
-                      </p>
-                      <p className="truncate text-sm font-semibold text-gray-800">
-                        9842023346-2@ibl
-                      </p>
-                    </div>
-                    <div className="shrink-0 text-right">
-                      <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-500">
-                        Donation
-                      </p>
-                      <p className="text-lg font-bold text-brand-primary">
-                        ₹{donationAmount.toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-blue-50/50 rounded-2xl p-6 border border-blue-100/50">
-                  <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <Upload className="w-5 h-5 text-blue-500" />{" "}
-                    {t("donate.upload_ss")}
-                  </h3>
-                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-blue-200 rounded-xl bg-white hover:bg-blue-50/50 transition-colors cursor-pointer relative overflow-hidden group">
-                    {paymentScreenshot ? (
-                      <div className="absolute inset-0 flex items-center justify-center bg-white">
-                        <img
-                          src={URL.createObjectURL(paymentScreenshot)}
-                          alt="Screenshot"
-                          className="w-full h-full object-contain p-2"
-                        />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold">
-                          Change
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6 text-blue-500">
-                        <Upload className="w-8 h-8 mb-2 opacity-50" />
-                        <p className="text-sm font-medium">
-                          {t("donate.click_upload")}
-                        </p>
-                      </div>
-                    )}
-                    <input
-                      type="file"
-                      className="hidden"
-                      accept="image/*"
-                      onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          setPaymentScreenshot(e.target.files[0]);
-                        }
-                      }}
-                    />
-                  </label>
-                </div>
-              </div>
-
-              <div className="p-6 border-t border-gray-100 sticky bottom-0 bg-white">
-                <button
-                  onClick={async () => {
-                    if (!paymentScreenshot) {
-                      alert("Please upload your payment screenshot");
-                      return;
-                    }
-                    try {
-                      setIsSubmitting(true);
-                      const submitData = new FormData();
-                      submitData.append(
-                        "cause",
-                        selectedCause === "kovil" ? "temple" : "food",
-                      );
-                      submitData.append("fullname", fullname);
-                      submitData.append("mobile", mobile);
-                      submitData.append("email", email);
-                      submitData.append("address", address);
-                      submitData.append("country", country);
-                      submitData.append("donortype", donortype);
-                      submitData.append(
-                        "amount",
-                        (amount || customAmount).toString(),
-                      );
-
-                      if (donortype === "domestic") {
-                        submitData.append("pannumber", pannumber);
-                        submitData.append("aadhaarnumber", aadhaarnumber);
-                      } else {
-                        submitData.append("passportnumber", passportnumber);
-                      }
-
-                      submitData.append("image", paymentScreenshot);
-
-                      const result = await addDonor(submitData);
-
-                      if (result.success) {
-                        setIsSidebarOpen(false);
-                        setShowSuccessAnimation(true);
-                        setTimeout(() => {
-                          setShowSuccessAnimation(false);
-                          setFullname("");
-                          setMobile("");
-                          setEmail("");
-                          setAddress("");
-                          setPannumber("");
-                          setAadhaarnumber("");
-                          setPassportnumber("");
-                          setAmount("");
-                          setCustomAmount("");
-                          setPaymentScreenshot(null);
-                        }, 3000);
-                      } else {
-                        alert(result.message || "Submission failed");
-                      }
-                    } catch (error) {
-                      console.error(error);
-                      alert("Failed to submit donation. Please try again.");
-                    } finally {
-                      setIsSubmitting(false);
-                    }
-                  }}
-                  disabled={isSubmitting}
-                  className="w-full bg-brand-primary text-white font-bold py-4 rounded-[0px] hover:bg-brand-primary/90 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                >
-                  {isSubmitting
-                    ? t("donate.submitting")
-                    : t("donate.submit_donation")}
-                </button>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
 
       {/* Contact Dialog Overlay */}
       <AnimatePresence>

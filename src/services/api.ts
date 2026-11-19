@@ -128,12 +128,9 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    const status = error?.response?.status;
     const message = error?.response?.data?.message;
 
     if (
-      status === 401 ||
-      status === 403 ||
       message === "Invalid or expired token" ||
       message === "Token is expired"
     ) {
@@ -147,11 +144,11 @@ api.interceptors.response.use(
       });
     }
 
-    // If any other API error occurs, clear local storage and reload the page
-    if (typeof window !== "undefined") {
-      localStorage.clear();
-      window.location.reload();
-    }
+    // // If any other API error occurs, clear local storage and reload the page
+    // if (typeof window !== "undefined") {
+    //   localStorage.clear();
+    //   window.location.reload();
+    // }
 
     return Promise.reject(error);
   },
@@ -470,6 +467,21 @@ export const placeOrder = async (payload: {
   }
 };
 
+export const verifyOrderPayment = async (payload: {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+  orderid: number;
+}) => {
+  try {
+    const response = await api.post("/order/verify-payment", payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error verifying order payment:", error);
+    throw error;
+  }
+};
+
 export const uploadPaymentScreenshot = async (imageFile: File) => {
   try {
     const formData = new FormData();
@@ -571,13 +583,21 @@ export const getProducts = async (category: string = "") => {
   }
 };
 
-export const addDonor = async (formData: FormData) => {
+export const addDonor = async (data: {
+  cause: string;
+  fullname: string;
+  mobile: string;
+  email: string;
+  address: string;
+  country: string;
+  donortype: string;
+  amount: number;
+  pannumber: string | null;
+  aadhaarnumber: string | null;
+  passportnumber: string | null;
+}) => {
   try {
-    const response = await api.post("/donor/add", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await api.post("/donor/add", data);
     return response.data;
   } catch (error) {
     console.error("Error adding donor:", error);
@@ -585,7 +605,42 @@ export const addDonor = async (formData: FormData) => {
   }
 };
 
-export const addBooking = async (data: any) => {
+export const verifyDonorPayment = async (data: {
+  donorid: number;
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}) => {
+  try {
+    const response = await api.post("/donor/verify-payment", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error verifying donor payment:", error);
+    throw error;
+  }
+};
+
+export const addBooking = async (data: {
+  eventid: number;
+  fullname: string;
+  phone: string;
+  whatsapp: string;
+  email: string;
+  occupation: string;
+  gender: string;
+  age: number;
+  city: string;
+  state: string;
+  country: string;
+  bookingdate?: string;
+  bookingtime?: string;
+  participants: number;
+  adultcount: number;
+  childrencount: number;
+  ishealthissue: boolean;
+  healthissues: { name?: string; issue?: string }[];
+  totalamount: number;
+}) => {
   try {
     console.log(JSON.stringify(data));
 
@@ -593,6 +648,21 @@ export const addBooking = async (data: any) => {
     return response.data;
   } catch (error) {
     console.error("Error booking event:", error);
+    throw error;
+  }
+};
+
+export const verifyBookingPayment = async (data: {
+  bookingid: number;
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}) => {
+  try {
+    const response = await api.post("/booking/verify-payment", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error verifying booking payment:", error);
     throw error;
   }
 };
@@ -611,20 +681,6 @@ export const uploadBookingPaymentScreenshot = async (imageFile: File) => {
     return response.data;
   } catch (error) {
     console.error("Error uploading booking payment screenshot:", error);
-    throw error;
-  }
-};
-
-export const updateBookingPaymentScreenshot = async (data: {
-  id: number;
-  screenshot: string;
-}) => {
-  try {
-    const response = await api.post("/booking/update-payment-screenshot", data);
-    console.log(response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Error updating booking payment screenshot:", error);
     throw error;
   }
 };
