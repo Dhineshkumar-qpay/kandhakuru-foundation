@@ -12,8 +12,8 @@ import { ProductModel } from "../models/product_model";
 import { AddressModel, CartModel } from "../models/OrderModel";
 import { config, json } from "zod";
 
-export const BASEURL = "https://api.srikandhagurufoundation.org";
-// export const BASEURL = "http://localhost:3003";
+// export const BASEURL = "https://api.srikandhagurufoundation.org";
+export const BASEURL = "http://localhost:3003";
 
 export const getImageVideoUrl = (data: string) => {
   if (data.startsWith("https") || data.startsWith("http")) {

@@ -1948,6 +1948,7 @@ export default function DonatePage() {
 
                   {/* CTA */}
                   <button
+                  
                     onClick={() => {
                       setError("");
                       if (
@@ -1987,7 +1988,7 @@ export default function DonatePage() {
 
                       void handleDonationPayment();
                     }}
-                    disabled={isSubmitting}
+                    disabled={true}
                     className="mt-2 flex w-full items-center justify-center gap-3 rounded-[0px] bg-gradient-to-r from-brand-primary to-orange-500 px-6 py-4 text-sm font-semibold uppercase tracking-[0.25em] text-white shadow-[0_16px_40px_-14px_rgba(245,158,11,0.65)] transition-all duration-300 hover:-translate-y-0.5 hover:from-orange-500 hover:to-brand-primary disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
                   >
                     {isSubmitting ? (
