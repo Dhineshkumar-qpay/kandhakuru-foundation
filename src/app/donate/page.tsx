@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Heart,
@@ -20,9 +20,14 @@ import {
   BookOpen,
   X,
   Loader2,
+  Printer,
+  Copy,
+  Check,
+  FileText,
+  Sparkles,
 } from "lucide-react";
-import { addDonor, verifyDonorPayment } from "../../services/api";
 import { useLanguage } from "../../i18n/LanguageContext";
+import { addDonor } from "../../services/api";
 
 const fadeUp: any = {
   hidden: { opacity: 0, y: 30 },
@@ -36,33 +41,34 @@ const staggerContainer: any = {
 
 const predefinedAmounts = [100, 250, 500, 1000, 5000, 10000];
 
-type RazorpayPaymentResponse = {
-  razorpay_order_id: string;
-  razorpay_payment_id: string;
-  razorpay_signature: string;
+// QPay Configuration
+const QPAY_CONFIG = {
+  targetUrl: "https://pg.qpayindia.com/wwws/Payment/PaymentDetails.aspx",
+  qpayId: "kandaapiacc",
+  qpayPwd: "kanda!123",
+  secretKey: "QQ5E0FSEcAPhe9yqiTKn0rtlUUO5ScwtN9yBeBnwUwh2HCfUVEfs",
+  mode: "test", // 'test' or 'live'
+  responseUrl:
+    typeof window !== "undefined"
+      ? `${window.location.origin}/api/qpay/callback`
+      : "https://srikandhagurufoundation.org/api/qpay/callback",
 };
 
-type RazorpayOptions = {
-  key: string;
-  order_id: string;
-  amount: number;
-  currency: string;
-  name: string;
-  description: string;
-  prefill: { name: string; email: string; contact: string };
-  theme: { color: string };
-  modal: { ondismiss: () => void };
-  handler: (response: RazorpayPaymentResponse) => Promise<void>;
+// Disallowed characters in QPay values: [ < > ; ]
+const sanitizeQPayValue = (val: string | null | undefined, maxLen?: number) => {
+  if (!val) return "";
+  const cleaned = val.replace(/[<>;[\]]/g, "").trim();
+  return maxLen ? cleaned.slice(0, maxLen) : cleaned;
 };
 
-type RazorpayWindow = Window & {
-  Razorpay?: new (options: RazorpayOptions) => {
-    on: (event: "payment.failed", handler: () => void) => void;
-    open: () => void;
-  };
-};
-
-let razorpayScriptPromise: Promise<boolean> | null = null;
+// SHA-512 calculation using Web Crypto API
+async function generateSHA512(message: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(message);
+  const hashBuffer = await crypto.subtle.digest("SHA-512", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
 
 const faqs = [
   {
@@ -104,11 +110,156 @@ export default function DonatePage() {
   const [donortype, setDonortype] = useState("domestic");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
+  const [isSuccessPage, setIsSuccessPage] = useState(false);
+  const [successDetails, setSuccessDetails] = useState<{
+    orderId?: string;
+    refId?: string;
+    amount?: string | number;
+    cause?: string;
+    donorName?: string;
+    email?: string;
+    phone?: string;
+    date?: string;
+    paymentMode?: string;
+  } | null>(null);
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [error, setError] = useState("");
 
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = (text: string) => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const resetDonationForm = () => {
+    setIsSuccessPage(false);
+    setSuccessDetails(null);
+    setFullname("");
+    setMobile("");
+    setEmail("");
+    setAddress("");
+    setPannumber("");
+    setAadhaarnumber("");
+    setPassportnumber("");
+    setAmount("");
+    setCustomAmount("");
+    setError("");
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.removeItem("skf_last_donation");
+        localStorage.removeItem("skf_last_donation");
+      } catch {
+        // ignore
+      }
+    }
+  };
+
+  const handlePrint = () => {
+    if (typeof window !== "undefined") {
+      window.print();
+    }
+  };
+
+  // Check for callback status when redirected from QPay gateway
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const searchParams = new URLSearchParams(window.location.search);
+    const status = searchParams.get("status");
+    const message = searchParams.get("message");
+    const hashError = searchParams.get("hashError");
+
+    if (status === "success") {
+      let savedData: any = {};
+      try {
+        const stored =
+          sessionStorage.getItem("skf_last_donation") ||
+          localStorage.getItem("skf_last_donation");
+        if (stored) savedData = JSON.parse(stored);
+      } catch {
+        // ignore
+      }
+
+      const orderIdVal = searchParams.get("orderId") || savedData.orderId || "";
+      const refVal = searchParams.get("ref") || savedData.refId || "";
+      const amountVal = searchParams.get("amount") || savedData.amount || "";
+      const causeVal =
+        savedData.cause === "anna" || savedData.cause === "annadhanam"
+          ? "Annadhanam Contribution"
+          : "Temple Construction & Renovation";
+
+      setSuccessDetails({
+        orderId: orderIdVal,
+        refId: refVal,
+        amount: amountVal,
+        cause: causeVal,
+        donorName: savedData.name || "",
+        email: savedData.email || "",
+        phone: savedData.phone || "",
+        date:
+          savedData.date ||
+          new Date().toLocaleString("en-IN", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+        paymentMode: searchParams.get("mode") || "Online",
+      });
+
+      setIsSuccessPage(true);
+
+      // Call AddDonor API on payment success
+      const donorSyncKey = `skf_donor_recorded_${orderIdVal || refVal || "success"}`;
+      if (typeof window !== "undefined" && !sessionStorage.getItem(donorSyncKey)) {
+        sessionStorage.setItem(donorSyncKey, "pending");
+
+        const donorPayload = {
+          cause:
+            savedData.cause === "anna" || savedData.cause === "annadhanam"
+              ? "Annadhanam"
+              : savedData.cause === "kovil"
+                ? "Temple Construction"
+                : savedData.cause || "Education Support",
+          fullname: savedData.name || savedData.fullname || "Donor",
+          mobile: savedData.phone || savedData.mobile || "",
+          email: savedData.email || "",
+          address: savedData.address || "",
+          country: savedData.country || "India",
+          pannumber: savedData.pannumber || "",
+          aadhaarnumber: savedData.aadhaarnumber || "",
+          passportnumber: savedData.passportnumber || "",
+          donortype:
+            savedData.donortype === "domestic"
+              ? "Individual"
+              : savedData.donortype || "Individual",
+          amount: Number(amountVal || savedData.amount || 0),
+        };
+
+        addDonor(donorPayload)
+          .then((res) => {
+            console.log("Donor added successfully:", res);
+            sessionStorage.setItem(donorSyncKey, "completed");
+          })
+          .catch((err) => {
+            console.error("Failed to add donor:", err);
+            sessionStorage.removeItem(donorSyncKey);
+          });
+      }
+    } else if (status === "failed") {
+      if (hashError) {
+        setError("Security validation failed for the payment response.");
+      } else {
+        setError(message || "Payment was not successful. Please try again.");
+      }
+    }
+  }, []);
 
   const faqs = [
     { question: t("donate.q1"), answer: t("donate.a1") },
@@ -134,142 +285,127 @@ export default function DonatePage() {
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const loadRazorpay = () => {
-    if (typeof window === "undefined") return Promise.resolve(false);
-    if ((window as RazorpayWindow).Razorpay) return Promise.resolve(true);
-    if (razorpayScriptPromise) return razorpayScriptPromise;
-
-    const scriptPromise = new Promise<boolean>((resolve) => {
-      const existingScript = document.querySelector(
-        'script[src="https://checkout.razorpay.com/v1/checkout.js"]',
-      );
-      if (existingScript) {
-        existingScript.remove();
-      }
-
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.async = true;
-      script.onload = () => {
-        const loaded = Boolean((window as RazorpayWindow).Razorpay);
-        if (!loaded) razorpayScriptPromise = null;
-        resolve(loaded);
-      };
-      script.onerror = () => {
-        razorpayScriptPromise = null;
-        resolve(false);
-      };
-      document.body.appendChild(script);
-    });
-    razorpayScriptPromise = scriptPromise;
-    return scriptPromise;
-  };
-
   const handleDonationPayment = async () => {
     setIsSubmitting(true);
     try {
-      const scriptLoaded = await loadRazorpay();
-      if (!scriptLoaded) {
-        throw new Error("Razorpay SDK failed to load. Please try again.");
-      }
+      // 1. Format values according to QPayIndia specification
+      const timestamp = Date.now().toString();
+      const orderId = `DON_${timestamp}`.slice(0, 30);
 
-      const donorResponse = await addDonor({
-        cause: selectedCause === "kovil" ? "temple" : "food",
-        fullname,
-        mobile,
-        email,
-        address,
-        country,
-        donortype,
-        amount: donationAmount,
-        pannumber: pannumber || null,
-        aadhaarnumber: aadhaarnumber || null,
-        passportnumber: passportnumber || null,
-      });
+      // Amount: "Amount should not contain any thousand separators or currency symbols"
+      const formattedAmount = Number.isInteger(donationAmount)
+        ? donationAmount.toString()
+        : donationAmount.toFixed(2);
+      const base64Amount = btoa(formattedAmount);
+      const qpayIdParam = `${QPAY_CONFIG.qpayId}\`${base64Amount}`;
 
-      const donorId = donorResponse.data?.donorid;
-      const razorpayOrderId = donorResponse.data?.razorpay_order_id;
-      if (!donorResponse.success || !donorId || !razorpayOrderId) {
-        throw new Error(
-          donorResponse.message ||
-          "The server did not return the donor and Razorpay order details.",
-        );
-      }
+      const cleanName = sanitizeQPayValue(fullname, 50);
+      const cleanEmail = sanitizeQPayValue(email, 50);
+      const cleanPhone = sanitizeQPayValue(mobile, 20);
+      const cleanAddress = sanitizeQPayValue(address, 150);
+      const cleanCountry = sanitizeQPayValue(country, 50);
+      const transactionType = "PURCHASE";
+      const currency = "INR";
+      const mode = QPAY_CONFIG.mode;
+      const responseUrl = QPAY_CONFIG.responseUrl;
+      const qpayPwd = QPAY_CONFIG.qpayPwd;
 
-      const options = {
-        key: "rzp_live_U1yBFqHCTDakxd",
-        order_id: razorpayOrderId,
-        amount: donationAmount * 100,
-        currency: "INR",
-        name: "Sri KandhaGuru Foundation",
-        description: "Donation",
-        prefill: {
-          name: fullname,
-          email,
-          contact: mobile,
-        },
-        theme: {
-          color: "#f59e0b",
-        },
-        modal: {
-          ondismiss: () => setIsSubmitting(false),
-        },
-        handler: async (razorpayResponse: RazorpayPaymentResponse) => {
-          setIsSubmitting(true);
-          try {
-            const verification = await verifyDonorPayment({
-              donorid: donorId,
-              razorpay_order_id: razorpayResponse.razorpay_order_id,
-              razorpay_payment_id: razorpayResponse.razorpay_payment_id,
-              razorpay_signature: razorpayResponse.razorpay_signature,
-            });
+      // 2. Steps for calculating secure hash:
+      // Hashdata = <secret_key provide by QPay> + "|" + <ResponseURL> + "|" + <QPayID> + "|" + <QPayPWD> + "|" + <TransactionType> + "|" + <OrderID> + "|" + <Currency> + "|" + <Mode> + "|" + <name> + "|" + <email> + "|" + <phone>
+      // "If there is no value for name, email and phone then empty string can be assigned"
+      // Secure_hash = SHA512(Hashdata)
+      const hashData = [
+        QPAY_CONFIG.secretKey,
+        responseUrl,
+        qpayIdParam,
+        qpayPwd,
+        transactionType,
+        orderId,
+        currency,
+        mode,
+        cleanName,
+        cleanEmail,
+        cleanPhone,
+      ].join("|");
 
-            if (!verification.success) {
-              throw new Error(
-                verification.message || "Donation payment verification failed.",
-              );
-            }
+      const secureHash = await generateSHA512(hashData);
 
-            setShowSuccessAnimation(true);
-            setTimeout(() => {
-              setShowSuccessAnimation(false);
-              setFullname("");
-              setMobile("");
-              setEmail("");
-              setAddress("");
-              setPannumber("");
-              setAadhaarnumber("");
-              setPassportnumber("");
-              setAmount("");
-              setCustomAmount("");
-            }, 3000);
-          } catch (error) {
-            console.error("Donation payment verification failed:", error);
-            alert(
-              error instanceof Error
-                ? error.message
-                : "Donation payment verification failed. Please contact support.",
-            );
-          } finally {
-            setIsSubmitting(false);
-          }
-        },
+      // 3. Construct form parameters per QPayIndia specification
+      const formParams: Record<string, string> = {
+        ResponseURL: responseUrl,
+        QPayID: qpayIdParam,
+        QPayPWD: qpayPwd,
+        TransactionType: transactionType,
+        OrderID: orderId,
+        Currency: currency,
+        Mode: mode,
+        Paymentoption: mode === "test" ? "C" : "C,N,U",
+        secure_hash: secureHash,
+        name: cleanName,
+        email: cleanEmail,
+        phone: cleanPhone,
       };
 
-      const RazorpayConstructor = (window as RazorpayWindow).Razorpay;
-      if (!RazorpayConstructor) {
-        throw new Error("Razorpay SDK is unavailable. Please try again.");
+      if (cleanAddress) formParams.address = cleanAddress;
+      if (cleanCountry) formParams.country = cleanCountry;
+
+      // Save pending donation details in storage for confirmation UI upon return
+      if (typeof window !== "undefined") {
+        try {
+          const donationRecord = JSON.stringify({
+            orderId,
+            amount: formattedAmount,
+            cause: selectedCause,
+            name: cleanName,
+            fullname: cleanName,
+            email: cleanEmail,
+            phone: cleanPhone,
+            mobile: cleanPhone,
+            address: cleanAddress,
+            country: cleanCountry,
+            pannumber,
+            aadhaarnumber,
+            passportnumber,
+            donortype:
+              donortype === "domestic" ? "Individual" : donortype || "Individual",
+            date: new Date().toLocaleString("en-IN", {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            }),
+          });
+          sessionStorage.setItem("skf_last_donation", donationRecord);
+          localStorage.setItem("skf_last_donation", donationRecord);
+        } catch {
+          // ignore
+        }
       }
 
-      const razorpay = new RazorpayConstructor(options);
-      razorpay.on("payment.failed", () => {
-        setIsSubmitting(false);
-        alert("Payment failed. Please try again.");
+      console.log("QPay Hashdata:", hashData);
+      console.log("Submitting QPay form with params:", formParams);
+
+      // 4. Submit form directly to QPay gateway URL
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = QPAY_CONFIG.targetUrl;
+      form.style.display = "none";
+
+      Object.entries(formParams).forEach(([key, val]) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = val;
+        form.appendChild(input);
       });
-      razorpay.open();
+
+      document.body.appendChild(form);
+      HTMLFormElement.prototype.submit.call(form);
     } catch (error) {
       setIsSubmitting(false);
-      console.error("Failed to start donation payment:", error);
+      console.error("Failed to start QPay payment:", error);
       alert(
         error instanceof Error
           ? error.message
@@ -277,6 +413,213 @@ export default function DonatePage() {
       );
     }
   };
+
+  if (isSuccessPage) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#FAF8F5] via-amber-50/20 to-[#F5F2EB] font-sans text-gray-800 pt-28 pb-20 flex items-center justify-center px-4 relative overflow-hidden">
+        {/* Soft background aura */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-200/25 rounded-full blur-3xl pointer-events-none" />
+
+        <motion.div
+          initial={{ opacity: 0, y: 20, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="w-full max-w-lg bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.08)] border border-amber-100 overflow-hidden relative z-10 print:shadow-none print:border-none print:w-full print:p-0"
+        >
+          {/* Top Brand & Trust Header */}
+          <div className="px-6 sm:px-8 pt-6 pb-4 border-b border-gray-100 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 text-white font-black text-sm flex items-center justify-center shadow-md shadow-orange-500/20">
+                SKF
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-gray-900 tracking-tight leading-none">
+                  Sri Kandhaguru Foundation
+                </h3>
+                <p className="text-[11px] text-amber-700/90 font-medium mt-1">
+                  Registered Trust • 80G Tax Exempt
+                </p>
+              </div>
+            </div>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              Verified
+            </span>
+          </div>
+
+          {/* Hero Success Badge & Heading */}
+          <div className="px-6 sm:px-8 pt-6 pb-5 text-center">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.15, duration: 0.4 }}
+              className="w-16 h-16 bg-gradient-to-tr from-emerald-500 to-teal-400 text-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-500/25 ring-8 ring-emerald-50"
+            >
+              <Check className="w-9 h-9 stroke-[3]" />
+            </motion.div>
+
+            <span className="inline-block px-3 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-widest text-amber-800 bg-amber-50 border border-amber-200/80 mb-2">
+              Official Donation Receipt
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
+              Donation Successful!
+            </h1>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1 max-w-sm mx-auto leading-relaxed">
+              Thank you for your sacred contribution. May divine grace and auspicious blessings be upon you.
+            </p>
+          </div>
+
+          {/* Amount Spotlight Card */}
+          <div className="px-6 sm:px-8 py-2">
+            <div className="rounded-2xl bg-gradient-to-b from-amber-50/70 to-orange-50/40 border border-amber-200/70 p-5 text-center">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold text-amber-900 bg-amber-100/80 mb-2 border border-amber-200/60">
+                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                {successDetails?.cause || "Sacred Offering"}
+              </span>
+
+              <div className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight my-1">
+                ₹
+                {successDetails?.amount
+                  ? Number(successDetails.amount).toLocaleString("en-IN")
+                  : "0"}
+              </div>
+
+              <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 bg-white/90 px-3 py-1 rounded-full border border-emerald-100 shadow-2xs mt-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Payment Confirmed & 80G Tax Deductible</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Itemized Receipt Details */}
+          <div className="px-6 sm:px-8 py-5">
+            <div className="rounded-2xl bg-gray-50/90 border border-gray-100 p-4 sm:p-5 space-y-3 text-xs sm:text-sm text-gray-700">
+              {successDetails?.orderId && (
+                <div className="flex justify-between items-center py-0.5">
+                  <span className="text-gray-400 font-medium">Order ID</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono font-bold text-gray-900 text-xs sm:text-sm">
+                      {successDetails.orderId}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleCopy(successDetails.orderId || "")}
+                      className="p-1 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-200/70 transition-colors print:hidden cursor-pointer"
+                      title="Copy Order ID"
+                    >
+                      {copied ? (
+                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      ) : (
+                        <Copy className="w-3.5 h-3.5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {successDetails?.refId && (
+                <div className="flex justify-between items-center py-0.5 border-t border-gray-200/60 pt-2.5">
+                  <span className="text-gray-400 font-medium">Gateway Ref (MSP)</span>
+                  <span className="font-mono font-medium text-gray-900">
+                    {successDetails.refId}
+                  </span>
+                </div>
+              )}
+
+              {successDetails?.donorName && (
+                <div className="flex justify-between items-center py-0.5 border-t border-gray-200/60 pt-2.5">
+                  <span className="text-gray-400 font-medium">Donor Name</span>
+                  <span className="font-bold text-gray-900">
+                    {successDetails.donorName}
+                  </span>
+                </div>
+              )}
+
+              {successDetails?.email && (
+                <div className="flex justify-between items-center py-0.5 border-t border-gray-200/60 pt-2.5">
+                  <span className="text-gray-400 font-medium">Email</span>
+                  <span className="font-medium text-gray-800 truncate max-w-[200px]">
+                    {successDetails.email}
+                  </span>
+                </div>
+              )}
+
+              {successDetails?.phone && (
+                <div className="flex justify-between items-center py-0.5 border-t border-gray-200/60 pt-2.5">
+                  <span className="text-gray-400 font-medium">Mobile Number</span>
+                  <span className="font-medium text-gray-800">
+                    {successDetails.phone}
+                  </span>
+                </div>
+              )}
+
+              {successDetails?.date && (
+                <div className="flex justify-between items-center py-0.5 border-t border-gray-200/60 pt-2.5">
+                  <span className="text-gray-400 font-medium">Date & Time</span>
+                  <span className="text-gray-800 font-medium">
+                    {successDetails.date}
+                  </span>
+                </div>
+              )}
+
+              <div className="flex justify-between items-center py-0.5 border-t border-gray-200/60 pt-2.5">
+                <span className="text-gray-400 font-medium">Payment Mode</span>
+                <span className="font-bold text-gray-900 uppercase">
+                  {successDetails?.paymentMode === "C"
+                    ? "Card"
+                    : successDetails?.paymentMode === "U"
+                      ? "UPI"
+                      : successDetails?.paymentMode === "N"
+                        ? "Net Banking"
+                        : successDetails?.paymentMode || "Online"}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center py-0.5 border-t border-gray-200/60 pt-2.5">
+                <span className="text-gray-400 font-medium">Status</span>
+                <span className="inline-flex items-center gap-1.5 text-emerald-700 font-semibold text-xs">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  Completed
+                </span>
+              </div>
+            </div>
+
+            {/* Note */}
+            <div className="mt-3.5 p-3 rounded-xl bg-amber-50/70 border border-amber-100 flex items-start gap-2 text-left">
+              <FileText className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+              <p className="text-[11px] text-amber-900/80 leading-relaxed">
+                An official digital receipt has been dispatched to your email address. This serves as formal proof for your voluntary contribution.
+              </p>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="px-6 sm:px-8 pb-7 pt-1 flex flex-col sm:flex-row gap-3 print:hidden">
+            <button
+              type="button"
+              onClick={handlePrint}
+              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-semibold text-sm transition-all shadow-xs cursor-pointer"
+            >
+              <Printer className="w-4 h-4 text-gray-500" />
+              <span>Print Receipt</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                resetDonationForm();
+                window.location.href = "/donate";
+              }}
+              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold text-sm transition-all shadow-md shadow-orange-500/20 cursor-pointer"
+            >
+              <span>Make Another Donation</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FFFDF7] font-sans selection:bg-amber-500/20 text-gray-800">
@@ -322,7 +665,7 @@ export default function DonatePage() {
             <motion.div variants={fadeUp}>
               <button
                 onClick={() => scrollToForm("kovil")}
-                className="px-10 py-4 rounded-[0px] bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold text-lg hover:shadow-lg hover:shadow-orange-500/30 transition-all hover:-translate-y-1 inline-flex items-center gap-2 cursor-pointer"
+                className="px-10 py-4 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white font-bold text-lg hover:shadow-xl hover:shadow-orange-500/30 transition-all hover:-translate-y-1 inline-flex items-center gap-2.5 cursor-pointer"
               >
                 {t("donate.donate_now")} <ArrowRight size={20} />
               </button>
@@ -547,60 +890,68 @@ export default function DonatePage() {
                     </label>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <button
+                        type="button"
                         onClick={() => setSelectedCause("kovil")}
-                        className={`flex items-center gap-4 rounded-2xl border px-5 py-4 text-left transition-all duration-300 ${selectedCause === "kovil"
-                          ? "border-brand-primary bg-white shadow-[0_10px_30px_-15px_rgba(245,158,11,0.35)]"
+                        className={`flex items-center gap-4 rounded-2xl border px-5 py-4 text-left transition-all duration-300 cursor-pointer ${selectedCause === "kovil"
+                          ? "border-amber-500 bg-amber-50/40 shadow-[0_10px_30px_-15px_rgba(245,158,11,0.35)] ring-2 ring-amber-500/20"
                           : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
                           }`}
                       >
                         <div
-                          className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${selectedCause === "kovil"
-                            ? "border-brand-primary"
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${selectedCause === "kovil"
+                            ? "border-amber-600"
                             : "border-slate-300"
                             }`}
                         >
                           {selectedCause === "kovil" && (
                             <motion.div
                               layoutId="cause-dot"
-                              className="h-2.5 w-2.5 rounded-full bg-brand-primary"
+                              className="h-2.5 w-2.5 rounded-full bg-amber-600"
                             />
                           )}
                         </div>
-                        <div>
-                          <p className="font-semibold text-slate-900">
-                            {t("donate.kovil_kattada")}
-                          </p>
-                          <p className="text-sm text-slate-500">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Landmark className="w-4 h-4 text-amber-600" />
+                            <p className="font-semibold text-slate-900">
+                              {t("donate.kovil_kattada")}
+                            </p>
+                          </div>
+                          <p className="text-sm text-slate-500 mt-0.5">
                             {t("donate.temple_support")}
                           </p>
                         </div>
                       </button>
 
                       <button
+                        type="button"
                         onClick={() => setSelectedCause("annadhanam")}
-                        className={`flex items-center gap-4 rounded-2xl border px-5 py-4 text-left transition-all duration-300 ${selectedCause === "annadhanam"
-                          ? "border-brand-primary bg-white shadow-[0_10px_30px_-15px_rgba(245,158,11,0.35)]"
+                        className={`flex items-center gap-4 rounded-2xl border px-5 py-4 text-left transition-all duration-300 cursor-pointer ${selectedCause === "annadhanam"
+                          ? "border-emerald-500 bg-emerald-50/40 shadow-[0_10px_30px_-15px_rgba(16,185,129,0.35)] ring-2 ring-emerald-500/20"
                           : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
                           }`}
                       >
                         <div
-                          className={`flex h-5 w-5 items-center justify-center rounded-full border-2 ${selectedCause === "annadhanam"
-                            ? "border-brand-primary"
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${selectedCause === "annadhanam"
+                            ? "border-emerald-600"
                             : "border-slate-300"
                             }`}
                         >
                           {selectedCause === "annadhanam" && (
                             <motion.div
                               layoutId="cause-dot"
-                              className="h-2.5 w-2.5 rounded-full bg-brand-primary"
+                              className="h-2.5 w-2.5 rounded-full bg-emerald-600"
                             />
                           )}
                         </div>
-                        <div>
-                          <p className="font-semibold text-slate-900">
-                            {t("donate.anna_title")}
-                          </p>
-                          <p className="text-sm text-slate-500">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Utensils className="w-4 h-4 text-emerald-600" />
+                            <p className="font-semibold text-slate-900">
+                              {t("donate.anna_title")}
+                            </p>
+                          </div>
+                          <p className="text-sm text-slate-500 mt-0.5">
                             {t("donate.food_support")}
                           </p>
                         </div>
@@ -721,13 +1072,14 @@ export default function DonatePage() {
                       {predefinedAmounts.map((amt) => (
                         <button
                           key={amt}
+                          type="button"
                           onClick={() => handleAmountClick(amt)}
-                          className={`rounded-xl border px-3 py-3 text-sm font-semibold transition-all cursor-pointer ${amount === amt
-                            ? "border-brand-primary bg-brand-primary text-white shadow-[0_10px_24px_-12px_rgba(245,158,11,0.55)]"
-                            : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                          className={`rounded-xl border py-3 px-2 text-sm font-bold transition-all duration-200 cursor-pointer active:scale-95 ${amount === amt
+                            ? "border-amber-500 bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md shadow-orange-500/30 scale-[1.02]"
+                            : "border-slate-200 bg-white text-slate-700 hover:border-amber-300 hover:bg-amber-50/50"
                             }`}
                         >
-                          ₹{amt}
+                          ₹{amt.toLocaleString("en-IN")}
                         </button>
                       ))}
                     </div>
@@ -748,14 +1100,18 @@ export default function DonatePage() {
 
                   {/* Error */}
                   {error && (
-                    <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm font-medium text-red-600">
-                      {error}
-                    </div>
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="rounded-2xl border border-red-200 bg-red-50/90 px-4 py-3 text-center text-sm font-semibold text-red-600 flex items-center justify-center gap-2 shadow-sm"
+                    >
+                      <X className="w-4 h-4 shrink-0 rounded-full bg-red-100 p-0.5" />
+                      <span>{error}</span>
+                    </motion.div>
                   )}
 
                   {/* CTA */}
                   <button
-
                     onClick={() => {
                       setError("");
                       if (
@@ -795,8 +1151,8 @@ export default function DonatePage() {
 
                       void handleDonationPayment();
                     }}
-                    disabled={isSubmitting}
-                    className="mt-2 flex w-full items-center justify-center gap-3 rounded-[0px] bg-gradient-to-r from-brand-primary to-orange-500 px-6 py-4 text-sm font-semibold uppercase tracking-[0.25em] text-white shadow-[0_16px_40px_-14px_rgba(245,158,11,0.65)] transition-all duration-300 hover:-translate-y-0.5 hover:from-orange-500 hover:to-brand-primary disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+                    disabled={true}
+                    className="mt-2 flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 px-6 py-4 text-sm font-bold uppercase tracking-[0.2em] text-white shadow-[0_16px_40px_-14px_rgba(245,158,11,0.55)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_45px_-12px_rgba(245,158,11,0.7)] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
                   >
                     {isSubmitting ? (
                       <>
@@ -809,12 +1165,28 @@ export default function DonatePage() {
                         <span>
                           {t("donate.donate_securely")}{" "}
                           {amount || customAmount
-                            ? `| ₹${amount || customAmount}`
+                            ? `| ₹${Number(amount || customAmount).toLocaleString("en-IN")}`
                             : ""}
                         </span>
                       </>
                     )}
                   </button>
+
+                  {/* Trust Badges */}
+                  <div className="pt-2 flex flex-wrap items-center justify-center gap-4 text-xs font-medium text-slate-500">
+                    <span className="inline-flex items-center gap-1.5">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                      256-Bit SSL Encrypted
+                    </span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <CheckCircle2 className="w-4 h-4 text-amber-600" />
+                      80G Tax Exemption
+                    </span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Heart className="w-4 h-4 text-rose-500" />
+                      100% Secure Gateway
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1032,105 +1404,6 @@ export default function DonatePage() {
               >
                 {t("donate.call")}
               </a>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Success Animation Overlay */}
-      <AnimatePresence>
-        {showSuccessAnimation && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden"
-          >
-            {/* Background Blur */}
-            <div className="absolute inset-0 bg-white/80 backdrop-blur-xl" />
-
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0, y: 50 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              transition={{
-                type: "spring",
-                damping: 20,
-                stiffness: 300,
-                duration: 0.6,
-              }}
-              className="relative z-10 flex flex-col items-center bg-white p-12 rounded-[3rem] shadow-[0_20px_60px_-15px_rgba(34,197,94,0.2)] border border-green-50 max-w-md w-full mx-4 text-center"
-            >
-              <div className="relative mb-8">
-                {/* Outer Ring Pulse */}
-                <motion.div
-                  animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0.7, 0.3] }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  className="absolute inset-0 bg-green-200 rounded-full blur-xl"
-                />
-
-                {/* SVG Tick */}
-                <motion.div
-                  animate={{
-                    scale: [1, 1.08, 1],
-                    boxShadow: [
-                      "0px 10px 20px -5px rgba(34, 197, 94, 0.3)",
-                      "0px 20px 40px -5px rgba(34, 197, 94, 0.5)",
-                      "0px 10px 20px -5px rgba(34, 197, 94, 0.3)",
-                    ],
-                  }}
-                  transition={{
-                    duration: 2.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                  className="relative w-32 h-32 rounded-full bg-gradient-to-tr from-green-500 to-emerald-400 flex items-center justify-center"
-                >
-                  <svg
-                    className="w-16 h-16 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <motion.path
-                      initial={{ pathLength: 0, opacity: 0 }}
-                      animate={{
-                        pathLength: [0, 1, 1, 0],
-                        opacity: [0, 1, 1, 0],
-                      }}
-                      transition={{
-                        duration: 2.5,
-                        ease: "easeInOut",
-                        repeat: Infinity,
-                      }}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </motion.div>
-              </div>
-
-              <motion.h2
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 }}
-                className="text-3xl font-black text-gray-900 mb-3 tracking-tight"
-              >
-                {t("donate.donation_success")}
-              </motion.h2>
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8 }}
-                className="text-gray-500 font-medium text-lg"
-              >
-                {t("donate.thank_you")}
-              </motion.p>
             </motion.div>
           </motion.div>
         )}
