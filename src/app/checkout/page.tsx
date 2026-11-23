@@ -163,7 +163,7 @@ export default function CheckoutPage() {
         }
 
         const options = {
-          key: "rzp_live_U1yBFqHCTDakxd",
+          key: "rzp_test_U1bWPxyRyZr7Fb",
           order_id: razorpayOrderId,
           amount: totalAmount * 100, // Amount in paise
           currency: "INR",
@@ -186,7 +186,7 @@ export default function CheckoutPage() {
               if (!verification.success) {
                 alert(
                   verification.message ||
-                    "Payment verification failed. Please contact support.",
+                  "Payment verification failed. Please contact support.",
                 );
                 return;
               }
@@ -528,11 +528,10 @@ export default function CheckoutPage() {
                       <div
                         key={addr.id}
                         onClick={() => setSelectedAddress(addr.id)}
-                        className={`relative p-5 rounded-xl border-2 cursor-pointer transition-all ${
-                          selectedAddress === addr.id
+                        className={`relative p-5 rounded-xl border-2 cursor-pointer transition-all ${selectedAddress === addr.id
                             ? "border-[var(--color-deepgreen)] bg-[var(--color-deepgreen)]/5"
                             : "border-gray-100 hover:border-[var(--color-deepgreen)]/40 bg-gray-50"
-                        }`}
+                          }`}
                       >
                         {selectedAddress === addr.id && (
                           <div className="absolute top-4 right-4 text-[var(--color-deepgreen)]">

@@ -12,8 +12,8 @@ import { ProductModel } from "../models/product_model";
 import { AddressModel, CartModel } from "../models/OrderModel";
 import { config, json } from "zod";
 
-export const BASEURL = "https://api.srikandhagurufoundation.org";
 // export const BASEURL = "http://localhost:3003";
+export const BASEURL = "https://api.srikandhagurufoundation.org";
 
 export const getImageVideoUrl = (data: string) => {
   if (data.startsWith("https") || data.startsWith("http")) {
@@ -589,21 +589,39 @@ export const addDonor = async (data: {
   mobile: string;
   email: string;
   address: string;
+  type: string;
   country: string;
+  pannumber?: string | null;
+  aadhaarnumber?: string | null;
+  passportnumber?: string | null;
   donortype: string;
   amount: number;
-  pannumber: string | null;
-  aadhaarnumber: string | null;
-  passportnumber: string | null;
+  orderid?: string;
+  gatewayref?: string | null;
+  paymentmode?: string | null;
+  paymentstatus?: string;
 }) => {
   try {
+    console.log("Calling /donor/add API with payload:", data);
     const response = await api.post("/donor/add", data);
+    console.log("/donor/add API response:", response.data);
     return response.data;
-  } catch (error) {
-    console.error("Error adding donor:", error);
+  } catch (error: any) {
+    if (error?.response?.status === 404) {
+      try {
+        const fallbackResponse = await api.post("/donate/add", data);
+        return fallbackResponse.data;
+      } catch (fallbackError) {
+        console.error("Error adding donor (fallback):", fallbackError);
+        throw fallbackError;
+      }
+    }
+    console.error("Error adding donor:", error?.response?.data || error.message);
     throw error;
   }
 };
+
+export const addDonation = addDonor;
 
 export const verifyDonorPayment = async (data: {
   donorid: number;

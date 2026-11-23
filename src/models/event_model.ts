@@ -51,6 +51,10 @@ export class EventDetailData {
   participants: number | null;
   partcipants?: number | null;
   registrationfee: string;
+  platinumprice?: string | number | null;
+  goldprice?: string | number | null;
+  silverprice?: string | number | null;
+  lastofferdate?: string | null;
   registrationlastdate: string | null;
   registrationactive: boolean;
   venuename: string | null;
@@ -85,6 +89,10 @@ export class EventDetailData {
     this.participants = data.participants;
     this.partcipants = data.partcipants;
     this.registrationfee = data.registrationfee;
+    this.platinumprice = data.platinumprice;
+    this.goldprice = data.goldprice;
+    this.silverprice = data.silverprice;
+    this.lastofferdate = data.lastofferdate;
     this.registrationlastdate = data.registrationlastdate;
     this.registrationactive = data.registrationactive;
     this.venuename = data.venuename;

@@ -64,7 +64,7 @@ export default function ShopPage() {
       {/* Premium Hero Section */}
       <section className="relative pt-8 pb-8 lg:pt-12 lg:pb-12 bg-gray-50">
         <div className="container mx-auto px-4 max-w-7xl">
-          <div className="relative rounded-[2rem] md:rounded-[3rem] p-8 md:p-14 lg:p-20 overflow-hidden bg-white text-gray-900 shadow-[0_8px_40px_rgb(0,0,0,0.06)] flex flex-col md:flex-row items-center gap-12 border border-gray-100/50">
+          <div className="relative rounded-[2rem] md:rounded-[3rem] p-8 md:p-14 lg:p-16 overflow-hidden bg-white text-gray-900 shadow-[0_8px_40px_rgb(0,0,0,0.06)] flex flex-col md:flex-row items-center gap-12 border border-gray-100/50">
             {/* Background glowing elements */}
             <div className="absolute -top-40 -right-40 w-96 h-96 bg-emerald-400/20 rounded-full blur-[100px] pointer-events-none"></div>
             <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-amber-300/20 rounded-full blur-[100px] pointer-events-none"></div>
@@ -114,63 +114,15 @@ export default function ShopPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-              className="flex-1 w-full hidden md:flex justify-end relative z-10"
+              className="flex-1 w-full flex justify-center md:justify-end relative z-10"
             >
-              {products.length > 0 ? (
-                <div
-                  className="relative w-full max-w-md h-[450px] rounded-[2rem] overflow-hidden cursor-pointer group shadow-2xl border-[6px] border-white transform rotate-2 hover:rotate-0 transition-transform duration-500"
-                  onClick={() => setSelectedProduct(products[0])}
-                >
-                  {/* Background Image */}
-                  <img
-                    src={getImageVideoUrl(products[0].image)}
-                    alt={products[0].productname}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-
-                  {/* Deep Overlay to make text pop */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/95 via-gray-900/40 to-transparent" />
-
-                  {/* Floating price badge */}
-                  <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-md px-4 py-2 rounded-2xl shadow-xl flex items-center gap-2 transform -translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                    <span className="text-sm font-black text-gray-900">
-                      ₹{products[0].sellingprice || products[0].price}
-                    </span>
-                  </div>
-
-                  {/* Content */}
-                  <div className="absolute inset-0 flex flex-col justify-end p-8 text-white">
-                    <p className="text-emerald-400 font-bold text-xs uppercase tracking-widest mb-2 shadow-sm drop-shadow-md">
-                      {products[0].category}
-                    </p>
-                    <h2 className="text-3xl font-extrabold leading-tight mb-4 drop-shadow-lg text-white">
-                      {products[0].productname}
-                    </h2>
-
-                    <div className="flex items-center justify-between mt-2 pt-4 border-t border-white/20">
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs uppercase tracking-widest text-gray-300 font-medium">
-                          {t("shop.starting_from")}
-                        </span>
-                        <span className="text-2xl font-black text-white drop-shadow-sm">
-                          ₹{products[0].sellingprice || products[0].price}
-                        </span>
-                      </div>
-
-                      <button className="w-12 h-12 rounded-full bg-white text-gray-900 flex items-center justify-center transition-all duration-300 group-hover:bg-[var(--color-deepgreen)] group-hover:text-white shadow-lg group-hover:scale-110">
-                        <ArrowRight className="w-5 h-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="relative w-full max-w-md h-[450px] bg-gray-50 rounded-[2rem] overflow-hidden border-[6px] border-white shadow-inner flex items-center justify-center flex-col gap-4 transform rotate-2">
-                  <Loader2 className="w-10 h-10 text-[var(--color-deepgreen)] animate-spin" />
-                  <span className="text-sm font-medium text-gray-400 uppercase tracking-widest">
-                    {t("shop.loading_feat")}
-                  </span>
-                </div>
-              )}
+              <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md h-[320px] sm:h-[380px] md:h-[420px] rounded-[2rem] overflow-hidden shadow-2xl border-[6px] border-white transform rotate-2 hover:rotate-0 transition-transform duration-500 bg-white flex items-center justify-center">
+                <img
+                  src="https://m.media-amazon.com/images/I/518zdG16JYL.jpg"
+                  alt="Premium Spiritual Resources"
+                  className="w-full h-full object-contain p-4 transition-transform duration-700 hover:scale-105"
+                />
+              </div>
             </motion.div>
           </div>
         </div>
@@ -240,12 +192,10 @@ export default function ShopPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {products
-                .filter(
-                  (product, idx) =>
-                    idx !== 0 &&
-                    product.productname
-                      .toLowerCase()
-                      .includes(searchQuery.toLowerCase()),
+                .filter((product) =>
+                  product.productname
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase()),
                 )
                 .map((product, index) => (
                   <motion.div

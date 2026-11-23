@@ -64,6 +64,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <ChannelSlider />
       <KriyaYogam />
       <SpiritualPhilosophy />
       <RoleOfReligions />
@@ -225,6 +226,120 @@ function Hero() {
           <div className="w-[2px] h-16 bg-gradient-to-b from-amber-500/80 to-transparent rounded-full"></div>
         </Link>
       </motion.div>
+    </section>
+  );
+}
+
+// Channel Slider (Horizontal automatic sliding channel logos below Hero)
+
+const channelLogos = [
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI5yDV7uioxJATJxYqf7xHamhL8tHa-ibVEaeCsxkaYconaifvTzEPLxQ&s=10",
+  "https://yt3.googleusercontent.com/cRB0p1BFWrD9YOzzehg-LzSKc4Efs7DGITcZis1gntWSDVLrs6ZWD0OwAfJyIXIy43RIrXOISw=s900-c-k-c0x00ffffff-no-rj",
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcrubzEetKn4tXxfxM0ez9tiUmmNX8AB8l80WN7KO2OA&s",
+  "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjQY0JJfrB9KfK3eKS2RwAYW1XwTyQ98rLwwscxX3uDD4SnSl_2DQbJv38u-G-6tleYCK1nBQjIcjqMqsHGS-NFT2IQGn19noYQSgCYXDLR4laIjab5v-AYnaKicYnaQfdMiZEGPKaFtqzwHqrleqdZVYpj1Xjj5GTLXdIhqe5l-PI1eqQjHT5F5K4I8ejn/s1600/Yogam%20Media%20Logo%20final.png",
+  "https://yt3.googleusercontent.com/sDEGdtpacfppQRzvIM3ZNDb_psETkENba7fZbf3WPurp9Ue7yXdgzYwrphEo_is3huPWkUywhoA=s900-c-k-c0x00ffffff-no-rj",
+  "https://yt3.googleusercontent.com/Z7mO33VyC9utg9d_025-6ya-AkejXSg3pKfWUlq31d2iVjbHbAq_EfWNhYcgoV6njov-r3do=s900-c-k-c0x00ffffff-no-rj",
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSo56AWhYnLjI8lp-WWX4FctJY1YWl8UH5RctRbwe9Oow&s",
+  "https://yt3.googleusercontent.com/iBvhQN7qcToBs7366J5TKZxX2epQc1NAXizN9YaDZb-JhJuZOtRSt2dd9-BXTidm7K5GxHUNRg=s900-c-k-c0x00ffffff-no-rj",
+];
+
+
+function ChannelSlider() {
+  const { t } = useLanguage();
+
+  return (
+    <section className="relative w-full overflow-hidden bg-[#FAF9F6] py-14 md:py-20 border-y border-[#E9E5DC]">
+
+      {/* Section Heading */}
+      <div className="container mx-auto px-5 mb-10 md:mb-14">
+        <div className="flex flex-col items-center text-center">
+
+          <span className="text-[10px] md:text-xs font-semibold tracking-[0.35em] uppercase text-amber-700 mb-3">
+            Our Media Network
+          </span>
+
+          <h2 className="text-2xl md:text-4xl font-semibold tracking-tight text-[#28251F]">
+            {t("home.channels_title")}
+          </h2>
+
+          <div className="flex items-center gap-3 mt-5">
+            <div className="w-10 h-px bg-amber-600/50" />
+            <div className="w-1.5 h-1.5 rotate-45 bg-amber-600" />
+            <div className="w-10 h-px bg-amber-600/50" />
+          </div>
+
+        </div>
+      </div>
+
+      {/* Slider */}
+      <div className="relative w-full overflow-hidden">
+
+        {/* Left / Right Fade */}
+        <div className="absolute inset-y-0 left-0 w-16 md:w-40 z-10 pointer-events-none bg-gradient-to-r from-[#FAF9F6] via-[#FAF9F6]/90 to-transparent" />
+
+        <div className="absolute inset-y-0 right-0 w-16 md:w-40 z-10 pointer-events-none bg-gradient-to-l from-[#FAF9F6] via-[#FAF9F6]/90 to-transparent" />
+
+        <motion.div
+          className="flex w-max items-center"
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{
+            ease: "linear",
+            duration: 35,
+            repeat: Infinity,
+          }}
+          whileHover={{ animationPlayState: "paused" }}
+        >
+
+          {[...channelLogos, ...channelLogos].map((url, idx) => (
+            <div
+              key={`${url}-${idx}`}
+              className="group shrink-0 px-3 md:px-5"
+            >
+
+              {/* Logo Card */}
+              <div className="
+                relative flex
+                h-24 w-40
+                md:h-28 md:w-48
+                items-center justify-center
+                rounded-xl
+                border border-[#EAE6DE]
+                bg-white
+                px-6 py-5
+                transition-all duration-500
+                hover:-translate-y-1.5
+                hover:border-amber-600/40
+                hover:shadow-[0_15px_35px_-15px_rgba(100,70,30,0.22)]
+              ">
+
+                <img
+                  src={url}
+                  alt={`Channel Logo ${(idx % channelLogos.length) + 1}`}
+                  className="
+                    max-h-full max-w-full
+                    object-contain
+                    opacity-85
+                    transition-all duration-500
+                    group-hover:opacity-100
+                    group-hover:scale-105
+                  "
+                  loading="lazy"
+                />
+
+              </div>
+            </div>
+          ))}
+
+        </motion.div>
+      </div>
+
+      {/* Bottom Caption */}
+      <div className="mt-9 md:mt-12 text-center px-4">
+        <p className="text-xs md:text-sm tracking-wide text-[#8B8377]">
+          A collection of voices, stories and spiritual inspiration.
+        </p>
+      </div>
+
     </section>
   );
 }
@@ -1420,7 +1535,7 @@ function BookShopPreview() {
                 <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
                   <div className="flex flex-col">
                     {selectedProduct.sellingprice &&
-                    selectedProduct.sellingprice > 0 ? (
+                      selectedProduct.sellingprice > 0 ? (
                       <div className="flex items-baseline gap-3">
                         <span className="text-3xl font-black text-gray-900">
                           ₹{selectedProduct.sellingprice}
@@ -1436,14 +1551,14 @@ function BookShopPreview() {
                     )}
                   </div>
                   {selectedProduct.sellingprice &&
-                  selectedProduct.sellingprice > 0 &&
-                  selectedProduct.price > selectedProduct.sellingprice ? (
+                    selectedProduct.sellingprice > 0 &&
+                    selectedProduct.price > selectedProduct.sellingprice ? (
                     <span className="bg-red-50 text-red-600 font-bold px-2 py-1 rounded text-sm">
                       {Math.round(
                         ((selectedProduct.price -
                           selectedProduct.sellingprice) /
                           selectedProduct.price) *
-                          100,
+                        100,
                       )}
                       % OFF
                     </span>

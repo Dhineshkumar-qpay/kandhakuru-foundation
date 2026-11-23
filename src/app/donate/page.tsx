@@ -41,6 +41,9 @@ const staggerContainer: any = {
 
 const predefinedAmounts = [100, 250, 500, 1000, 5000, 10000];
 
+// Module-level guard to ensure addDonor is NEVER called more than once per transaction
+const inFlightOrProcessedDonorKeys = new Set<string>();
+
 // QPay Configuration
 const QPAY_CONFIG = {
   targetUrl: "https://pg.qpayindia.com/wwws/Payment/PaymentDetails.aspx",
@@ -127,6 +130,7 @@ export default function DonatePage() {
 
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [copied, setCopied] = useState(false);
+  const hasCalledAddDonor = useRef(false);
 
   const handleCopy = (text: string) => {
     if (typeof navigator !== "undefined" && navigator.clipboard) {
@@ -173,25 +177,53 @@ export default function DonatePage() {
     const message = searchParams.get("message");
     const hashError = searchParams.get("hashError");
 
+    if (!status) return;
+
+    let savedData: any = {};
+    try {
+      const stored =
+        sessionStorage.getItem("skf_last_donation") ||
+        localStorage.getItem("skf_last_donation");
+      if (stored) savedData = JSON.parse(stored);
+    } catch {
+      // ignore
+    }
+
+    const orderIdVal = searchParams.get("orderId") || savedData.orderId || "";
+    const refVal = searchParams.get("ref") || savedData.refId || "";
+
+    // Validate amount from URL or saved session data
+    const rawUrlAmount = searchParams.get("amount");
+    let amountVal = "";
+    if (rawUrlAmount && !isNaN(Number(rawUrlAmount)) && Number(rawUrlAmount) > 0) {
+      amountVal = String(Number(rawUrlAmount));
+    } else if (savedData.amount && !isNaN(Number(savedData.amount)) && Number(savedData.amount) > 0) {
+      amountVal = String(Number(savedData.amount));
+    } else {
+      amountVal = "0";
+    }
+
+    const causeVal =
+      savedData.cause === "anna" || savedData.cause === "annadhanam"
+        ? "Annadhanam Contribution"
+        : "Temple Construction & Renovation";
+
+    const rawMode = searchParams.get("mode") || savedData.paymentmode || "";
+    let paymentModeVal = "UPI";
+    if (rawMode) {
+      const lower = rawMode.toLowerCase();
+      if (lower.includes("upi")) paymentModeVal = "UPI";
+      else if (lower.includes("card") || lower.includes("cc") || lower.includes("dc")) paymentModeVal = "Card";
+      else if (lower.includes("net") || lower.includes("nb") || lower.includes("banking")) paymentModeVal = "Net Banking";
+      else paymentModeVal = rawMode;
+    }
+
+    // Determine normalized payment status: "success", "failed", or "pending"
+    const normalizedStatus =
+      status === "success" ? "success" : status === "failed" ? "failed" : "pending";
+
+    // Handle UI display depending on payment status
     if (status === "success") {
-      let savedData: any = {};
-      try {
-        const stored =
-          sessionStorage.getItem("skf_last_donation") ||
-          localStorage.getItem("skf_last_donation");
-        if (stored) savedData = JSON.parse(stored);
-      } catch {
-        // ignore
-      }
-
-      const orderIdVal = searchParams.get("orderId") || savedData.orderId || "";
-      const refVal = searchParams.get("ref") || savedData.refId || "";
-      const amountVal = searchParams.get("amount") || savedData.amount || "";
-      const causeVal =
-        savedData.cause === "anna" || savedData.cause === "annadhanam"
-          ? "Annadhanam Contribution"
-          : "Temple Construction & Renovation";
-
       setSuccessDetails({
         orderId: orderIdVal,
         refId: refVal,
@@ -212,52 +244,91 @@ export default function DonatePage() {
           }),
         paymentMode: searchParams.get("mode") || "Online",
       });
-
       setIsSuccessPage(true);
-
-      // Call AddDonor API on payment success
-      const donorSyncKey = `skf_donor_recorded_${orderIdVal || refVal || "success"}`;
-      if (typeof window !== "undefined" && !sessionStorage.getItem(donorSyncKey)) {
-        sessionStorage.setItem(donorSyncKey, "pending");
-
-        const donorPayload = {
-          cause:
-            savedData.cause === "anna" || savedData.cause === "annadhanam"
-              ? "Annadhanam"
-              : savedData.cause === "kovil"
-                ? "Temple Construction"
-                : savedData.cause || "Education Support",
-          fullname: savedData.name || savedData.fullname || "Donor",
-          mobile: savedData.phone || savedData.mobile || "",
-          email: savedData.email || "",
-          address: savedData.address || "",
-          country: savedData.country || "India",
-          pannumber: savedData.pannumber || "",
-          aadhaarnumber: savedData.aadhaarnumber || "",
-          passportnumber: savedData.passportnumber || "",
-          donortype:
-            savedData.donortype === "domestic"
-              ? "Individual"
-              : savedData.donortype || "Individual",
-          amount: Number(amountVal || savedData.amount || 0),
-        };
-
-        addDonor(donorPayload)
-          .then((res) => {
-            console.log("Donor added successfully:", res);
-            sessionStorage.setItem(donorSyncKey, "completed");
-          })
-          .catch((err) => {
-            console.error("Failed to add donor:", err);
-            sessionStorage.removeItem(donorSyncKey);
-          });
-      }
     } else if (status === "failed") {
       if (hashError) {
         setError("Security validation failed for the payment response.");
       } else {
         setError(message || "Payment was not successful. Please try again.");
       }
+    } else if (status === "pending") {
+      setError(
+        message || "Payment is currently pending confirmation from your bank. We will update you once confirmed."
+      );
+    }
+
+    // Call /donor/add API for all completed payment states (success, failed, or pending)
+    const donorSyncKey = `skf_donor_recorded_${orderIdVal || refVal || savedData.orderId || "order"}_${normalizedStatus}`;
+    const alreadyRecorded =
+      typeof window !== "undefined" &&
+      Boolean(sessionStorage.getItem(donorSyncKey));
+
+    if (
+      !hasCalledAddDonor.current &&
+      !inFlightOrProcessedDonorKeys.has(donorSyncKey) &&
+      !alreadyRecorded
+    ) {
+      // Lock immediately and synchronously across ref, module cache, and sessionStorage
+      hasCalledAddDonor.current = true;
+      inFlightOrProcessedDonorKeys.add(donorSyncKey);
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(donorSyncKey, "in_progress");
+      }
+
+      const donorPayload = {
+        cause:
+          savedData.cause === "anna" ||
+            savedData.cause === "annadhanam" ||
+            savedData.cause === "food"
+            ? "food"
+            : "temple",
+        type: "online",
+        fullname:
+          (savedData.fullname || savedData.name || "").trim() || "Donor",
+        mobile:
+          (savedData.mobile || savedData.phone || "").trim() || "9876543210",
+        email:
+          (savedData.email || "").trim() || "donor@srikandhagurufoundation.org",
+        address:
+          (savedData.address || "").trim() ||
+          (savedData.country ? `${savedData.country}` : "Address not provided"),
+        country: (savedData.country || "").trim() || "India",
+        pannumber: savedData.pannumber?.trim()
+          ? savedData.pannumber.trim().toUpperCase()
+          : null,
+        aadhaarnumber: savedData.aadhaarnumber?.trim()
+          ? savedData.aadhaarnumber.replace(/\s+/g, "").trim()
+          : null,
+        passportnumber: savedData.passportnumber?.trim()
+          ? savedData.passportnumber.trim().toUpperCase()
+          : null,
+        donortype:
+          savedData.donortype === "international"
+            ? "international"
+            : "domestic",
+        amount:
+          !isNaN(Number(amountVal)) && Number(amountVal) > 0
+            ? Number(amountVal)
+            : Number(savedData.amount) || 0,
+        orderid: orderIdVal || savedData.orderId || `SKGF-DON-${Date.now()}`,
+        gatewayref: refVal || savedData.refId || null,
+        paymentmode: paymentModeVal,
+        paymentstatus: normalizedStatus,
+      };
+
+      addDonor(donorPayload)
+        .then((res) => {
+          console.log(
+            `Donor added successfully with status ${normalizedStatus}:`,
+            res
+          );
+          if (typeof window !== "undefined") {
+            sessionStorage.setItem(donorSyncKey, "completed");
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to add donor:", err);
+        });
     }
   }, []);
 
@@ -367,7 +438,8 @@ export default function DonatePage() {
             aadhaarnumber,
             passportnumber,
             donortype:
-              donortype === "domestic" ? "Individual" : donortype || "Individual",
+              donortype === "international" ? "international" : "domestic",
+            paymentstatus: "pending",
             date: new Date().toLocaleString("en-IN", {
               day: "numeric",
               month: "short",
@@ -479,9 +551,10 @@ export default function DonatePage() {
 
               <div className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight my-1">
                 ₹
-                {successDetails?.amount
-                  ? Number(successDetails.amount).toLocaleString("en-IN")
-                  : "0"}
+                {(() => {
+                  const num = Number(successDetails?.amount);
+                  return !isNaN(num) && num > 0 ? num.toLocaleString("en-IN") : "0";
+                })()}
               </div>
 
               <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 bg-white/90 px-3 py-1 rounded-full border border-emerald-100 shadow-2xs mt-1">
@@ -595,15 +668,6 @@ export default function DonatePage() {
 
           {/* Action Buttons */}
           <div className="px-6 sm:px-8 pb-7 pt-1 flex flex-col sm:flex-row gap-3 print:hidden">
-            <button
-              type="button"
-              onClick={handlePrint}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-semibold text-sm transition-all shadow-xs cursor-pointer"
-            >
-              <Printer className="w-4 h-4 text-gray-500" />
-              <span>Print Receipt</span>
-            </button>
-
             <button
               type="button"
               onClick={() => {
@@ -1151,7 +1215,7 @@ export default function DonatePage() {
 
                       void handleDonationPayment();
                     }}
-                    disabled={true}
+                    disabled={isSubmitting}
                     className="mt-2 flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 px-6 py-4 text-sm font-bold uppercase tracking-[0.2em] text-white shadow-[0_16px_40px_-14px_rgba(245,158,11,0.55)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_45px_-12px_rgba(245,158,11,0.7)] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
                   >
                     {isSubmitting ? (

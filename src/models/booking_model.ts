@@ -27,6 +27,7 @@ export interface BookingData {
   remarks?: string;
   totalamount?: string;
   deliverymode?: string;
+  pricetype?: "platinum" | "gold" | "silver" | string | null;
   paymentstatus?: string;
   transactionid?: null;
   bookingstatus?: string;

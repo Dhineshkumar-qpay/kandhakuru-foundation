@@ -115,6 +115,18 @@ export async function POST(request: NextRequest) {
       Message.toLowerCase().includes("approved") ||
       Message.toLowerCase().includes("success");
 
+    const isPending =
+      ResponseCode === "101" ||
+      ResponseCode === "102" ||
+      Message.toLowerCase().includes("pending") ||
+      Message.toLowerCase().includes("awaiting");
+
+    const callbackStatus = isSuccess
+      ? "success"
+      : isPending
+        ? "pending"
+        : "failed";
+
     console.log("QPay Callback Received:", {
       MSPReferenceID,
       MerchantOrderID,
@@ -126,6 +138,8 @@ export async function POST(request: NextRequest) {
       calculatedHash,
       isValid,
       isSuccess,
+      isPending,
+      callbackStatus,
     });
 
     const isExplicitWebhook =
@@ -144,10 +158,7 @@ export async function POST(request: NextRequest) {
         "http";
       const redirectUrl = new URL("/donate", `${proto}://${host}`);
 
-      redirectUrl.searchParams.set(
-        "status",
-        isSuccess ? "success" : "failed",
-      );
+      redirectUrl.searchParams.set("status", callbackStatus);
       if (MerchantOrderID)
         redirectUrl.searchParams.set("orderId", MerchantOrderID);
       if (MSPReferenceID) redirectUrl.searchParams.set("ref", MSPReferenceID);
@@ -155,11 +166,23 @@ export async function POST(request: NextRequest) {
       if (PaymentMode) redirectUrl.searchParams.set("mode", PaymentMode);
       const rawAmount = data.Amount || data.amount;
       if (rawAmount) {
-        try {
-          const decodedAmount = Buffer.from(rawAmount, "base64").toString("utf-8");
-          redirectUrl.searchParams.set("amount", decodedAmount);
-        } catch {
-          redirectUrl.searchParams.set("amount", rawAmount);
+        let cleanAmount = "";
+        const num = Number(rawAmount);
+        if (!isNaN(num) && num > 0) {
+          cleanAmount = String(num);
+        } else {
+          try {
+            const decoded = Buffer.from(rawAmount, "base64").toString("utf-8").trim();
+            const decodedNum = Number(decoded);
+            if (!isNaN(decodedNum) && decodedNum > 0) {
+              cleanAmount = String(decodedNum);
+            }
+          } catch {
+            // ignore
+          }
+        }
+        if (cleanAmount) {
+          redirectUrl.searchParams.set("amount", cleanAmount);
         }
       }
       if (!isValid && receivedHash)
