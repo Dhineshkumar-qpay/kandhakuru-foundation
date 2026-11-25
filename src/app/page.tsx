@@ -253,11 +253,6 @@ function ChannelSlider() {
       {/* Section Heading */}
       <div className="container mx-auto px-5 mb-10 md:mb-14">
         <div className="flex flex-col items-center text-center">
-
-          <span className="text-[10px] md:text-xs font-semibold tracking-[0.35em] uppercase text-amber-700 mb-3">
-            Our Media Network
-          </span>
-
           <h2 className="text-2xl md:text-4xl font-semibold tracking-tight text-[#28251F]">
             {t("home.channels_title")}
           </h2>
