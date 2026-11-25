@@ -50,6 +50,10 @@ export class EventDetailData {
   thingstobring: string[] | null;
   participants: number | null;
   partcipants?: number | null;
+  seatsavailable?: number | null;
+  seatsleft?: number | null;
+  bookedseats?: number | null;
+  occupiedseats?: number | null;
   registrationfee: string;
   platinumprice?: string | number | null;
   goldprice?: string | number | null;
@@ -88,6 +92,10 @@ export class EventDetailData {
     this.thingstobring = data.thingstobring;
     this.participants = data.participants;
     this.partcipants = data.partcipants;
+    this.seatsavailable = data.availableseats ?? data.seatsavailable ?? data.seats_available;
+    this.seatsleft = data.seatsleft ?? data.seats_left;
+    this.bookedseats = data.bookedseats ?? data.booked_seats;
+    this.occupiedseats = data.occupiedseats ?? data.occupied_seats ?? data.bookedseats ?? data.booked_seats;
     this.registrationfee = data.registrationfee;
     this.platinumprice = data.platinumprice;
     this.goldprice = data.goldprice;

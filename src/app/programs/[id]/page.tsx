@@ -148,6 +148,36 @@ export default function ProgramDetailsPage() {
     if (str === "" || str === "null" || str === "undefined") return false;
     return !isNaN(new Date(str).getTime());
   })();
+
+  const totalParticipants = Number(
+    program?.participants ??
+    program?.partcipants ??
+    program?.seatsavailable ??
+    (program as any)?.seats_available ??
+    100
+  );
+
+  const availableSeats =
+    program?.seatsleft !== null && program?.seatsleft !== undefined
+      ? Number(program.seatsleft)
+      : (program as any)?.seats_left !== null && (program as any)?.seats_left !== undefined
+        ? Number((program as any).seats_left)
+        : program?.bookedseats !== null && program?.bookedseats !== undefined
+          ? Math.max(0, totalParticipants - Number(program.bookedseats))
+          : program?.occupiedseats !== null && program?.occupiedseats !== undefined
+            ? Math.max(0, totalParticipants - Number(program.occupiedseats))
+            : totalParticipants;
+
+  const occupiedSeats =
+    program?.occupiedseats !== null && program?.occupiedseats !== undefined
+      ? Number(program.occupiedseats)
+      : (program as any)?.occupied_seats !== null && (program as any)?.occupied_seats !== undefined
+        ? Number((program as any).occupied_seats)
+        : program?.bookedseats !== null && program?.bookedseats !== undefined
+          ? Number(program.bookedseats)
+          : (program as any)?.booked_seats !== null && (program as any)?.booked_seats !== undefined
+            ? Number((program as any).booked_seats)
+            : Math.max(0, totalParticipants - availableSeats);
   const [selectedPriceType, setSelectedPriceType] = useState<
     "platinum" | "gold" | "silver"
   >("platinum");
@@ -623,28 +653,52 @@ export default function ProgramDetailsPage() {
                   )}
                 </div>
 
-                {program.participants !== null &&
-                  program.participants !== undefined ? (
-                  <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
-                    <Users className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
-                    <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
-                      Capacity
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <Armchair className="w-8 h-8 text-amber-500 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        Live
+                      </span>
+                    </div>
+                    <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-3">
+                      {t("program_details.capacity")}
                     </h4>
-                    <p className="text-lg font-semibold text-gray-900">
-                      {program.participants} Max
-                    </p>
+
+                    {/* 3D Participants Box */}
+                    <div className="relative bg-gradient-to-r from-blue-50/90 to-white rounded-xl px-3.5 py-2.5 border-t border-x border-blue-200 border-b-[3px] border-b-blue-500 shadow-sm flex items-center justify-between hover:translate-y-0.5 hover:border-b-[2px] transition-all duration-150">
+                      <span className="text-xs font-bold text-gray-700">
+                        {t("program_details.participants")}
+                      </span>
+                      <span className="text-xl font-black text-blue-600 tracking-tight">
+                        {totalParticipants}
+                      </span>
+                    </div>
                   </div>
-                ) : (
-                  <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
-                    <Info className="w-8 h-8 text-amber-500 mb-4 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
-                    <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
-                      {t("program_details.program_type")}
-                    </h4>
-                    <p className="text-lg font-semibold text-gray-900 capitalize">
-                      {program.programtype || t("program_details.general")}
-                    </p>
+
+                  <div className="grid grid-cols-2 gap-3 mt-3">
+                    {/* 3D Available Seats Box */}
+                    <div className="relative bg-gradient-to-b from-white to-emerald-50/80 rounded-xl p-3 border-t border-x border-emerald-200 border-b-[4px] border-b-emerald-500 shadow-[0_4px_10px_rgba(16,185,129,0.15)] hover:translate-y-0.5 hover:border-b-[2px] transition-all duration-150 flex flex-col justify-center text-center">
+                      <span className="text-[11px] font-bold text-gray-600 leading-tight mb-1">
+                        {t("program_details.available_seats")}
+                      </span>
+                      <span className="text-xl font-black text-emerald-600 tracking-tight">
+                        {availableSeats}
+                      </span>
+                    </div>
+
+                    {/* 3D Occupied Seats Box */}
+                    <div className="relative bg-gradient-to-b from-white to-amber-50/80 rounded-xl p-3 border-t border-x border-amber-200 border-b-[4px] border-b-amber-500 shadow-[0_4px_10px_rgba(245,158,11,0.15)] hover:translate-y-0.5 hover:border-b-[2px] transition-all duration-150 flex flex-col justify-center text-center">
+                      <span className="text-[11px] font-bold text-gray-600 leading-tight mb-1">
+                        {t("program_details.occupied_seats")}
+                      </span>
+                      <span className="text-xl font-black text-amber-600 tracking-tight">
+                        {occupiedSeats}
+                      </span>
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             </motion.div>
 
@@ -1163,7 +1217,7 @@ export default function ProgramDetailsPage() {
                         </p>
                       </div>
 
-                      {isLevel1Or2 && hasValidEventToDate && program.eventtodate && (
+                      {hasValidEventToDate && program.eventtodate && (
                         <div>
                           <h5 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
                             {t("program_details.reg_closed")}
