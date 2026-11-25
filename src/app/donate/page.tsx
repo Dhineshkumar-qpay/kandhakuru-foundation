@@ -195,32 +195,58 @@ export default function DonatePage() {
     // Validate amount from URL or saved session data
     const rawUrlAmount = searchParams.get("amount");
     let amountVal = "";
-    if (rawUrlAmount && !isNaN(Number(rawUrlAmount)) && Number(rawUrlAmount) > 0) {
+    if (
+      rawUrlAmount &&
+      !isNaN(Number(rawUrlAmount)) &&
+      Number(rawUrlAmount) > 0
+    ) {
       amountVal = String(Number(rawUrlAmount));
-    } else if (savedData.amount && !isNaN(Number(savedData.amount)) && Number(savedData.amount) > 0) {
+    } else if (
+      savedData.amount &&
+      !isNaN(Number(savedData.amount)) &&
+      Number(savedData.amount) > 0
+    ) {
       amountVal = String(Number(savedData.amount));
     } else {
       amountVal = "0";
     }
 
-    const causeVal =
-      savedData.cause === "anna" || savedData.cause === "annadhanam"
-        ? "Annadhanam Contribution"
-        : "Temple Construction & Renovation";
+    let causeVal = "Temple Construction & Renovation";
+    if (savedData.cause === "anna" || savedData.cause === "annadhanam" || savedData.cause === "food") {
+      causeVal = "Annadhanam Contribution";
+    } else if (savedData.cause === "ghosala" || savedData.cause === "gosala") {
+      causeVal = "Ghosala Contribution";
+    } else if (savedData.cause === "pooja" || savedData.cause === "puja") {
+      causeVal = "Pooja Contribution";
+    }
 
     const rawMode = searchParams.get("mode") || savedData.paymentmode || "";
     let paymentModeVal = "UPI";
     if (rawMode) {
       const lower = rawMode.toLowerCase();
       if (lower.includes("upi")) paymentModeVal = "UPI";
-      else if (lower.includes("card") || lower.includes("cc") || lower.includes("dc")) paymentModeVal = "Card";
-      else if (lower.includes("net") || lower.includes("nb") || lower.includes("banking")) paymentModeVal = "Net Banking";
+      else if (
+        lower.includes("card") ||
+        lower.includes("cc") ||
+        lower.includes("dc")
+      )
+        paymentModeVal = "Card";
+      else if (
+        lower.includes("net") ||
+        lower.includes("nb") ||
+        lower.includes("banking")
+      )
+        paymentModeVal = "Net Banking";
       else paymentModeVal = rawMode;
     }
 
     // Determine normalized payment status: "success", "failed", or "pending"
     const normalizedStatus =
-      status === "success" ? "success" : status === "failed" ? "failed" : "pending";
+      status === "success"
+        ? "success"
+        : status === "failed"
+          ? "failed"
+          : "pending";
 
     // Handle UI display depending on payment status
     if (status === "success") {
@@ -253,7 +279,8 @@ export default function DonatePage() {
       }
     } else if (status === "pending") {
       setError(
-        message || "Payment is currently pending confirmation from your bank. We will update you once confirmed."
+        message ||
+        "Payment is currently pending confirmation from your bank. We will update you once confirmed.",
       );
     }
 
@@ -275,13 +302,21 @@ export default function DonatePage() {
         sessionStorage.setItem(donorSyncKey, "in_progress");
       }
 
+      let causePayload = "temple";
+      if (
+        savedData.cause === "anna" ||
+        savedData.cause === "annadhanam" ||
+        savedData.cause === "food"
+      ) {
+        causePayload = "food";
+      } else if (savedData.cause === "ghosala" || savedData.cause === "gosala") {
+        causePayload = "ghosala";
+      } else if (savedData.cause === "pooja" || savedData.cause === "puja") {
+        causePayload = "pooja";
+      }
+
       const donorPayload = {
-        cause:
-          savedData.cause === "anna" ||
-            savedData.cause === "annadhanam" ||
-            savedData.cause === "food"
-            ? "food"
-            : "temple",
+        cause: causePayload,
         type: "online",
         fullname:
           (savedData.fullname || savedData.name || "").trim() || "Donor",
@@ -320,7 +355,7 @@ export default function DonatePage() {
         .then((res) => {
           console.log(
             `Donor added successfully with status ${normalizedStatus}:`,
-            res
+            res,
           );
           if (typeof window !== "undefined") {
             sessionStorage.setItem(donorSyncKey, "completed");
@@ -537,7 +572,8 @@ export default function DonatePage() {
               Donation Successful!
             </h1>
             <p className="text-xs sm:text-sm text-gray-500 mt-1 max-w-sm mx-auto leading-relaxed">
-              Thank you for your sacred contribution. May divine grace and auspicious blessings be upon you.
+              Thank you for your sacred contribution. May divine grace and
+              auspicious blessings be upon you.
             </p>
           </div>
 
@@ -553,7 +589,9 @@ export default function DonatePage() {
                 ₹
                 {(() => {
                   const num = Number(successDetails?.amount);
-                  return !isNaN(num) && num > 0 ? num.toLocaleString("en-IN") : "0";
+                  return !isNaN(num) && num > 0
+                    ? num.toLocaleString("en-IN")
+                    : "0";
                 })()}
               </div>
 
@@ -592,7 +630,9 @@ export default function DonatePage() {
 
               {successDetails?.refId && (
                 <div className="flex justify-between items-center py-0.5 border-t border-gray-200/60 pt-2.5">
-                  <span className="text-gray-400 font-medium">Gateway Ref (MSP)</span>
+                  <span className="text-gray-400 font-medium">
+                    Gateway Ref (MSP)
+                  </span>
                   <span className="font-mono font-medium text-gray-900">
                     {successDetails.refId}
                   </span>
@@ -619,7 +659,9 @@ export default function DonatePage() {
 
               {successDetails?.phone && (
                 <div className="flex justify-between items-center py-0.5 border-t border-gray-200/60 pt-2.5">
-                  <span className="text-gray-400 font-medium">Mobile Number</span>
+                  <span className="text-gray-400 font-medium">
+                    Mobile Number
+                  </span>
                   <span className="font-medium text-gray-800">
                     {successDetails.phone}
                   </span>
@@ -661,7 +703,9 @@ export default function DonatePage() {
             <div className="mt-3.5 p-3 rounded-xl bg-amber-50/70 border border-amber-100 flex items-start gap-2 text-left">
               <FileText className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
               <p className="text-[11px] text-amber-900/80 leading-relaxed">
-                An official digital receipt has been dispatched to your email address. This serves as formal proof for your voluntary contribution.
+                An official digital receipt has been dispatched to your email
+                address. This serves as formal proof for your voluntary
+                contribution.
               </p>
             </div>
           </div>
@@ -846,9 +890,121 @@ export default function DonatePage() {
                 </ul>
                 <button
                   onClick={() => scrollToForm("annadhanam")}
-                  className="w-full py-4 rounded-xl bg-green-50 text-green-700 font-bold hover:bg-green-600 hover:text-white transition-colors border border-green-200 hover:border-transparent"
+                  className="w-full py-4 rounded-xl bg-green-50 text-green-700 font-bold hover:bg-green-600 hover:text-white transition-colors border border-green-200 hover:border-transparent cursor-pointer"
                 >
                   {t("donate.donate_food")}
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Cause 3: Ghosala */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="bg-white rounded-3xl p-2 shadow-xl shadow-gray-200/50 border border-amber-100 group flex flex-col"
+            >
+              <div className="h-64 rounded-2xl overflow-hidden relative">
+                <img
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlCWkWZ3yWTNtcvsnrSbwetbYrXzCss0wPLUekjDLjZgRdSOlaxShjjfKC&s=10"
+                  alt="Ghosala Seva"
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-amber-700 rounded-xl flex items-center justify-center text-white shrink-0">
+                      <Leaf size={24} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white leading-tight">
+                      {t("donate.ghosala_title")}
+                    </h3>
+                  </div>
+                </div>
+              </div>
+              <div className="p-8 flex flex-col flex-grow">
+                <p className="text-gray-600 mb-6 font-medium leading-relaxed">
+                  {t("donate.ghosala_desc")}
+                </p>
+                <ul className="space-y-3 mb-8 flex-grow">
+                  <li className="flex items-center gap-3 text-sm font-bold text-gray-700">
+                    <CheckCircle2 size={18} className="text-amber-700" />{" "}
+                    {t("donate.cow_protection")}
+                  </li>
+                  <li className="flex items-center gap-3 text-sm font-bold text-gray-700">
+                    <CheckCircle2 size={18} className="text-amber-700" />{" "}
+                    {t("donate.daily_fodder")}
+                  </li>
+                  <li className="flex items-center gap-3 text-sm font-bold text-gray-700">
+                    <CheckCircle2 size={18} className="text-amber-700" />{" "}
+                    {t("donate.veterinary_care")}
+                  </li>
+                  <li className="flex items-center gap-3 text-sm font-bold text-gray-700">
+                    <CheckCircle2 size={18} className="text-amber-700" />{" "}
+                    {t("donate.sacred_goseva")}
+                  </li>
+                </ul>
+                <button
+                  onClick={() => scrollToForm("ghosala")}
+                  className="w-full py-4 rounded-xl bg-amber-50 text-amber-800 font-bold hover:bg-amber-700 hover:text-white transition-colors border border-amber-200 hover:border-transparent cursor-pointer"
+                >
+                  {t("donate.donate_ghosala")}
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Cause 4: Pooja */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="bg-white rounded-3xl p-2 shadow-xl shadow-gray-200/50 border border-rose-100 group flex flex-col"
+            >
+              <div className="h-64 rounded-2xl overflow-hidden relative">
+                <img
+                  src="https://m.media-amazon.com/images/I/71i-D7OFdJL._AC_UF894,1000_QL80_.jpg"
+                  alt="Pooja Seva"
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-rose-600 rounded-xl flex items-center justify-center text-white shrink-0">
+                      <Sparkles size={24} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white leading-tight">
+                      {t("donate.pooja_title")}
+                    </h3>
+                  </div>
+                </div>
+              </div>
+              <div className="p-8 flex flex-col flex-grow">
+                <p className="text-gray-600 mb-6 font-medium leading-relaxed">
+                  {t("donate.pooja_desc")}
+                </p>
+                <ul className="space-y-3 mb-8 flex-grow">
+                  <li className="flex items-center gap-3 text-sm font-bold text-gray-700">
+                    <CheckCircle2 size={18} className="text-rose-600" />{" "}
+                    {t("donate.daily_pooja")}
+                  </li>
+                  <li className="flex items-center gap-3 text-sm font-bold text-gray-700">
+                    <CheckCircle2 size={18} className="text-rose-600" />{" "}
+                    {t("donate.archana_seva")}
+                  </li>
+                  <li className="flex items-center gap-3 text-sm font-bold text-gray-700">
+                    <CheckCircle2 size={18} className="text-rose-600" />{" "}
+                    {t("donate.homam_rituals")}
+                  </li>
+                  <li className="flex items-center gap-3 text-sm font-bold text-gray-700">
+                    <CheckCircle2 size={18} className="text-rose-600" />{" "}
+                    {t("donate.divine_blessings")}
+                  </li>
+                </ul>
+                <button
+                  onClick={() => scrollToForm("pooja")}
+                  className="w-full py-4 rounded-xl bg-rose-50 text-rose-700 font-bold hover:bg-rose-600 hover:text-white transition-colors border border-rose-200 hover:border-transparent cursor-pointer"
+                >
+                  {t("donate.donate_pooja")}
                 </button>
               </div>
             </motion.div>
@@ -1017,6 +1173,74 @@ export default function DonatePage() {
                           </div>
                           <p className="text-sm text-slate-500 mt-0.5">
                             {t("donate.food_support")}
+                          </p>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setSelectedCause("ghosala")}
+                        className={`flex items-center gap-4 rounded-2xl border px-5 py-4 text-left transition-all duration-300 cursor-pointer ${selectedCause === "ghosala"
+                          ? "border-amber-600 bg-amber-50/40 shadow-[0_10px_30px_-15px_rgba(217,119,6,0.35)] ring-2 ring-amber-600/20"
+                          : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
+                          }`}
+                      >
+                        <div
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${selectedCause === "ghosala"
+                            ? "border-amber-700"
+                            : "border-slate-300"
+                            }`}
+                        >
+                          {selectedCause === "ghosala" && (
+                            <motion.div
+                              layoutId="cause-dot"
+                              className="h-2.5 w-2.5 rounded-full bg-amber-700"
+                            />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Leaf className="w-4 h-4 text-amber-700" />
+                            <p className="font-semibold text-slate-900">
+                              {t("donate.ghosala_title")}
+                            </p>
+                          </div>
+                          <p className="text-sm text-slate-500 mt-0.5">
+                            {t("donate.ghosala_support")}
+                          </p>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setSelectedCause("pooja")}
+                        className={`flex items-center gap-4 rounded-2xl border px-5 py-4 text-left transition-all duration-300 cursor-pointer ${selectedCause === "pooja"
+                          ? "border-rose-500 bg-rose-50/40 shadow-[0_10px_30px_-15px_rgba(244,63,94,0.35)] ring-2 ring-rose-500/20"
+                          : "border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm"
+                          }`}
+                      >
+                        <div
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${selectedCause === "pooja"
+                            ? "border-rose-600"
+                            : "border-slate-300"
+                            }`}
+                        >
+                          {selectedCause === "pooja" && (
+                            <motion.div
+                              layoutId="cause-dot"
+                              className="h-2.5 w-2.5 rounded-full bg-rose-600"
+                            />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-rose-600" />
+                            <p className="font-semibold text-slate-900">
+                              {t("donate.pooja_title")}
+                            </p>
+                          </div>
+                          <p className="text-sm text-slate-500 mt-0.5">
+                            {t("donate.pooja_support")}
                           </p>
                         </div>
                       </button>

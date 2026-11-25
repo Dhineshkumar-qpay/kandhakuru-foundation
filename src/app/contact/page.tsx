@@ -199,7 +199,6 @@ export default function Contact() {
                         className="h-10 w-10 object-contain transition-all duration-300"
                       />
                     </div>
-
                     <div>
                       <div className="mb-2 inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
                        {t("contact.whatsapp_community")}
