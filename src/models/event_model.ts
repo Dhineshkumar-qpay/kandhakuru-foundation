@@ -55,6 +55,7 @@ export class EventDetailData {
   bookedseats?: number | null;
   occupiedseats?: number | null;
   registrationfee: string;
+  isofferprice?: boolean | null;
   platinumprice?: string | number | null;
   goldprice?: string | number | null;
   silverprice?: string | number | null;
@@ -97,6 +98,7 @@ export class EventDetailData {
     this.bookedseats = data.bookedseats ?? data.booked_seats;
     this.occupiedseats = data.occupiedseats ?? data.occupied_seats ?? data.bookedseats ?? data.booked_seats;
     this.registrationfee = data.registrationfee;
+    this.isofferprice = data.isofferprice !== undefined && data.isofferprice !== null ? Boolean(data.isofferprice) : null;
     this.platinumprice = data.platinumprice;
     this.goldprice = data.goldprice;
     this.silverprice = data.silverprice;

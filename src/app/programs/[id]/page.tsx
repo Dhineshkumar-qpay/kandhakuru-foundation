@@ -134,6 +134,10 @@ export default function ProgramDetailsPage() {
   const bookingdateValue = watch("bookingdate");
   const isOnline = program?.deliverymode?.toLowerCase() === "online";
   const isLevel2 = program?.leveltype?.toLowerCase() === "level2";
+  const isOfferPrice =
+    program?.isofferprice !== undefined && program?.isofferprice !== null
+      ? Boolean(program.isofferprice)
+      : isLevel2;
   const isLevel1Or2 =
     program?.leveltype?.toLowerCase() === "level1" ||
     program?.leveltype?.toLowerCase() === "level2" ||
@@ -184,7 +188,7 @@ export default function ProgramDetailsPage() {
   const [showSeatPlanModal, setShowSeatPlanModal] = useState(false);
 
   useEffect(() => {
-    if (isLevel2 && program) {
+    if (isOfferPrice && program) {
       if (program.platinumprice) {
         setSelectedPriceType("platinum");
       } else if (program.goldprice) {
@@ -193,7 +197,7 @@ export default function ProgramDetailsPage() {
         setSelectedPriceType("silver");
       }
     }
-  }, [program, isLevel2]);
+  }, [program, isOfferPrice]);
 
   const participantsCount = isOnline ? "1" : watch("participants") || "1";
 
@@ -232,7 +236,7 @@ export default function ProgramDetailsPage() {
 
   const getUnitPrice = () => {
     if (!program) return 0;
-    if (isLevel2) {
+    if (isOfferPrice) {
       if (selectedPriceType === "platinum" && program.platinumprice) {
         return getTierPrice("platinum");
       }
@@ -295,7 +299,7 @@ export default function ProgramDetailsPage() {
       sendtotalamount: totalAmount,
       baseamount: baseAmount,
       gstamount: gstAmount,
-      ...(isLevel2 ? { pricetype: selectedPriceType } : {}),
+      ...(isOfferPrice ? { pricetype: selectedPriceType } : {}),
       ...(isOnline && data.bookingdate && data.bookingtime
         ? {
           bookingdate: data.bookingdate,
@@ -584,11 +588,11 @@ export default function ProgramDetailsPage() {
                 <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border border-amber-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group">
                   <CreditCard className="w-8 h-8 text-amber-500 mb-3 group-hover:scale-110 group-hover:text-orange-500 transition-all duration-300" />
                   <h4 className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
-                    {isLevel2
+                    {isOfferPrice
                       ? t("program_details.tier_packages")
                       : t("program_details.registration")}
                   </h4>
-                  {isLevel2 &&
+                  {isOfferPrice &&
                     (program.platinumprice ||
                       program.goldprice ||
                       program.silverprice) ? (
@@ -702,7 +706,7 @@ export default function ProgramDetailsPage() {
               </div>
             </motion.div>
 
-            {isLevel2 &&
+            {isOfferPrice &&
               Boolean(
                 program.platinumprice ||
                 program.goldprice ||
@@ -1447,7 +1451,7 @@ export default function ProgramDetailsPage() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                  {isLevel2 &&
+                  {isOfferPrice &&
                     (program.platinumprice ||
                       program.goldprice ||
                       program.silverprice) && (
@@ -1956,7 +1960,7 @@ export default function ProgramDetailsPage() {
                   </div>
 
                   <div className="rounded-xl bg-amber-50/70 border border-amber-200/70 p-4 space-y-2 text-xs text-gray-700">
-                    {isLevel2 && (
+                    {isOfferPrice && (
                       <div className="space-y-1 pb-2 border-b border-amber-200/60">
                         <div className="flex justify-between items-center text-gray-700 font-medium">
                           <span>Selected Package:</span>
