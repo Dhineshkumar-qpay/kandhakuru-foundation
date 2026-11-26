@@ -50,7 +50,7 @@ const QPAY_CONFIG = {
   qpayId: "kandaapiacc",
   qpayPwd: "kanda!123",
   secretKey: "QQ5E0FSEcAPhe9yqiTKn0rtlUUO5ScwtN9yBeBnwUwh2HCfUVEfs",
-  mode: "test", // 'test' or 'live'
+  mode: "live", // 'test' or 'live'
   responseUrl:
     typeof window !== "undefined"
       ? `${window.location.origin}/api/qpay/callback`
